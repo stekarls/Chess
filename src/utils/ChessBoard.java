@@ -53,24 +53,28 @@ public class ChessBoard {
         BOARD[white][3] = new Queen(Color.WHITE, new Position(white,3));
         BOARD[white][4] = new King(Color.WHITE, new Position(white,4));
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
     public void printBoard() {
-
+        int count = 8;
+        String space = "  ";
+        for (int rank = 0; rank < BOARD.length; rank++){
+            System.out.print("\n" + count-- + "     ");
+            for (int file = 0; file < BOARD.length; file++){
+                Piece piece = BOARD[rank][file];
+                if (piece == null){
+                    System.out.print("." + space);
+                    continue;
+                }
+                char symbol = piece.getSymbol();
+                if (piece.getColor().equals(Color.BLACK)){
+                    System.out.print(symbol + space);
+                }else {
+                    System.out.print(symbol + space);
+                }
+            }
+        }
+        System.out.println("\n\n    " + space + "A" + space + "B" + space + "C" + space + "D" + space + "E" + space + "F" + space + "G" + space + "H");
     }
 
 
