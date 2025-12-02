@@ -1,9 +1,11 @@
 package utils;
 
+import java.util.Objects;
+
 public class Position {
 
-    int x;
-    int y;
+    private int x;
+    private int y;
 
     public Position(int x, int y){
         this.x = x;
@@ -29,6 +31,40 @@ public class Position {
         };
     }
 
+    public char boardCharacter(int number){
+        return switch (number){
+            case 0 -> 'A';
+            case 1 -> 'B';
+            case 2 -> 'C';
+            case 3 -> 'D';
+            case 4 -> 'E';
+            case 5 -> 'F';
+            case 6 -> 'G';
+            case 7 -> 'H';
+            default -> throw new IllegalStateException("Unexpected value: " + number);
+        };
+    }
+
+    public int boardNumber(int number){
+        return switch (number){
+            case 7 -> 1;
+            case 6 -> 2;
+            case 5 -> 3;
+            case 4 -> 4;
+            case 3 -> 5;
+            case 2 -> 6;
+            case 1 -> 7;
+            case 0 -> 8;
+            default -> throw new IllegalStateException("Unexpected value: " + number);
+        };
+    }
+
+
+
+
+
+
+
     public int getX() {
         return x;
     }
@@ -45,6 +81,14 @@ public class Position {
         this.y = y;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Position position)) return false;
+        return x == position.x && y == position.y;
+    }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
 }

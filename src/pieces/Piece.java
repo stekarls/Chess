@@ -29,13 +29,20 @@ public abstract class Piece {
 
 
 
-    public abstract boolean legalMove();
+    public abstract boolean legalMove(Position position);
 
     public Color getColor(){
         return this.color;
     }
     public char getSymbol(){
         return this.symbol;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
+    public Position getPosition(){
+        return this.position;
     }
 
 }

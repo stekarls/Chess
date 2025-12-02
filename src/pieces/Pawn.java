@@ -12,8 +12,12 @@ public class Pawn extends Piece{
     }
 
     @Override
-    public boolean legalMove() {
-        return false;
+    public boolean legalMove(Position position) {
+        if (this.position.equals(position)){
+            System.out.println("Piece already at same position, try again");
+            return false;
+        }
+        return true;
     }
 
     public boolean getHasMoved(){
@@ -22,5 +26,10 @@ public class Pawn extends Piece{
 
     public void setHasMoved(boolean hasMoved){
         this.hasMoved = hasMoved;
+    }
+
+    @Override
+    public String toString(){
+        return "Pawn";
     }
 }
