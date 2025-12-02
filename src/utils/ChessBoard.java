@@ -70,7 +70,7 @@ public class ChessBoard {
     }
 
     public void printBoard() {
-        
+
     }
 
 
