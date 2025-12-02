@@ -7,6 +7,9 @@ public class ChessBoard {
     public static void main(String[] args) {
         ChessBoard brett = new ChessBoard();
         brett.printBoard();
+
+        brett.movePiece(new Position(6, 3), new Position(5, 3));
+
     }
 
     private final int RANKS = 8;
@@ -56,6 +59,12 @@ public class ChessBoard {
     }
 
     public void printBoard() {
+
+        //"Clear" history in console
+        for (int i = 0; i < 50; i++){
+            System.out.println();
+        }
+
         int count = 8;
         String space = "  ";
         for (int rank = 0; rank < BOARD.length; rank++){
@@ -80,12 +89,30 @@ public class ChessBoard {
 
 
     public Piece getPieceAt(Position position){
-        return null;
+        return BOARD[position.getX()][position.getY()];
     }
 
     public boolean movePiece(Position from, Position to){
-        return false;
+        Piece piece = getPieceAt(from);
+        if (piece != null){
+            if (piece.legalMove(to)){
+                BOARD[from.getX()][from.getY()] = null;
+                piece.setPosition(to);
+                BOARD[to.getX()][to.getY()] = piece;
+                printBoard();
+                System.out.println("\nYou moved " + piece + " from " + from.boardCharacter(from.getY()) + from.boardNumber(from.getX()));
+
+                return true;
+            }else {
+                return false;
+            }
+        }else {
+            System.out.println("Found no piece in " + from.boardCharacter(from.getY()) + from.getX());
+            return false;
+        }
     }
+
+
 
     public boolean isEmpty(Piece[][] board){
         return false;

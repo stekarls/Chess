@@ -10,7 +10,7 @@ public class King extends Piece{
     }
 
     @Override
-    public boolean legalMove() {
+    public boolean legalMove(Position position) {
         return false;
     }
 }
