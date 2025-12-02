@@ -59,12 +59,6 @@ public class Position {
         };
     }
 
-
-
-
-
-
-
     public int getX() {
         return x;
     }
@@ -87,6 +81,9 @@ public class Position {
         return x == position.x && y == position.y;
     }
 
+    public boolean legalPosition(){
+        return (this.x < 8 && this.x >= 0) && (this.y < 7 && this.y >= 0);
+    }
     @Override
     public int hashCode() {
         return Objects.hash(x, y);

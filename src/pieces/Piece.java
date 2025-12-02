@@ -1,4 +1,5 @@
 package pieces;
+import utils.ChessBoard;
 import utils.Color;
 import utils.Position;
 
@@ -29,7 +30,7 @@ public abstract class Piece {
 
 
 
-    public abstract boolean legalMove(Position position);
+    public abstract boolean legalMove(Position position, ChessBoard board);
 
     public Color getColor(){
         return this.color;
