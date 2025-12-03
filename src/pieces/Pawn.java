@@ -16,13 +16,9 @@ public class Pawn extends Piece{
 
     @Override
     public boolean legalMove(Position position, ChessBoard board) {
-        if (!position.legalPosition()){
-            return false;
-        }else if (this.position.equals(position)){
-            System.out.println("Piece already at same position, try again");
-            return false;
-        }
-
+        
+        if (!position.legalPosition()) return false;
+        
         ArrayList<Position> legalMoves = new ArrayList<>();
 
         if (this.color.equals(Color.WHITE)){
