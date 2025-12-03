@@ -4,17 +4,17 @@ import java.util.Objects;
 
 public class Position {
 
-    private int x;
-    private int y;
+    private int rank;
+    private int file;
 
-    public Position(int x, int y){
-        this.x = x;
-        this.y = y;
+    public Position(int rank, int file){
+        this.rank = rank;
+        this.file = file;
     }
 
-    public Position(char y, int x){
-        this.x = x;
-        this.y = getRank(y);
+    public Position(char file, int rank){
+        this.rank = rank;
+        this.file = getRank(file);
     }
 
     public int getRank(char letter){
@@ -59,33 +59,33 @@ public class Position {
         };
     }
 
-    public int getX() {
-        return x;
+    public int getRank() {
+        return rank;
     }
 
-    public void setX(int x) {
-        this.x = x;
+    public void setRank(int rank) {
+        this.rank = rank;
     }
 
-    public int getY() {
-        return y;
+    public int getFile() {
+        return file;
     }
 
-    public void setY(int y) {
-        this.y = y;
+    public void setFile(int file) {
+        this.file = file;
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Position position)) return false;
-        return x == position.x && y == position.y;
+        return rank == position.rank && file == position.file;
     }
 
     public boolean legalPosition(){
-        return (this.x < 8 && this.x >= 0) && (this.y < 7 && this.y >= 0);
+        return (this.rank < 8 && this.rank >= 0) && (this.file < 7 && this.file >= 0);
     }
     @Override
     public int hashCode() {
-        return Objects.hash(x, y);
+        return Objects.hash(rank, file);
     }
 }

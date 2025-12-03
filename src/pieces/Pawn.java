@@ -1,6 +1,5 @@
 package pieces;
 
-import utils.ChessBoard;
 import utils.Color;
 import utils.Position;
 
@@ -22,16 +21,16 @@ public class Pawn extends Piece{
         ArrayList<Position> legalMoves = new ArrayList<>();
 
         if (this.color.equals(Color.WHITE)){
-            legalMoves.add(new Position(this.position.getX() - 1, this.position.getY()));
-            legalMoves.add(new Position(this.position.getX() - 1, this.position.getY() - 1));
-            legalMoves.add(new Position(this.position.getX() - 1, this.position.getY() + 1));
-            if(!this.hasMoved) legalMoves.add(new Position(this.position.getX() - 2, this.position.getY()));
+            legalMoves.add(new Position(this.position.getRank() - 1, this.position.getFile()));
+            legalMoves.add(new Position(this.position.getRank() - 1, this.position.getFile() - 1));
+            legalMoves.add(new Position(this.position.getRank() - 1, this.position.getFile() + 1));
+            if(!this.hasMoved) legalMoves.add(new Position(this.position.getRank() - 2, this.position.getFile()));
             
         }else{
-            legalMoves.add(new Position(this.position.getX() + 1, this.position.getY()));
-            legalMoves.add(new Position(this.position.getX() + 1, this.position.getY() - 1));
-            legalMoves.add(new Position(this.position.getX() + 1, this.position.getY() + 1));
-            if(!this.hasMoved) legalMoves.add(new Position(this.position.getX() + 2, this.position.getY()));
+            legalMoves.add(new Position(this.position.getRank() + 1, this.position.getFile()));
+            legalMoves.add(new Position(this.position.getRank() + 1, this.position.getFile() - 1));
+            legalMoves.add(new Position(this.position.getRank() + 1, this.position.getFile() + 1));
+            if(!this.hasMoved) legalMoves.add(new Position(this.position.getRank() + 2, this.position.getFile()));
         }
 
         return legalMoves.contains(position);

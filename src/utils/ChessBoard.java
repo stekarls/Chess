@@ -8,7 +8,7 @@ public class ChessBoard {
         ChessBoard brett = new ChessBoard();
         brett.printBoard();
 
-        brett.movePiece(new Position(6, 1), new Position(5, -2));
+        brett.movePiece(new Position(6, 1), new Position(5, 1));
     }
 
     private final int RANKS = 8;
@@ -88,7 +88,7 @@ public class ChessBoard {
 
 
     public Piece getPieceAt(Position position){
-        return BOARD[position.getX()][position.getY()];
+        return BOARD[position.getRank()][position.getFile()];
     }
 
     public boolean movePiece(Position from, Position to){
@@ -108,22 +108,25 @@ public class ChessBoard {
     }
 
     private boolean captureSquare(Piece piece, Position to){
-        int piece_x = piece.getPosition().getX();
-        int piece_y = piece.getPosition().getY();
-
+        Position piecePos = piece.getPosition();
         Piece targetPiece = getPieceAt(to);
 
         if (targetPiece == null){
-            BOARD[piece_x][piece_y] = null;
-            piece.setPosition(to);
-            BOARD[to.getX()][to.getY()] = piece;
             if(piece instanceof Pawn pawn){
+                if(to.getFile() != piecePos.getFile()){
+                    return false;
+                }
                 pawn.setHasMoved(true);
             }
+            BOARD[piecePos.getRank()][piecePos.getFile()] = null;
+            piece.setPosition(to);
+            BOARD[to.getRank()][to.getFile()] = piece;
+
             return true;
+
         } else if (!(targetPiece.getColor().equals(piece.getColor()))){
             targetPiece.setPosition(null);
-            BOARD[targetPiece.getPosition().getX()][targetPiece.getPosition().getY()] = null;
+            BOARD[targetPiece.getPosition().getRank()][targetPiece.getPosition().getFile()] = null;
             return captureSquare(piece, to);
         }
         return false;

@@ -1,6 +1,5 @@
 package pieces;
 
-import utils.ChessBoard;
 import utils.Color;
 import utils.Position;
 
@@ -17,14 +16,14 @@ public class Knight extends Piece{
         
         ArrayList<Position> legalMoves = new ArrayList<>();
 
-        legalMoves.add(new Position(this.position.getX() + 2, this.position.getY() - 1));
-        legalMoves.add(new Position(this.position.getX() + 2, this.position.getY() + 1));
-        legalMoves.add(new Position(this.position.getX() - 2, this.position.getY() - 1));
-        legalMoves.add(new Position(this.position.getX() - 2, this.position.getY() + 1));
-        legalMoves.add(new Position(this.position.getX() + 1, this.position.getY() + 2));
-        legalMoves.add(new Position(this.position.getX() - 1, this.position.getY() + 2));
-        legalMoves.add(new Position(this.position.getX() + 1, this.position.getY() - 2));
-        legalMoves.add(new Position(this.position.getX() - 1, this.position.getY() - 2));
+        legalMoves.add(new Position(this.position.getRank() + 2, this.position.getFile() - 1));
+        legalMoves.add(new Position(this.position.getRank() + 2, this.position.getFile() + 1));
+        legalMoves.add(new Position(this.position.getRank() - 2, this.position.getFile() - 1));
+        legalMoves.add(new Position(this.position.getRank() - 2, this.position.getFile() + 1));
+        legalMoves.add(new Position(this.position.getRank() + 1, this.position.getFile() + 2));
+        legalMoves.add(new Position(this.position.getRank() - 1, this.position.getFile() + 2));
+        legalMoves.add(new Position(this.position.getRank() + 1, this.position.getFile() - 2));
+        legalMoves.add(new Position(this.position.getRank() - 1, this.position.getFile() - 2));
 
 
         return legalMoves.contains(position);
