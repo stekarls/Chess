@@ -30,7 +30,8 @@ public abstract class Piece {
 
 
 
-    public abstract boolean legalMove(Position position, ChessBoard board);
+    public abstract boolean legalMove(Position position);
+
 
     public Color getColor(){
         return this.color;

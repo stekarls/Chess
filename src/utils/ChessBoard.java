@@ -8,8 +8,7 @@ public class ChessBoard {
         ChessBoard brett = new ChessBoard();
         brett.printBoard();
 
-        brett.movePiece(new Position(6, 3), new Position(5, 3));
-
+        brett.movePiece(new Position(6, 1), new Position(5, -2));
     }
 
     private final int RANKS = 8;
@@ -94,27 +93,47 @@ public class ChessBoard {
 
     public boolean movePiece(Position from, Position to){
         Piece piece = getPieceAt(from);
-        if (piece != null){
-            if (piece.legalMove(to)){
-                BOARD[from.getX()][from.getY()] = null;
-                piece.setPosition(to);
-                BOARD[to.getX()][to.getY()] = piece;
-                printBoard();
-                System.out.println("\nYou moved " + piece + " from " + from.boardCharacter(from.getY()) + from.boardNumber(from.getX()));
 
-                return true;
-            }else {
-                return false;
-            }
+        if (piece.legalMove(to)){
+            captureSquare(piece, to);
+            printBoard();
+            return true;
         }else {
-            System.out.println("Found no piece in " + from.boardCharacter(from.getY()) + from.getX());
+            System.out.println("Not a legal move for " + piece);
             return false;
         }
+
+//        System.out.println("\nYou moved " + piece + " from " + piece.getPosition().getX().boardCharacter(from.getY()) + from.boardNumber(from.getX()));
+
     }
 
+    private boolean captureSquare(Piece piece, Position to){
+        int piece_x = piece.getPosition().getX();
+        int piece_y = piece.getPosition().getY();
 
+        Piece targetPiece = getPieceAt(to);
+
+        if (targetPiece == null){
+            BOARD[piece_x][piece_y] = null;
+            piece.setPosition(to);
+            BOARD[to.getX()][to.getY()] = piece;
+            if(piece instanceof Pawn pawn){
+                pawn.setHasMoved(true);
+            }
+            return true;
+        } else if (!(targetPiece.getColor().equals(piece.getColor()))){
+            targetPiece.setPosition(null);
+            BOARD[targetPiece.getPosition().getX()][targetPiece.getPosition().getY()] = null;
+            return captureSquare(piece, to);
+        }
+        return false;
+    }
 
     public boolean isEmpty(Piece[][] board){
         return false;
     }
+    public Piece[][] getBOARD(){
+        return this.BOARD;
+    }
 }
+

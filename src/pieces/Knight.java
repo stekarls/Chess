@@ -1,7 +1,10 @@
 package pieces;
 
+import utils.ChessBoard;
 import utils.Color;
 import utils.Position;
+
+import java.util.ArrayList;
 
 public class Knight extends Piece{
     public Knight(Color color, Position position) {
@@ -14,20 +17,26 @@ public class Knight extends Piece{
         
         ArrayList<Position> legalMoves = new ArrayList<>();
 
-        legalMoved.add(new Position(this.position.getX() + 2, this.position.getY() - 1));
-        legalMoved.add(new Position(this.position.getX() + 2, this.position.getY() + 1));
-        legalMoved.add(new Position(this.position.getX() - 2, this.position.getY() - 1));
-        legalMoved.add(new Position(this.position.getX() - 2, this.position.getY() + 1));
-        legalMoved.add(new Position(this.position.getX() + 1, this.position.getY() + 2));
-        legalMoved.add(new Position(this.position.getX() - 1, this.position.getY() + 2));
-        legalMoved.add(new Position(this.position.getX() + 1, this.position.getY() - 2));
-        legalMoved.add(new Position(this.position.getX() - 1, this.position.getY() - 2));
+        legalMoves.add(new Position(this.position.getX() + 2, this.position.getY() - 1));
+        legalMoves.add(new Position(this.position.getX() + 2, this.position.getY() + 1));
+        legalMoves.add(new Position(this.position.getX() - 2, this.position.getY() - 1));
+        legalMoves.add(new Position(this.position.getX() - 2, this.position.getY() + 1));
+        legalMoves.add(new Position(this.position.getX() + 1, this.position.getY() + 2));
+        legalMoves.add(new Position(this.position.getX() - 1, this.position.getY() + 2));
+        legalMoves.add(new Position(this.position.getX() + 1, this.position.getY() - 2));
+        legalMoves.add(new Position(this.position.getX() - 1, this.position.getY() - 2));
 
 
-        Piece target targetPiece = ChessBoard.getPieceAt(position);
-        if(legalMoves.contains(position)){
-            if(targetPiece == null) return true;
-            else if(targetPiece.getColor().notEquals(this.color)) return true;   
-        }else return false; 
+        return legalMoves.contains(position);
+//        if(legalMoves.contains(position)){
+//            Piece targetPiece = board.getPieceAt(position);
+//            if(targetPiece == null) return true;
+//            else if(!(targetPiece.getColor().equals(this.color))) return true;
+//        }
+    }
+
+    @Override
+    public String toString(){
+        return "Knight";
     }
 }

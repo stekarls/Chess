@@ -1,0 +1,6 @@
+
+1. Remove Chessboard board parameter from legalMove method in pieces. Just check if they can move there and then have a capture()
+method that captures.
+2. Rename x and y to rank and file
+3. Fix hasMoved in Pawn
+4. Fix capturing diagnally, now diagonal moves are allway allowed for pawn
