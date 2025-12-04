@@ -1,5 +1,5 @@
 package pieces;
-import utils.ChessBoard;
+
 import utils.Color;
 import utils.Position;
 

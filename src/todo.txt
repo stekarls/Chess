@@ -1,5 +1,8 @@
 
-1. Remove Chessboard board parameter from legalMove method in pieces. Just check if they can move there and then have a capture()
-method that captures.
-2. Rename x and y to rank and file
-4. Fix capturing diagnally, now diagonal moves are allway allowed for pawn
+1. Make isLegal logic more efficient. New position - old position will give correct moving instructions
+2. Add moving animation to the previous one
+3. Add opponent CPU
+4. Add rules for check, and king check in legalMove
+5. Fix null handling, getting right error messages to console
+6. En passant
+7. Pawn can capture frontally (can fix this with more efficient and right legalMove logic in pawn)

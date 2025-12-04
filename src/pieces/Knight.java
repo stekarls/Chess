@@ -11,27 +11,16 @@ public class Knight extends Piece{
     }
 
     @Override
-    public boolean legalMove(Position position) {
+    public boolean legalMove(Position targetPosition) {
         if (!position.legalPosition()) return false;
-        
-        ArrayList<Position> legalMoves = new ArrayList<>();
 
-        legalMoves.add(new Position(this.position.getRank() + 2, this.position.getFile() - 1));
-        legalMoves.add(new Position(this.position.getRank() + 2, this.position.getFile() + 1));
-        legalMoves.add(new Position(this.position.getRank() - 2, this.position.getFile() - 1));
-        legalMoves.add(new Position(this.position.getRank() - 2, this.position.getFile() + 1));
-        legalMoves.add(new Position(this.position.getRank() + 1, this.position.getFile() + 2));
-        legalMoves.add(new Position(this.position.getRank() - 1, this.position.getFile() + 2));
-        legalMoves.add(new Position(this.position.getRank() + 1, this.position.getFile() - 2));
-        legalMoves.add(new Position(this.position.getRank() - 1, this.position.getFile() - 2));
+        int rankDifference = Math.abs(targetPosition.getRank() - this.position.getRank());
+        int fileDifference = Math.abs(targetPosition.getFile() - this.position.getFile());
 
+        boolean lPattern1 = (rankDifference == 2) && (fileDifference == 1);
+        boolean lPattern2 = (rankDifference == 1) && (fileDifference == 2);
 
-        return legalMoves.contains(position);
-//        if(legalMoves.contains(position)){
-//            Piece targetPiece = board.getPieceAt(position);
-//            if(targetPiece == null) return true;
-//            else if(!(targetPiece.getColor().equals(this.color))) return true;
-//        }
+        return lPattern1 || lPattern2;
     }
 
     @Override

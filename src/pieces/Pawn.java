@@ -17,7 +17,7 @@ public class Pawn extends Piece{
     public boolean legalMove(Position position) {
         
         if (!position.legalPosition()) return false;
-        
+
         ArrayList<Position> legalMoves = new ArrayList<>();
 
         if (this.color.equals(Color.WHITE)){
@@ -34,24 +34,7 @@ public class Pawn extends Piece{
         }
 
         return legalMoves.contains(position);
-//
-//        if(legalMoves.contains(position)){
-//            Piece targetPiece = board.getPieceAt(position);
-//
-//            if(targetPiece == null){
-//                this.hasMoved = true;
-//                return true;
-//            }else if(targetPiece.getColor().equals(this.color)){ //Target piece is same color
-//                System.out.println("Du har en brikke her fra før");
-//                return false;
-//            }else if (targetPiece.getPosition().getX() == this.position.getX()){ //Check if targetPiece is on same file
-//                System.out.println("Cannot capture enemy piece in this way");
-//                return false;
-//            }else{
-//                this.hasMoved = true;
-//                return true;
-//            }
-//        }
+
     }
 
     public boolean getHasMoved(){

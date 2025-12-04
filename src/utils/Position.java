@@ -13,11 +13,11 @@ public class Position {
     }
 
     public Position(char file, int rank){
-        this.rank = rank;
-        this.file = getRank(file);
+        this.rank = boardNumber(rank);
+        this.file = getFile(file);
     }
 
-    public int getRank(char letter){
+    public int getFile(char letter){
         return switch (Character.toUpperCase(letter)){
             case 'A' -> 0;
             case 'B' -> 1;
@@ -31,8 +31,22 @@ public class Position {
         };
     }
 
-    public char boardCharacter(int number){
-        return switch (number){
+    public int boardNumber(int rank){
+        return switch (rank){
+            case 8 -> 0;
+            case 7 -> 1;
+            case 6 -> 2;
+            case 5 -> 3;
+            case 4 -> 4;
+            case 3 -> 5;
+            case 2 -> 6;
+            case 1 -> 7;
+            default -> throw new IllegalStateException("Unexpected value: " + rank);
+        };
+    }
+
+    public char boardCharacter(int file){
+        return switch (file){
             case 0 -> 'A';
             case 1 -> 'B';
             case 2 -> 'C';
@@ -41,22 +55,9 @@ public class Position {
             case 5 -> 'F';
             case 6 -> 'G';
             case 7 -> 'H';
-            default -> throw new IllegalStateException("Unexpected value: " + number);
+            default -> throw new IllegalStateException("Unexpected value: " + file);
         };
-    }
 
-    public int boardNumber(int number){
-        return switch (number){
-            case 7 -> 1;
-            case 6 -> 2;
-            case 5 -> 3;
-            case 4 -> 4;
-            case 3 -> 5;
-            case 2 -> 6;
-            case 1 -> 7;
-            case 0 -> 8;
-            default -> throw new IllegalStateException("Unexpected value: " + number);
-        };
     }
 
     public int getRank() {
@@ -87,5 +88,10 @@ public class Position {
     @Override
     public int hashCode() {
         return Objects.hash(rank, file);
+    }
+
+    public String chessNotation(){
+        return boardCharacter(this.file) + boardNumber(this.rank) + "";
+
     }
 }
