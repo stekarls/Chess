@@ -6,3 +6,4 @@
 5. Fix null handling, getting right error messages to console
 6. En passant
 7. Pawn can capture frontally (can fix this with more efficient and right legalMove logic in pawn)
+8. Pawn on H file and Bishop can not move on H file. Debug. 
