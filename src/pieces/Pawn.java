@@ -3,6 +3,8 @@ package pieces;
 import utils.Color;
 import utils.Position;
 
+import java.util.ArrayList;
+
 public class Pawn extends Piece{
 
     private boolean hasMoved = false;
@@ -13,11 +15,26 @@ public class Pawn extends Piece{
 
     @Override
     public boolean legalMove(Position position) {
-        if (this.position.equals(position)){
-            System.out.println("Piece already at same position, try again");
-            return false;
+        
+        if (!position.legalPosition()) return false;
+
+        ArrayList<Position> legalMoves = new ArrayList<>();
+
+        if (this.color.equals(Color.WHITE)){
+            legalMoves.add(new Position(this.position.getRank() - 1, this.position.getFile()));
+            legalMoves.add(new Position(this.position.getRank() - 1, this.position.getFile() - 1));
+            legalMoves.add(new Position(this.position.getRank() - 1, this.position.getFile() + 1));
+            if(!this.hasMoved) legalMoves.add(new Position(this.position.getRank() - 2, this.position.getFile()));
+            
+        }else{
+            legalMoves.add(new Position(this.position.getRank() + 1, this.position.getFile()));
+            legalMoves.add(new Position(this.position.getRank() + 1, this.position.getFile() - 1));
+            legalMoves.add(new Position(this.position.getRank() + 1, this.position.getFile() + 1));
+            if(!this.hasMoved) legalMoves.add(new Position(this.position.getRank() + 2, this.position.getFile()));
         }
-        return true;
+
+        return legalMoves.contains(position);
+
     }
 
     public boolean getHasMoved(){

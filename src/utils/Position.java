@@ -4,20 +4,20 @@ import java.util.Objects;
 
 public class Position {
 
-    private int x;
-    private int y;
+    private int rank;
+    private int file;
 
-    public Position(int x, int y){
-        this.x = x;
-        this.y = y;
+    public Position(int rank, int file){
+        this.rank = rank;
+        this.file = file;
     }
 
-    public Position(char y, int x){
-        this.x = x;
-        this.y = getRank(y);
+    public Position(char file, int rank){
+        this.rank = boardNumber(rank);
+        this.file = getFile(file);
     }
 
-    public int getRank(char letter){
+    public int getFile(char letter){
         return switch (Character.toUpperCase(letter)){
             case 'A' -> 0;
             case 'B' -> 1;
@@ -31,8 +31,22 @@ public class Position {
         };
     }
 
-    public char boardCharacter(int number){
-        return switch (number){
+    public int boardNumber(int rank){
+        return switch (rank){
+            case 8 -> 0;
+            case 7 -> 1;
+            case 6 -> 2;
+            case 5 -> 3;
+            case 4 -> 4;
+            case 3 -> 5;
+            case 2 -> 6;
+            case 1 -> 7;
+            default -> throw new IllegalStateException("Unexpected value: " + rank);
+        };
+    }
+
+    public char boardCharacter(int file){
+        return switch (file){
             case 0 -> 'A';
             case 1 -> 'B';
             case 2 -> 'C';
@@ -41,54 +55,43 @@ public class Position {
             case 5 -> 'F';
             case 6 -> 'G';
             case 7 -> 'H';
-            default -> throw new IllegalStateException("Unexpected value: " + number);
+            default -> throw new IllegalStateException("Unexpected value: " + file);
         };
+
     }
 
-    public int boardNumber(int number){
-        return switch (number){
-            case 7 -> 1;
-            case 6 -> 2;
-            case 5 -> 3;
-            case 4 -> 4;
-            case 3 -> 5;
-            case 2 -> 6;
-            case 1 -> 7;
-            case 0 -> 8;
-            default -> throw new IllegalStateException("Unexpected value: " + number);
-        };
+    public int getRank() {
+        return rank;
     }
 
-
-
-
-
-
-
-    public int getX() {
-        return x;
+    public void setRank(int rank) {
+        this.rank = rank;
     }
 
-    public void setX(int x) {
-        this.x = x;
+    public int getFile() {
+        return file;
     }
 
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
+    public void setFile(int file) {
+        this.file = file;
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Position position)) return false;
-        return x == position.x && y == position.y;
+        return rank == position.rank && file == position.file;
     }
 
+    public boolean legalPosition(){
+        return (this.rank < 8 && this.rank >= 0) && (this.file < 7 && this.file >= 0);
+    }
     @Override
     public int hashCode() {
-        return Objects.hash(x, y);
+        return Objects.hash(rank, file);
+    }
+
+    public String chessNotation(){
+        return boardCharacter(this.file) + boardNumber(this.rank) + "";
+
     }
 }

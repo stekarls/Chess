@@ -1,4 +1,5 @@
 package pieces;
+
 import utils.Color;
 import utils.Position;
 
@@ -30,6 +31,7 @@ public abstract class Piece {
 
 
     public abstract boolean legalMove(Position position);
+
 
     public Color getColor(){
         return this.color;

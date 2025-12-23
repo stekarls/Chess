@@ -1,0 +1,8 @@
+
+1. Make isLegal logic more efficient. New position - old position will give correct moving instructions
+2. Add moving animation to the previous one
+3. Add opponent CPU
+4. Add rules for check, and king check in legalMove
+5. Fix null handling, getting right error messages to console
+6. En passant
+7. Pawn can capture frontally (can fix this with more efficient and right legalMove logic in pawn)

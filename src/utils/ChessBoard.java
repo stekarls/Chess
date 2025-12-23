@@ -2,16 +2,9 @@ package utils;
 
 import pieces.*;
 
+import java.util.Objects;
+
 public class ChessBoard {
-
-    public static void main(String[] args) {
-        ChessBoard brett = new ChessBoard();
-        brett.printBoard();
-
-        brett.movePiece(new Position(6, 3), new Position(5, 3));
-
-    }
-
     private final int RANKS = 8;
     private final int FILES = 8;
     final Piece[][] BOARD = new Piece[RANKS][FILES];
@@ -28,11 +21,11 @@ public class ChessBoard {
         int black = 0;
 
         //Rooks
-        BOARD[black][0] = new Rook(Color.BLACK, new Position(black,0));
-        BOARD[black][7] = new Rook(Color.BLACK, new Position(black,7));
+        BOARD[black][0] = new Rook(Color.BLACK, new Position(black,0), this);
+        BOARD[black][7] = new Rook(Color.BLACK, new Position(black,7), this);
 
-        BOARD[white][0] = new Rook(Color.WHITE, new Position(white,0));
-        BOARD[white][7] = new Rook(Color.WHITE, new Position(white,7));
+        BOARD[white][0] = new Rook(Color.WHITE, new Position(white,0), this);
+        BOARD[white][7] = new Rook(Color.WHITE, new Position(white,7), this);
 
 
         //Knights
@@ -43,17 +36,17 @@ public class ChessBoard {
         BOARD[white][6] = new Knight(Color.WHITE, new Position(white,6));
 
         //Bishops
-        BOARD[black][2] = new Bishop(Color.BLACK, new Position(black,2));
-        BOARD[black][5] = new Bishop(Color.BLACK, new Position(black,5));
+        BOARD[black][2] = new Bishop(Color.BLACK, new Position(black,2), this);
+        BOARD[black][5] = new Bishop(Color.BLACK, new Position(black,5), this);
 
-        BOARD[white][2] = new Bishop(Color.WHITE, new Position(white,2));
-        BOARD[white][5] = new Bishop(Color.WHITE, new Position(white,5));
+        BOARD[white][2] = new Bishop(Color.WHITE, new Position(white,2), this);
+        BOARD[white][5] = new Bishop(Color.WHITE, new Position(white,5), this);
 
         //King and queen
-        BOARD[black][3] = new Queen(Color.BLACK, new Position(black,3));
+        BOARD[black][3] = new Queen(Color.BLACK, new Position(black,3), this);
         BOARD[black][4] = new King(Color.BLACK, new Position(black,4));
 
-        BOARD[white][3] = new Queen(Color.WHITE, new Position(white,3));
+        BOARD[white][3] = new Queen(Color.WHITE, new Position(white,3), this);
         BOARD[white][4] = new King(Color.WHITE, new Position(white,4));
 
     }
@@ -89,32 +82,67 @@ public class ChessBoard {
 
 
     public Piece getPieceAt(Position position){
-        return BOARD[position.getX()][position.getY()];
+        return BOARD[position.getRank()][position.getFile()];
     }
 
     public boolean movePiece(Position from, Position to){
         Piece piece = getPieceAt(from);
-        if (piece != null){
-            if (piece.legalMove(to)){
-                BOARD[from.getX()][from.getY()] = null;
-                piece.setPosition(to);
-                BOARD[to.getX()][to.getY()] = piece;
-                printBoard();
-                System.out.println("\nYou moved " + piece + " from " + from.boardCharacter(from.getY()) + from.boardNumber(from.getX()));
 
-                return true;
-            }else {
-                return false;
-            }
-        }else {
-            System.out.println("Found no piece in " + from.boardCharacter(from.getY()) + from.getX());
+        if (piece == null){
+            System.out.println("No piece is in " + from.boardCharacter(from.getFile()) + from.getRank());
             return false;
         }
+
+        if (piece.legalMove(to)){
+            if (captureSquare(piece, to)) {
+                printBoard();
+                return true;
+            }
+
+        }
+        System.out.println("Not a legal move for " + piece);
+        return false;
+
+
+//        System.out.println("\nYou moved " + piece + " from " + piece.getPosition().getX().boardCharacter(from.getY()) + from.boardNumber(from.getX()));
+
     }
 
+    private boolean captureSquare(Piece piece, Position to){
+        Position piecePos = piece.getPosition();
+        Piece targetPiece = getPieceAt(to);
 
+        if (targetPiece == null){
+            if(piece instanceof Pawn pawn){
+                if(to.getFile() != piecePos.getFile()){
+                    return false;
+                }
+                pawn.setHasMoved(true);
+            }
+            BOARD[piecePos.getRank()][piecePos.getFile()] = null;
+            piece.setPosition(to);
+            BOARD[to.getRank()][to.getFile()] = piece;
+
+            return true;
+
+        } else if (!(targetPiece.getColor().equals(piece.getColor()))){
+            /*
+            targetPiece.setPosition(null);
+            BOARD[targetPiece.getPosition().getRank()][targetPiece.getPosition().getFile()] = null;
+            */
+            BOARD[piecePos.getRank()][piecePos.getFile()] = null;
+            piece.setPosition(to);
+            BOARD[to.getRank()][to.getFile()] = piece;
+            return true;
+        }
+        return false;
+    }
 
     public boolean isEmpty(Piece[][] board){
         return false;
     }
+    public Piece[][] getBOARD(){
+        return this.BOARD;
+    }
 }
+
