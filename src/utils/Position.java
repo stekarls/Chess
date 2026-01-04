@@ -83,7 +83,7 @@ public class Position {
     }
 
     public boolean legalPosition(){
-        return (this.rank < 8 && this.rank >= 0) && (this.file < 7 && this.file >= 0);
+        return (this.rank < 8 && this.rank >= 0) && (this.file < 8 && this.file >= 0);
     }
     @Override
     public int hashCode() {
