@@ -18,68 +18,70 @@ public class Queen extends Piece{
         int rankPos = this.position.getRank();
         int filePos = this.position.getFile();
 
-        int rankDifference = position.getRank() - this.position.getRank();
-        int fileDifference = position.getFile() - this.position.getFile();
+        int rankSteps = position.getRank() - this.position.getRank();
+        int fileSteps = position.getFile() - this.position.getFile();
 
-        int rankAbs = Math.abs(rankDifference);
-        int fileAbs = Math.abs(fileDifference);
+        int rankAbs = Math.abs(rankSteps);
+        int fileAbs = Math.abs(fileSteps);
 
-        //Moves diagonally
-        if (rankDifference != 0 && fileDifference != 0){
-            if (rankDifference > 0 && fileDifference > 0){
-                for (int i = 0; i < rankDifference - 1; i++){
+        if((rankAbs != fileAbs) && (rankSteps != 0 && fileSteps != 0)){
+            return false;
+        }
+
+        if (rankAbs == fileAbs){
+            if (rankSteps > 0 && fileSteps > 0){
+                for (int i = 0; i < rankSteps - 1; i++){
                     if (board.getBOARD()[++rankPos][++filePos] != null){
                         return false;
                     }
                 }
-            } else if (rankDifference > 0){
-                for (int i = 0; i < rankDifference - 1; i++){
+            } else if (rankSteps > 0 && fileSteps < 0){
+                for (int i = 0; i < rankSteps - 1; i++){
                     if (board.getBOARD()[++rankPos][--filePos] != null){
                         return false;
                     }
                 }
-            } else if (fileDifference > 0){
-                for (int i = 0; i < rankDifference - 1; i++){
+            } else if (rankSteps < 0 && fileSteps > 0){
+                for (int i = 0; i < rankSteps - 1; i++){
                     if (board.getBOARD()[--rankPos][++filePos] != null){
                         return false;
                     }
                 }
             }else {
-                for (int i = 0; i < rankDifference - 1; i++){
+                for (int i = 0; i < rankSteps - 1; i++){
                     if (board.getBOARD()[--rankPos][--filePos] != null){
                         return false;
                     }
                 }
             }
-        } else if (rankDifference != 0 || fileDifference != 0) {
-            if(rankDifference > 0){
-                for (int i = 0; i < rankDifference - 1; i++){
+        }else{
+            if(rankSteps > 0){
+                for (int i = 0; i < rankSteps - 1; i++){
                     if (board.getBOARD()[++rankPos][filePos] != null){
                         return false;
                     }
                 }
             }else {
-                for (int i = 0; i > rankDifference + 1; i--){
+                for (int i = 0; i > rankSteps + 1; i--){
                     if (board.getBOARD()[--rankPos][filePos] != null){
                         return false;
                     }
                 }
             }
-            if(fileDifference > 0){
-                for (int i = 0; i < fileDifference - 1; i++){
+            if(fileSteps > 0){
+                for (int i = 0; i < fileSteps - 1; i++){
                     if (board.getBOARD()[rankPos][++filePos] != null){
                         return false;
                     }
                 }
 
             }else {
-                for (int i = 0; i > fileDifference + 1; i--){
+                for (int i = 0; i > fileSteps + 1; i--){
                     if (board.getBOARD()[rankPos][--filePos] != null){
                         return false;
                     }
                 }
             }
-
         }
         return true;
     }

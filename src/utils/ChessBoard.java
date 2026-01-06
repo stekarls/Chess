@@ -108,31 +108,32 @@ public class ChessBoard {
 
     }
 
-    private boolean captureSquare(Piece piece, Position to){
-        Position piecePos = piece.getPosition();
-        Piece targetPiece = getPieceAt(to);
+    private boolean captureSquare(Piece myPiece, Position enemyPiece){
+        Position piecePos = myPiece.getPosition();
+        Piece targetPiece = getPieceAt(enemyPiece);
 
         if (targetPiece == null){
-            if(piece instanceof Pawn pawn){
-                if(to.getFile() != piecePos.getFile()){
+            if(myPiece instanceof Pawn pawn){
+                //Stops diagonal movement of pawn if there are no enemy pieces
+                if(enemyPiece.getFile() != piecePos.getFile()){
                     return false;
                 }
                 pawn.setHasMoved(true);
             }
             BOARD[piecePos.getRank()][piecePos.getFile()] = null;
-            piece.setPosition(to);
-            BOARD[to.getRank()][to.getFile()] = piece;
+            myPiece.setPosition(enemyPiece);
+            BOARD[enemyPiece.getRank()][enemyPiece.getFile()] = myPiece;
 
             return true;
 
-        } else if (!(targetPiece.getColor().equals(piece.getColor()))){
+        } else if (!(targetPiece.getColor().equals(myPiece.getColor()))){
             /*
             targetPiece.setPosition(null);
             BOARD[targetPiece.getPosition().getRank()][targetPiece.getPosition().getFile()] = null;
             */
             BOARD[piecePos.getRank()][piecePos.getFile()] = null;
-            piece.setPosition(to);
-            BOARD[to.getRank()][to.getFile()] = piece;
+            myPiece.setPosition(enemyPiece);
+            BOARD[enemyPiece.getRank()][enemyPiece.getFile()] = myPiece;
             return true;
         }
         return false;

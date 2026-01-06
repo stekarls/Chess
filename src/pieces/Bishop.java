@@ -22,7 +22,10 @@ public class Bishop extends Piece{
         int rankSteps = position.getRank() - this.position.getRank();
         int fileSteps = position.getFile() - this.position.getFile();
 
-        if (Math.abs(rankSteps) != Math.abs(fileSteps)){
+        int rankAbs = Math.abs(rankSteps);
+        int fileAbs = Math.abs(fileSteps);
+
+        if (rankAbs != fileAbs){
             return false;
         }
         if (rankSteps > 0 && fileSteps > 0){
@@ -31,8 +34,6 @@ public class Bishop extends Piece{
                     return false;
                 }
             }
-
-
         } else if (rankSteps > 0 && fileSteps < 0){
             for (int i = 0; i < rankSteps - 1; i++){
                 if (board.getBOARD()[++rankPos][--filePos] != null){
@@ -52,7 +53,6 @@ public class Bishop extends Piece{
                 }
             }
         }
-
         return true;
     }
     @Override
