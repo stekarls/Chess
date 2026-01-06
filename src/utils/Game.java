@@ -30,16 +30,14 @@ public class Game {
                 char[] letters = move.toCharArray();
                 Position piecePos = new Position(letters[0], Character.getNumericValue(letters[1]));
 
-              if (checkPlayerTurn(board, piecePos, totalMoves)){
-                  if (board.movePiece(piecePos, new Position(letters[3], Character.getNumericValue(letters[4])))){
-                      totalMoves++;
-                      board.printBoard();
-                  }
-
-
-              }else {
-                  System.out.println("Not this player's turn");
-              }
+                if (checkPlayerTurn(board, piecePos, totalMoves)){
+                   if (board.movePiece(piecePos, new Position(letters[3], Character.getNumericValue(letters[4])))){
+                       totalMoves++;
+                       board.printBoard();
+                   }
+               }else {
+                   System.out.println("Not this player's turn");
+               }
             }else {
                 System.out.println("Move is not written in right format, example: A4-C2");
             }
