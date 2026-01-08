@@ -17,8 +17,7 @@ public class Game {
 
 
         while (true){
-
-            System.out.println("\n------ Valid move format: [letter][number]-[letter][number]. EXAMPLE: A2-A4 ------");
+            //System.out.println("\n------ Valid move format: [letter][number]-[letter][number]. EXAMPLE: A2-A4 ------");
             System.out.print("Enter a valid move: ");
             String move = input.nextLine();
 

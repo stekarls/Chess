@@ -1,5 +1,6 @@
 package pieces;
 
+import utils.ChessBoard;
 import utils.Color;
 import utils.Position;
 
@@ -11,11 +12,11 @@ public class Knight extends Piece{
     }
 
     @Override
-    public boolean legalMove(Position targetPosition) {
-        if (!position.legalPosition()) return false;
+    public boolean legalMovement(Position targetSquare, ChessBoard board){
+        if (!targetSquare.legalPosition()) return false;
 
-        int rankDifference = Math.abs(targetPosition.getRank() - this.position.getRank());
-        int fileDifference = Math.abs(targetPosition.getFile() - this.position.getFile());
+        int rankDifference = Math.abs(targetSquare.getRank() - this.position.getRank());
+        int fileDifference = Math.abs(targetSquare.getFile() - this.position.getFile());
 
         boolean lPattern1 = (rankDifference == 2) && (fileDifference == 1);
         boolean lPattern2 = (rankDifference == 1) && (fileDifference == 2);

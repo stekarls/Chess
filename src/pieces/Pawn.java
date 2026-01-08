@@ -1,5 +1,6 @@
 package pieces;
 
+import utils.ChessBoard;
 import utils.Color;
 import utils.Position;
 
@@ -14,9 +15,8 @@ public class Pawn extends Piece{
     }
 
     @Override
-    public boolean legalMove(Position position) {
-        
-        if (!position.legalPosition()) return false;
+    public boolean legalMovement(Position targetSquare, ChessBoard board) {
+        if (!targetSquare.legalPosition()) return false;
 
         ArrayList<Position> legalMoves = new ArrayList<>();
 
@@ -33,7 +33,7 @@ public class Pawn extends Piece{
             if(!this.hasMoved) legalMoves.add(new Position(this.position.getRank() + 2, this.position.getFile()));
         }
 
-        return legalMoves.contains(position);
+        return legalMoves.contains(targetSquare);
 
     }
 
