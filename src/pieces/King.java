@@ -4,6 +4,9 @@ import utils.ChessBoard;
 import utils.Color;
 import utils.Position;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class King extends Piece{
     private boolean hasMoved = false;
 
@@ -23,6 +26,41 @@ public class King extends Piece{
 
         return Math.abs(rankDifference) <= 1 && Math.abs(fileDifference) <= 1;
     }
+
+    public List<Position> getMoves(ChessBoard board){
+        List<Position> moves = new ArrayList<>();
+
+        //Diagonal
+        moves.add(new Position(this.position.getRank() - 1, this.position.getFile() - 1));
+        moves.add(new Position(this.position.getRank() - 1, this.position.getFile() + 1));
+        moves.add(new Position(this.position.getRank() + 1, this.position.getFile() - 1));
+        moves.add(new Position(this.position.getRank() + 1, this.position.getFile() + 1));
+
+        //Straight
+        moves.add(new Position(this.position.getRank() - 1, this.position.getFile()));
+        moves.add(new Position(this.position.getRank() + 1, this.position.getFile()));
+        moves.add(new Position(this.position.getRank(), this.position.getFile() - 1));
+        moves.add(new Position(this.position.getRank(), this.position.getFile() + 1));
+
+        moves.removeIf(pos -> !pos.legalPosition());
+
+        List<Position> reachable = new ArrayList<>();
+        for (Position pos : moves){
+            Piece square = board.getBOARD()[pos.getRank()][pos.getFile()];
+            if ((square == null)) {
+                reachable.add(pos);
+            } else if (!square.getColor().equals(this.color)){
+                reachable.add(pos);
+            }
+        }
+        return reachable;
+    }
+
+    public boolean canMove(ChessBoard chessboard){
+        List<Position> moves = getMoves(chessboard);
+        return !moves.isEmpty();
+    }
+
 
 
     public void setHasMoved(boolean hasMoved){

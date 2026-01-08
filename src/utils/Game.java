@@ -33,6 +33,10 @@ public class Game {
                    if (board.movePiece(piecePos, new Position(letters[3], Character.getNumericValue(letters[4])))){
                        totalMoves++;
                        board.printBoard();
+                       if (board.checkGameEnded()){
+                           System.out.println("King unable to move, checkmate");
+                           break;
+                       }
                    }
                }else {
                    System.out.println("Not this player's turn");

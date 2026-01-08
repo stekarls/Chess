@@ -12,8 +12,9 @@ public class ChessBoard {
     final Piece[][] BOARD = new Piece[RANKS][FILES];
     private List<Piece> whitePieces = new ArrayList<>();
     private List<Piece> blackPieces = new ArrayList<>();
-    private Piece whiteKing;
-    private Piece blackKing;
+    private King whiteKing;
+    private King blackKing;
+    private King kingInCheck;
 
     public ChessBoard(){
 
@@ -37,7 +38,7 @@ public class ChessBoard {
         BOARD[white][5] = new Bishop(Color.WHITE, new Position(white,5));
         BOARD[white][3] = new Queen(Color.WHITE, new Position(white,3));
 
-        Piece whiteKing = new King(Color.WHITE, new Position(white,4));
+        King whiteKing = new King(Color.WHITE, new Position(white,4));
         this.whiteKing = whiteKing;
         BOARD[white][4] = whiteKing;
 
@@ -50,7 +51,7 @@ public class ChessBoard {
         BOARD[black][5] = new Bishop(Color.BLACK, new Position(black,5));
         BOARD[black][3] = new Queen(Color.BLACK, new Position(black,3));
 
-        Piece blackKing = new King(Color.BLACK, new Position(black,4));
+        King blackKing = new King(Color.BLACK, new Position(black,4));
         this.blackKing = blackKing;
         BOARD[black][4] = blackKing;
 
@@ -149,19 +150,39 @@ public class ChessBoard {
 
         for (Piece piece : whitePieces){
             if (canCapture(piece, blackKingPos)){
-                System.out.println(piece + " can capture");
+                System.out.println(piece + " can capture king");
                 return true;
             }
         }
 
         for (Piece piece : blackPieces){
             if (canCapture(piece, whiteKingPos)){
-                System.out.println(piece + " can capture");
+                System.out.println(piece + " can capture king");
                 return true;
             }
         }
 
         return false;
+    }
+
+    private Color checkedKingColor(){
+        Position blackKingPos = blackKing.getPosition();
+        Position whiteKingPos = whiteKing.getPosition();
+
+        for (Piece piece : whitePieces){
+            if (canCapture(piece, blackKingPos)){
+                System.out.println(piece + " can capture king");
+                return Color.BLACK;
+            }
+        }
+
+        for (Piece piece : blackPieces){
+            if (canCapture(piece, whiteKingPos)){
+                System.out.println(piece + " can capture king");
+                return Color.BLACK;
+            }
+        }
+        return null;
     }
 
     private boolean isMyKingChecked(Piece myPiece){
@@ -172,7 +193,6 @@ public class ChessBoard {
         if (myPiece.getColor().equals(Color.WHITE)){
             for (Piece piece : blackPieces){
                 if (canCapture(piece, whiteKingPos)){
-                    System.out.println(piece + " From the debug!");
                     return true;
                 }
             }
@@ -194,9 +214,9 @@ public class ChessBoard {
         Position myPos = myPiece.getPosition();
         Piece targetSquare = getPieceAt(targetPos);
 
-        //TODO: Chek if this actually works, that it finds right piece
         if (targetSquare != null){
             if (targetSquare.getColor().equals(Color.WHITE)){
+                //TODO: Does this get put back in again if the move fails?
                 whitePieces.remove(targetSquare);
             }else {
                 blackPieces.remove(targetSquare);
@@ -206,6 +226,16 @@ public class ChessBoard {
         BOARD[myPos.getRank()][myPos.getFile()] = null;
         myPiece.setPosition(targetPos);
         BOARD[targetPos.getRank()][targetPos.getFile()] = myPiece;
+    }
+
+    private void reverseCapture(Piece myPiece, Position originalSquare){
+        Position myPos = myPiece.getPosition();
+
+        BOARD[myPos.getRank()][myPos.getFile()] = null;
+        myPiece.setPosition(originalSquare);
+        BOARD[originalSquare.getRank()][originalSquare.getFile()] = myPiece;
+
+
     }
 
     private boolean canCapture(Piece myPiece, Position square){
@@ -229,6 +259,38 @@ public class ChessBoard {
             return true;
         }
         return false;
+    }
+
+    public boolean checkGameEnded(){
+
+        Color checkedKingColor = checkedKingColor();
+        if (checkedKingColor == null) return false;
+
+        if (checkedKingColor.equals(Color.WHITE)) {
+            Position kingPos = whiteKing.getPosition();
+            for (Position pos : whiteKing.getMoves(this)){
+                movePiece(whiteKing.getPosition(), pos);
+                if (!isMyKingChecked(whiteKing)){
+                    reverseCapture(whiteKing, kingPos);
+                    return false;
+                }
+                reverseCapture(whiteKing, kingPos);
+            }
+
+        }else {
+            Position kingPos = blackKing.getPosition();
+            for (Position pos : blackKing.getMoves(this)){
+                movePiece(blackKing.getPosition(), pos);
+                if (!isMyKingChecked(blackKing)){
+                    reverseCapture(blackKing, kingPos);
+                    return false;
+                }
+                reverseCapture(blackKing, kingPos);
+
+            }
+        }
+
+        return true;
     }
 
     public boolean isEmpty(Piece[][] board){
