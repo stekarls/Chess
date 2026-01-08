@@ -1,5 +1,6 @@
 package pieces;
 
+import utils.ChessBoard;
 import utils.Color;
 import utils.Position;
 
@@ -12,14 +13,24 @@ public class King extends Piece{
     }
 
     @Override
-    public boolean legalMove(Position position) {
-        if (!position.legalPosition()) return false;
+    public boolean legalMovement(Position targetSquare, ChessBoard board){
+        if (!targetSquare.legalPosition()) return false;
 
-        int rankDifference = position.getRank() - this.position.getRank();
-        int fileDifference = position.getFile() - this.position.getFile();
+        int rankDifference = targetSquare.getRank() - this.position.getRank();
+        int fileDifference = targetSquare.getFile() - this.position.getFile();
+
+        if (rankDifference == 0 && fileDifference == 0) return false;
+
+        return Math.abs(rankDifference) <= 1 && Math.abs(fileDifference) <= 1;
+    }
 
 
-        return rankDifference <= 1 && fileDifference <= 1;
+    public void setHasMoved(boolean hasMoved){
+        this.hasMoved = hasMoved;
+    }
+
+    public boolean getHasMoved(){
+        return hasMoved;
     }
     @Override
     public String toString(){

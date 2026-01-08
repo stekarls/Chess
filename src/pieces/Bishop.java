@@ -5,22 +5,20 @@ import utils.Color;
 import utils.Position;
 
 public class Bishop extends Piece{
-    private final ChessBoard board;
-    public Bishop(Color color, Position position, ChessBoard board) {
+    public Bishop(Color color, Position position) {
         super(color, position);
-        this.board = board;
     }
 
     @Override
-    public boolean legalMove(Position position) {
+    public boolean legalMovement(Position targetSquare, ChessBoard board) {
 
-        if (!position.legalPosition()) return false;
+        if (!targetSquare.legalPosition()) return false;
 
         int rankPos = this.position.getRank();
         int filePos = this.position.getFile();
 
-        int rankSteps = position.getRank() - this.position.getRank();
-        int fileSteps = position.getFile() - this.position.getFile();
+        int rankSteps = targetSquare.getRank() - this.position.getRank();
+        int fileSteps = targetSquare.getFile() - this.position.getFile();
 
         int rankAbs = Math.abs(rankSteps);
         int fileAbs = Math.abs(fileSteps);

@@ -7,23 +7,24 @@ import utils.Position;
 import java.util.ArrayList;
 
 public class Rook extends Piece{
-    private final ChessBoard board;
-    public Rook(Color color, Position position, ChessBoard board){
+    private boolean hasMoved = false;
+
+
+    public Rook(Color color, Position position){
         super(color, position);
-        this.board = board;
     }
 
 
     @Override
-    public boolean legalMove(Position position) {
+    public boolean legalMovement(Position targetSquare, ChessBoard board){
 
-        if (!position.legalPosition()) return false;
+        if (!targetSquare.legalPosition()) return false;
 
         int rankPos = this.position.getRank();
         int filePos = this.position.getFile();
 
-        int rankSteps = position.getRank() - this.position.getRank();
-        int fileSteps = position.getFile() - this.position.getFile();
+        int rankSteps = targetSquare.getRank() - this.position.getRank();
+        int fileSteps = targetSquare.getFile() - this.position.getFile();
 
         if (rankSteps != 0 && fileSteps != 0){
             return false;
@@ -57,6 +58,14 @@ public class Rook extends Piece{
             }
         }
         return true;
+    }
+
+    public boolean isHasMoved() {
+        return hasMoved;
+    }
+
+    public void setHasMoved(boolean hasMoved) {
+        this.hasMoved = hasMoved;
     }
     @Override
     public String toString(){
