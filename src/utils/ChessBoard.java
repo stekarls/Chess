@@ -15,7 +15,6 @@ public class ChessBoard {
     private Piece whiteKing;
     private Piece blackKing;
 
-
     public ChessBoard(){
 
         //Build board
@@ -54,10 +53,6 @@ public class ChessBoard {
         Piece blackKing = new King(Color.BLACK, new Position(black,4));
         this.blackKing = blackKing;
         BOARD[black][4] = blackKing;
-
-
-
-
 
         //Add players pieces to their array
         for (int i = 0; i < BOARD.length; i++){
