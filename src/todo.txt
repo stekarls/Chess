@@ -4,6 +4,7 @@ Non-essential:
 3. Add opponent CPU
 5. Fix null handling, getting right error messages to console
 - Check for variable permissions, final etc for optimal scoping
+- Move history maybe new class with Piece and Position stored
 
 Essential:
 - En passant
@@ -11,4 +12,6 @@ Essential:
 - Enhance code readability by replacing BOARD[targetpos.get....][] with getters and setters like getSquare(Position position)
 - How to end game condition
 - Add checkmate recognition
+- Add Remis
+- Fix king radius where other king cannot go, maybe return a list with positions
 
