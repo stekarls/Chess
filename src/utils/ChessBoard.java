@@ -12,8 +12,8 @@ public class ChessBoard {
     final Piece[][] BOARD = new Piece[RANKS][FILES];
     private List<Piece> whitePieces = new ArrayList<>();
     private List<Piece> blackPieces = new ArrayList<>();
-    private King whiteKing;
-    private King blackKing;
+    private final King whiteKing;
+    private final King blackKing;
     private King kingInCheck;
 
     public ChessBoard(){
