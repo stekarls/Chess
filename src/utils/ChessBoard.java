@@ -216,6 +216,7 @@ public class ChessBoard {
 
         if (targetSquare != null){
             if (targetSquare.getColor().equals(Color.WHITE)){
+                //TODO: Does this get put back in again if the move fails?
                 whitePieces.remove(targetSquare);
             }else {
                 blackPieces.remove(targetSquare);
@@ -225,6 +226,16 @@ public class ChessBoard {
         BOARD[myPos.getRank()][myPos.getFile()] = null;
         myPiece.setPosition(targetPos);
         BOARD[targetPos.getRank()][targetPos.getFile()] = myPiece;
+    }
+
+    private void reverseCapture(Piece myPiece, Position originalSquare){
+        Position myPos = myPiece.getPosition();
+
+        BOARD[myPos.getRank()][myPos.getFile()] = null;
+        myPiece.setPosition(originalSquare);
+        BOARD[originalSquare.getRank()][originalSquare.getFile()] = myPiece;
+
+
     }
 
     private boolean canCapture(Piece myPiece, Position square){
@@ -255,30 +266,31 @@ public class ChessBoard {
         Color checkedKingColor = checkedKingColor();
         if (checkedKingColor == null) return false;
 
-        List<Piece> attackingKing = new ArrayList<>();
-
-
         if (checkedKingColor.equals(Color.WHITE)) {
-            return whiteKing.canMove(this);
+            Position kingPos = whiteKing.getPosition();
+            for (Position pos : whiteKing.getMoves(this)){
+                movePiece(whiteKing.getPosition(), pos);
+                if (!isMyKingChecked(whiteKing)){
+                    reverseCapture(whiteKing, kingPos);
+                    return false;
+                }
+                reverseCapture(whiteKing, kingPos);
+            }
+
         }else {
-            return blackKing.canMove(this);
+            Position kingPos = blackKing.getPosition();
+            for (Position pos : blackKing.getMoves(this)){
+                movePiece(blackKing.getPosition(), pos);
+                if (!isMyKingChecked(blackKing)){
+                    reverseCapture(blackKing, kingPos);
+                    return false;
+                }
+                reverseCapture(blackKing, kingPos);
+
+            }
         }
 
-
-
-//        for (Piece piece : whitePieces){
-//            if (canCapture(piece, blackKingPos)){
-//                System.out.println(piece + " can capture");
-//                return true;
-//            }
-//        }
-//
-//        for (Piece piece : blackPieces){
-//            if (canCapture(piece, whiteKingPos)){
-//                System.out.println(piece + " can capture");
-//                return true;
-//            }
-//        }
+        return true;
     }
 
     public boolean isEmpty(Piece[][] board){

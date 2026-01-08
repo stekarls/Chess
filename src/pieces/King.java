@@ -27,7 +27,7 @@ public class King extends Piece{
         return Math.abs(rankDifference) <= 1 && Math.abs(fileDifference) <= 1;
     }
 
-    public boolean canMove(ChessBoard board){
+    public List<Position> getMoves(ChessBoard board){
         List<Position> moves = new ArrayList<>();
 
         //Diagonal
@@ -53,8 +53,14 @@ public class King extends Piece{
                 reachable.add(pos);
             }
         }
-        return !reachable.isEmpty();
+        return reachable;
     }
+
+    public boolean canMove(ChessBoard chessboard){
+        List<Position> moves = getMoves(chessboard);
+        return !moves.isEmpty();
+    }
+
 
 
     public void setHasMoved(boolean hasMoved){

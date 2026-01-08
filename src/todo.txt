@@ -5,13 +5,15 @@ Non-essential:
 5. Fix null handling, getting right error messages to console
 - Check for variable permissions, final etc for optimal scoping
 - Move history maybe new class with Piece and Position stored
+- Enhance code readability by replacing BOARD[targetpos.get....][] with getters and setters like getSquare(Position position)
 
 Essential:
 - En passant
 - Castling
-- Enhance code readability by replacing BOARD[targetpos.get....][] with getters and setters like getSquare(Position position)
 - How to end game condition
 - Add checkmate recognition
 - Add Remis
 - Fix king radius where other king cannot go, maybe return a list with positions
+- Add reverseCapture method that adds piece back in arraylist
+- Go over and check all hasMoved logic in the different scenarios that it is set right
 
