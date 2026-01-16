@@ -9,9 +9,9 @@ import java.util.List;
 public class ChessBoard {
     private final int RANKS = 8;
     private final int FILES = 8;
-    final Piece[][] BOARD = new Piece[RANKS][FILES];
-    private List<Piece> whitePieces = new ArrayList<>();
-    private List<Piece> blackPieces = new ArrayList<>();
+    private final Piece[][] BOARD = new Piece[RANKS][FILES];
+    private final List<Piece> whitePieces = new ArrayList<>();
+    private final List<Piece> blackPieces = new ArrayList<>();
     private final King whiteKing;
     private final King blackKing;
     private King kingInCheck;
