@@ -201,7 +201,6 @@ public class ChessBoard {
         if (myPiece.getColor().equals(Color.BLACK)){
             for (Piece piece : whitePieces){
                 if (canCapture(piece, blackKingPos)){
-                    System.out.println(piece + " From the debug!");
                     return true;
                 }
             }

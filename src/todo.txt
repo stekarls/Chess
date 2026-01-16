@@ -10,8 +10,7 @@ Non-essential:
 Essential:
 - En passant
 - Castling
-- How to end game condition
-- Add checkmate recognition
+- Checkmate comes even if another piece can intercept
 - Add Remis
 - Fix king radius where other king cannot go, maybe return a list with positions
 - Add reverseCapture method that adds piece back in arraylist
