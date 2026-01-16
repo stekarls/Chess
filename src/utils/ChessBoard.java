@@ -68,15 +68,13 @@ public class ChessBoard {
                 }
             }
         }
-        System.out.println("White pieces: " + whitePieces);
-        System.out.println("Black pieces: " + blackPieces);
+
 
     }
 
     public void printBoard() {
 
-        //"Clear" history in console
-        for (int i = 0; i < 10; i++){
+        for (int i = 0; i < 3; i++){
             System.out.println();
         }
 
@@ -98,7 +96,9 @@ public class ChessBoard {
                 }
             }
         }
-        System.out.println("\n\n    " + space + "A" + space + "B" + space + "C" + space + "D" + space + "E" + space + "F" + space + "G" + space + "H");
+        System.out.println("\n\n    " + space + "A" + space + "B" + space + "C" + space + "D" + space + "E" + space + "F" + space + "G" + space + "H" + "\n");
+        System.out.println("White pieces: " + whitePieces);
+        System.out.println("Black pieces: " + blackPieces);
     }
 
 
@@ -117,10 +117,18 @@ public class ChessBoard {
 
         if (canCapture(piece, targetSquare)){
             Position originalSquare = piece.getPosition();
-            capture(piece, targetSquare);
+            Piece captured = capture(piece, targetSquare);
             if (isMyKingChecked(piece)){
                 System.out.println("You left your king vulnerable");
                 capture(piece,originalSquare);
+                if (captured != null){
+                    if (captured.getColor().equals(Color.WHITE)){
+                        whitePieces.add(captured);
+                    }else {
+                        blackPieces.add(captured);
+                    }
+                    insertPiece(captured, targetSquare);
+                }
                 return false;
             }
             if (piece instanceof Pawn){
@@ -209,7 +217,7 @@ public class ChessBoard {
     }
 
 
-    private void capture(Piece myPiece, Position targetPos){
+    private Piece capture(Piece myPiece, Position targetPos){
         Position myPos = myPiece.getPosition();
         Piece targetSquare = getPieceAt(targetPos);
 
@@ -225,6 +233,7 @@ public class ChessBoard {
         BOARD[myPos.getRank()][myPos.getFile()] = null;
         myPiece.setPosition(targetPos);
         BOARD[targetPos.getRank()][targetPos.getFile()] = myPiece;
+        return targetSquare;
     }
 
     private void reverseCapture(Piece myPiece, Position originalSquare){
@@ -290,6 +299,10 @@ public class ChessBoard {
         }
 
         return true;
+    }
+
+    public void insertPiece(Piece piece, Position position){
+        BOARD[position.getRank()][position.getFile()] = piece;
     }
 
     public boolean isEmpty(Piece[][] board){

@@ -13,11 +13,11 @@ public class Game {
         Scanner input = new Scanner(System.in);
 
         ChessBoard board = new ChessBoard();
+        System.out.println("------Welcome to Command Line Chess------");
+        System.out.println("Valid move format: FROM-TO. EXAMPLE: A2-A4");
         board.printBoard();
 
-
         while (true){
-            //System.out.println("\n------ Valid move format: [letter][number]-[letter][number]. EXAMPLE: A2-A4 ------");
             System.out.print("Enter a valid move: ");
             String move = input.nextLine();
 
