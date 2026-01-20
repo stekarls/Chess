@@ -97,8 +97,8 @@ public class ChessBoard {
             }
         }
         System.out.println("\n\n    " + space + "A" + space + "B" + space + "C" + space + "D" + space + "E" + space + "F" + space + "G" + space + "H" + "\n");
-        System.out.println("White pieces: " + whitePieces);
-        System.out.println("Black pieces: " + blackPieces);
+        //System.out.println("White pieces: " + whitePieces);
+        //System.out.println("Black pieces: " + blackPieces);
     }
 
 
@@ -195,6 +195,8 @@ public class ChessBoard {
 
     private boolean isMyKingChecked(Piece myPiece){
 
+        //TODO: Maybe isMyKingChecked kan take color instead of piece, so we dont have to figure out color every time.
+
         Position blackKingPos = blackKing.getPosition();
         Position whiteKingPos = whiteKing.getPosition();
 
@@ -223,7 +225,6 @@ public class ChessBoard {
 
         if (targetSquare != null){
             if (targetSquare.getColor().equals(Color.WHITE)){
-                //TODO: Does this get put back in again if the move fails?
                 whitePieces.remove(targetSquare);
             }else {
                 blackPieces.remove(targetSquare);
@@ -270,9 +271,13 @@ public class ChessBoard {
     }
 
     public boolean checkGameEnded(){
+        return !kingCanMoveFromCheck();
+        //TODO: add interception
+    }
 
+    private boolean kingCanMoveFromCheck(){
         Color checkedKingColor = checkedKingColor();
-        if (checkedKingColor == null) return false;
+        if (checkedKingColor == null) return true;
 
         if (checkedKingColor.equals(Color.WHITE)) {
             Position kingPos = whiteKing.getPosition();
@@ -280,7 +285,7 @@ public class ChessBoard {
                 movePiece(whiteKing.getPosition(), pos);
                 if (!isMyKingChecked(whiteKing)){
                     reverseCapture(whiteKing, kingPos);
-                    return false;
+                    return true;
                 }
                 reverseCapture(whiteKing, kingPos);
             }
@@ -291,14 +296,16 @@ public class ChessBoard {
                 movePiece(blackKing.getPosition(), pos);
                 if (!isMyKingChecked(blackKing)){
                     reverseCapture(blackKing, kingPos);
-                    return false;
+                    return true;
                 }
                 reverseCapture(blackKing, kingPos);
-
             }
         }
+        return false;
+    }
 
-        return true;
+    private boolean checkInterception(Piece myPiece){
+        return false;
     }
 
     public void insertPiece(Piece piece, Position position){

@@ -6,7 +6,7 @@ Non-essential:
 - Check for variable permissions, final etc for optimal scoping
 - Move history maybe new class with Piece and Position stored
 - Enhance code readability by replacing BOARD[targetpos.get....][] with getters and setters like getSquare(Position position)
-- Add FEN position notation
+- Add FEN position notation (importing and exporting board positions) interpreter
 - Add stockfish api
 
 Essential:

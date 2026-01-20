@@ -9,16 +9,18 @@ public class Game {
 
     public static void main(String[] args) {
 
+        Color playerTurn = null;
         int totalMoves = 1;
         Scanner input = new Scanner(System.in);
 
         ChessBoard board = new ChessBoard();
-        System.out.println("------Welcome to Command Line Chess------");
+        System.out.println("\n\n\n\n\n\n------Welcome to Command Line Chess------");
         System.out.println("Valid move format: FROM-TO. EXAMPLE: A2-A4");
         board.printBoard();
 
         while (true){
-            System.out.print("Enter a valid move: ");
+            playerTurn = totalMoves % 2 == 0 ? Color.BLACK : Color.WHITE;
+            System.out.print("(" + playerTurn + ") " + "Enter a valid move: ");
             String move = input.nextLine();
 
             if (move.equals("exit")){
