@@ -4,6 +4,7 @@ import javafx.geometry.Pos;
 import pieces.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ChessBoard {
@@ -72,6 +73,21 @@ public class ChessBoard {
 
     }
 
+    /*
+    public ChessBoard(String fen){
+        char[] letters = fen.toCharArray();
+        List<Character> letter = List.of(letters);
+
+
+        int rank = 0;
+        for (int i = 0; i < letters.length; i++){
+            if (letters[i] == )
+        }
+
+
+        return;
+    }
+*/
     public void printBoard() {
 
         for (int i = 0; i < 3; i++){
