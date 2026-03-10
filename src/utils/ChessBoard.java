@@ -4,14 +4,15 @@ import javafx.geometry.Pos;
 import pieces.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ChessBoard {
     private final int RANKS = 8;
     private final int FILES = 8;
-    final Piece[][] BOARD = new Piece[RANKS][FILES];
-    private List<Piece> whitePieces = new ArrayList<>();
-    private List<Piece> blackPieces = new ArrayList<>();
+    private final Piece[][] BOARD = new Piece[RANKS][FILES];
+    private final List<Piece> whitePieces = new ArrayList<>();
+    private final List<Piece> blackPieces = new ArrayList<>();
     private final King whiteKing;
     private final King blackKing;
     private King kingInCheck;
@@ -68,15 +69,28 @@ public class ChessBoard {
                 }
             }
         }
-        System.out.println("White pieces: " + whitePieces);
-        System.out.println("Black pieces: " + blackPieces);
+
 
     }
 
+    /*
+    public ChessBoard(String fen){
+        char[] letters = fen.toCharArray();
+        List<Character> letter = List.of(letters);
+
+
+        int rank = 0;
+        for (int i = 0; i < letters.length; i++){
+            if (letters[i] == )
+        }
+
+
+        return;
+    }
+*/
     public void printBoard() {
 
-        //"Clear" history in console
-        for (int i = 0; i < 10; i++){
+        for (int i = 0; i < 3; i++){
             System.out.println();
         }
 
@@ -98,7 +112,9 @@ public class ChessBoard {
                 }
             }
         }
-        System.out.println("\n\n    " + space + "A" + space + "B" + space + "C" + space + "D" + space + "E" + space + "F" + space + "G" + space + "H");
+        System.out.println("\n\n    " + space + "A" + space + "B" + space + "C" + space + "D" + space + "E" + space + "F" + space + "G" + space + "H" + "\n");
+        //System.out.println("White pieces: " + whitePieces);
+        //System.out.println("Black pieces: " + blackPieces);
     }
 
 
@@ -117,10 +133,18 @@ public class ChessBoard {
 
         if (canCapture(piece, targetSquare)){
             Position originalSquare = piece.getPosition();
-            capture(piece, targetSquare);
+            Piece captured = capture(piece, targetSquare);
             if (isMyKingChecked(piece)){
                 System.out.println("You left your king vulnerable");
                 capture(piece,originalSquare);
+                if (captured != null){
+                    if (captured.getColor().equals(Color.WHITE)){
+                        whitePieces.add(captured);
+                    }else {
+                        blackPieces.add(captured);
+                    }
+                    insertPiece(captured, targetSquare);
+                }
                 return false;
             }
             if (piece instanceof Pawn){
@@ -187,6 +211,8 @@ public class ChessBoard {
 
     private boolean isMyKingChecked(Piece myPiece){
 
+        //TODO: Maybe isMyKingChecked kan take color instead of piece, so we dont have to figure out color every time.
+
         Position blackKingPos = blackKing.getPosition();
         Position whiteKingPos = whiteKing.getPosition();
 
@@ -201,7 +227,6 @@ public class ChessBoard {
         if (myPiece.getColor().equals(Color.BLACK)){
             for (Piece piece : whitePieces){
                 if (canCapture(piece, blackKingPos)){
-                    System.out.println(piece + " From the debug!");
                     return true;
                 }
             }
@@ -210,13 +235,12 @@ public class ChessBoard {
     }
 
 
-    private void capture(Piece myPiece, Position targetPos){
+    private Piece capture(Piece myPiece, Position targetPos){
         Position myPos = myPiece.getPosition();
         Piece targetSquare = getPieceAt(targetPos);
 
         if (targetSquare != null){
             if (targetSquare.getColor().equals(Color.WHITE)){
-                //TODO: Does this get put back in again if the move fails?
                 whitePieces.remove(targetSquare);
             }else {
                 blackPieces.remove(targetSquare);
@@ -226,6 +250,7 @@ public class ChessBoard {
         BOARD[myPos.getRank()][myPos.getFile()] = null;
         myPiece.setPosition(targetPos);
         BOARD[targetPos.getRank()][targetPos.getFile()] = myPiece;
+        return targetSquare;
     }
 
     private void reverseCapture(Piece myPiece, Position originalSquare){
@@ -262,9 +287,13 @@ public class ChessBoard {
     }
 
     public boolean checkGameEnded(){
+        return !kingCanMoveFromCheck();
+        //TODO: add interception
+    }
 
+    private boolean kingCanMoveFromCheck(){
         Color checkedKingColor = checkedKingColor();
-        if (checkedKingColor == null) return false;
+        if (checkedKingColor == null) return true;
 
         if (checkedKingColor.equals(Color.WHITE)) {
             Position kingPos = whiteKing.getPosition();
@@ -272,7 +301,7 @@ public class ChessBoard {
                 movePiece(whiteKing.getPosition(), pos);
                 if (!isMyKingChecked(whiteKing)){
                     reverseCapture(whiteKing, kingPos);
-                    return false;
+                    return true;
                 }
                 reverseCapture(whiteKing, kingPos);
             }
@@ -283,14 +312,20 @@ public class ChessBoard {
                 movePiece(blackKing.getPosition(), pos);
                 if (!isMyKingChecked(blackKing)){
                     reverseCapture(blackKing, kingPos);
-                    return false;
+                    return true;
                 }
                 reverseCapture(blackKing, kingPos);
-
             }
         }
+        return false;
+    }
 
-        return true;
+    private boolean checkInterception(Piece myPiece){
+        return false;
+    }
+
+    public void insertPiece(Piece piece, Position position){
+        BOARD[position.getRank()][position.getFile()] = piece;
     }
 
     public boolean isEmpty(Piece[][] board){

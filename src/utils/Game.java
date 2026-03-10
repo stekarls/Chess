@@ -9,16 +9,18 @@ public class Game {
 
     public static void main(String[] args) {
 
+        Color playerTurn;
         int totalMoves = 1;
         Scanner input = new Scanner(System.in);
 
         ChessBoard board = new ChessBoard();
+        System.out.println("\n\n\n\n\n\n------Welcome to Command Line Chess------");
+        System.out.println("Valid move format: FROM-TO. EXAMPLE: A2-A4");
         board.printBoard();
 
-
         while (true){
-            //System.out.println("\n------ Valid move format: [letter][number]-[letter][number]. EXAMPLE: A2-A4 ------");
-            System.out.print("Enter a valid move: ");
+            playerTurn = totalMoves % 2 == 0 ? Color.BLACK : Color.WHITE;
+            System.out.print("(" + playerTurn + ") " + "Enter a valid move: ");
             String move = input.nextLine();
 
             if (move.equals("exit")){
@@ -26,11 +28,10 @@ public class Game {
             }
 
             if (Pattern.matches("[A-Ha-h][1-8]-[A-Ha-h][1-8]", move)){
-                char[] letters = move.toCharArray();
-                Position piecePos = new Position(letters[0], Character.getNumericValue(letters[1]));
+                Position piecePos = new Position(move.charAt(0), Character.getNumericValue(move.charAt(1)));
 
                 if (checkPlayerTurn(board, piecePos, totalMoves)){
-                   if (board.movePiece(piecePos, new Position(letters[3], Character.getNumericValue(letters[4])))){
+                   if (board.movePiece(piecePos, new Position(move.charAt(3), Character.getNumericValue(move.charAt(4))))){
                        totalMoves++;
                        board.printBoard();
                        if (board.checkGameEnded()){

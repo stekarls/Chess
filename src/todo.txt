@@ -6,12 +6,13 @@ Non-essential:
 - Check for variable permissions, final etc for optimal scoping
 - Move history maybe new class with Piece and Position stored
 - Enhance code readability by replacing BOARD[targetpos.get....][] with getters and setters like getSquare(Position position)
+- Add FEN position notation (importing and exporting board positions) interpreter
+- Add stockfish api
 
 Essential:
 - En passant
 - Castling
-- How to end game condition
-- Add checkmate recognition
+- Checkmate comes even if another piece can intercept
 - Add Remis
 - Fix king radius where other king cannot go, maybe return a list with positions
 - Add reverseCapture method that adds piece back in arraylist
