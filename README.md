@@ -1,6 +1,6 @@
 # Command-Line Chess
 
-A chess engine and playable command-line game written in plain Java (no external chess libraries), modeling the full board, piece movement rules, and check detection using object-oriented design.
+A chess engine and playable command-line game written in plain Java (no external chess libraries), modeling the full board, piece movement rules, and check detection using object-oriented design. Was initially a challenge to write a complete chess game just from my knowledge of Java without aid or AI.
 
 ```
     A  B  C  D  E  F  G  H
