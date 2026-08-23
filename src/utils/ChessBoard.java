@@ -1,10 +1,8 @@
 package utils;
 
-import javafx.geometry.Pos;
 import pieces.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ChessBoard {
