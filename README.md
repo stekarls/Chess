@@ -61,23 +61,6 @@ src/
     └── Color.java       # Enum for White / Black
 ```
 
-## How to run
-
-1. Clone the repo
-2. Compile the source:
-   ```bash
-   javac -d out src/pieces/*.java src/utils/*.java
-   ```
-3. Run the game:
-   ```bash
-   java -cp out utils.Game
-   ```
-4. Enter moves in the format `FROM-TO`, e.g.:
-   ```
-   A2-A4
-   ```
-   Type `exit` to quit.
-
 ## License
 
 This project is for personal/portfolio use.
