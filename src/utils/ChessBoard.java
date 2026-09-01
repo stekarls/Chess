@@ -55,13 +55,12 @@ public class ChessBoard {
         BOARD[black][4] = blackKing;
 
         //Add players pieces to their array
-        for (int i = 0; i < BOARD.length; i++){
-            for (int j = 0; j < BOARD[i].length; j++){
-                Piece piece = BOARD[i][j];
-                if (piece != null){
-                    if (BOARD[i][j].getColor().equals(Color.WHITE)){
+        for (Piece[] pieces : BOARD) {
+            for (Piece piece : pieces) {
+                if (piece != null) {
+                    if (piece.getColor().equals(Color.WHITE)) {
                         whitePieces.add(piece);
-                    }else {
+                    } else {
                         blackPieces.add(piece);
                     }
                 }
@@ -94,18 +93,18 @@ public class ChessBoard {
 
         int count = 8;
         String space = "  ";
-        for (int rank = 0; rank < BOARD.length; rank++){
+        for (Piece[] pieces : BOARD) {
             System.out.print("\n" + count-- + "     ");
-            for (int file = 0; file < BOARD.length; file++){
-                Piece piece = BOARD[rank][file];
-                if (piece == null){
+            for (int file = 0; file < BOARD.length; file++) {
+                Piece piece = pieces[file];
+                if (piece == null) {
                     System.out.print("." + space);
                     continue;
                 }
                 char symbol = piece.getSymbol();
-                if (piece.getColor().equals(Color.BLACK)){
+                if (piece.getColor().equals(Color.BLACK)) {
                     System.out.print(symbol + space);
-                }else {
+                } else {
                     System.out.print(symbol + space);
                 }
             }
@@ -116,69 +115,186 @@ public class ChessBoard {
     }
 
 
+    private boolean squareIsEmpty(Position position){
+        return BOARD[position.getRank()][position.getFile()] == null;
+    }
 
     public Piece getPieceAt(Position position){
         return BOARD[position.getRank()][position.getFile()];
     }
 
-    public boolean movePiece(Position from, Position targetSquare){
-        Piece piece = getPieceAt(from);
+
+    public boolean movePiece(Position originalSquare, Position targetSquare){
+
+        Piece piece = getPieceAt(originalSquare);
 
         if (piece == null){
-            System.out.println("No piece is in " + from.boardCharacter(from.getFile()) + from.getRank());
+            System.out.println("No piece is in " + originalSquare.boardCharacter(originalSquare.getFile()) + originalSquare.getRank());
             return false;
         }
 
-        if (canCapture(piece, targetSquare)){
-            Position originalSquare = piece.getPosition();
-            Piece captured = capture(piece, targetSquare);
-            if (isMyKingChecked(piece)){
-                System.out.println("You left your king vulnerable");
-                capture(piece,originalSquare);
-                if (captured != null){
-                    if (captured.getColor().equals(Color.WHITE)){
-                        whitePieces.add(captured);
-                    }else {
-                        blackPieces.add(captured);
-                    }
-                    insertPiece(captured, targetSquare);
-                }
-                return false;
-            }
-            if (piece instanceof Pawn){
-                ((Pawn) piece).setHasMoved(true);
-            }else if (piece instanceof King){
-                ((King) piece).setHasMoved(true);
-            } else if (piece instanceof Rook){
-                ((Rook) piece).setHasMoved(true);
+        Piece targetPiece = getPieceAt(targetSquare);
 
+        //TODO: squareIsEmpty is also checked in canCaptureOrMove, redundant check
+        //Move or capture square
+        if (canCaptureOrMove(piece, targetSquare)){
+            if (squareIsEmpty(targetSquare)){
+                move(piece, targetSquare);
+            }else{
+                capture(piece, targetPiece);
             }
-            return true;
+        }else {
+            return false;
         }
 
+        //Reverse move or reverse capture if own king is checked
+        if (isMyKingChecked(piece)){
+            if (targetPiece != null){
+                reverseCapture(targetPiece, originalSquare);
+            }else {
+                move(piece, originalSquare);
+            }
+            System.out.println("You left your own king vulnerable");
+            return false;
+        }
 
-        System.out.println("Error");
-        return false;
+        switch (piece) {
+                case Pawn p -> p.setHasMoved(true);
+                case King k -> k.setHasMoved(true);
+                case Rook r -> r.setHasMoved(true);
+                default -> {}
+            }
+            return true;
+
+
+
+
+
+//        if (canCapture(piece, targetSquare)){
+//            Position originalSquare = piece.getPosition();
+//            Piece captured = capture(piece, targetSquare);
+//            if (isMyKingChecked(piece)){
+//                System.out.println("You left your king vulnerable");
+//                capture(piece,originalSquare);
+//                if (captured != null){
+//                    if (captured.getColor().equals(Color.WHITE)){
+//                        whitePieces.add(captured);
+//                    }else {
+//                        blackPieces.add(captured);
+//                    }
+//                    insertPiece(captured, targetSquare);
+//                }
+//                return false;
+//            }
+//            switch (piece) {
+//                case Pawn p -> p.setHasMoved(true);
+//                case King k -> k.setHasMoved(true);
+//                case Rook r -> r.setHasMoved(true);
+//                default -> {}
+//            }
+//            return true;
+//        }
+
+
+//        System.out.println("Error");
+//        return false;
 
 
 //        System.out.println("\nYou moved " + piece + " from " + piece.getPosition().getX().boardCharacter(from.getY()) + from.boardNumber(from.getX()));
 
     }
 
+    private void move(Piece piece, Position targetSquare){
+        BOARD[piece.getPosition().getRank()][piece.getPosition().getFile()] = null;
+        piece.setPosition(targetSquare);
+        BOARD[targetSquare.getRank()][targetSquare.getFile()] = piece;
+
+    }
+
+    private void capture(Piece myPiece, Piece targetPiece){
+
+        Color targetColor = targetPiece.getColor();
+
+        if (targetColor.equals(Color.WHITE)){
+            whitePieces.remove(targetPiece);
+        }else {
+            blackPieces.remove(targetPiece);
+        }
+
+        move(myPiece, targetPiece.getPosition());
+
+
+
+//        if (targetSquare != null){
+//            if (targetSquare.getColor().equals(Color.WHITE)){
+//                whitePieces.remove(targetSquare);
+//            }else {
+//                blackPieces.remove(targetSquare);
+//            }
+//        }
+//
+//        BOARD[myPos.getRank()][myPos.getFile()] = null;
+//        myPiece.setPosition(targetPos);
+//        BOARD[targetPos.getRank()][targetPos.getFile()] = myPiece;
+    }
+
+    private void reverseCapture(Piece capturedPiece, Position originalSquare){
+
+        Piece myPiece = getPieceAt(capturedPiece.getPosition());
+
+        Color capturedColor = capturedPiece.getColor();
+
+        if (capturedColor.equals(Color.WHITE)){
+            whitePieces.add(capturedPiece);
+        }else {
+            blackPieces.add(capturedPiece);
+        }
+
+        move(myPiece, originalSquare);
+        insertPiece(capturedPiece, capturedPiece.getPosition());
+
+
+    }
+
+    private boolean canCaptureOrMove(Piece myPiece, Position targetSquare){
+
+        Position piecePos = myPiece.getPosition();
+
+        if (!myPiece.legalMovement(targetSquare, this)){
+            return false;
+        }
+
+        if (squareIsEmpty(targetSquare)){
+            if(myPiece instanceof Pawn){ //Stops diagonal movement of pawn if there are no enemy pieces at targetsquare
+                return targetSquare.getFile() == piecePos.getFile();
+            }
+            return true;
+        } else{
+            Piece targetPiece = getPieceAt(targetSquare);
+            if (!(targetPiece.getColor().equals(myPiece.getColor()))){
+                if (myPiece instanceof  Pawn){   //Stops pawn capturing frontally
+                    return piecePos.getFile() != targetSquare.getFile();
+                }
+                return true;
+            }
+            System.out.println("Cannot capture piece of same color");
+        }
+        return false;
+    }
 
     private boolean isKingChecked(){
         Position blackKingPos = blackKing.getPosition();
         Position whiteKingPos = whiteKing.getPosition();
 
         for (Piece piece : whitePieces){
-            if (canCapture(piece, blackKingPos)){
+            if (canCaptureOrMove(piece, blackKingPos)){
                 System.out.println(piece + " can capture king");
                 return true;
             }
         }
 
         for (Piece piece : blackPieces){
-            if (canCapture(piece, whiteKingPos)){
+            if (canCaptureOrMove(piece, whiteKingPos)){
                 System.out.println(piece + " can capture king");
                 return true;
             }
@@ -192,14 +308,14 @@ public class ChessBoard {
         Position whiteKingPos = whiteKing.getPosition();
 
         for (Piece piece : whitePieces){
-            if (canCapture(piece, blackKingPos)){
+            if (canCaptureOrMove(piece, blackKingPos)){
                 System.out.println(piece + " can capture king");
                 return Color.BLACK;
             }
         }
 
         for (Piece piece : blackPieces){
-            if (canCapture(piece, whiteKingPos)){
+            if (canCaptureOrMove(piece, whiteKingPos)){
                 System.out.println(piece + " can capture king");
                 return Color.BLACK;
             }
@@ -216,7 +332,7 @@ public class ChessBoard {
 
         if (myPiece.getColor().equals(Color.WHITE)){
             for (Piece piece : blackPieces){
-                if (canCapture(piece, whiteKingPos)){
+                if (canCaptureOrMove(piece, whiteKingPos)){
                     return true;
                 }
             }
@@ -224,66 +340,13 @@ public class ChessBoard {
 
         if (myPiece.getColor().equals(Color.BLACK)){
             for (Piece piece : whitePieces){
-                if (canCapture(piece, blackKingPos)){
+                if (canCaptureOrMove(piece, blackKingPos)){
                     return true;
                 }
             }
         }
         return false;
     }
-
-
-    private Piece capture(Piece myPiece, Position targetPos){
-        Position myPos = myPiece.getPosition();
-        Piece targetSquare = getPieceAt(targetPos);
-
-        if (targetSquare != null){
-            if (targetSquare.getColor().equals(Color.WHITE)){
-                whitePieces.remove(targetSquare);
-            }else {
-                blackPieces.remove(targetSquare);
-            }
-        }
-
-        BOARD[myPos.getRank()][myPos.getFile()] = null;
-        myPiece.setPosition(targetPos);
-        BOARD[targetPos.getRank()][targetPos.getFile()] = myPiece;
-        return targetSquare;
-    }
-
-    private void reverseCapture(Piece myPiece, Position originalSquare){
-        Position myPos = myPiece.getPosition();
-
-        BOARD[myPos.getRank()][myPos.getFile()] = null;
-        myPiece.setPosition(originalSquare);
-        BOARD[originalSquare.getRank()][originalSquare.getFile()] = myPiece;
-
-
-    }
-
-    private boolean canCapture(Piece myPiece, Position square){
-
-        Position piecePos = myPiece.getPosition();
-        Piece targetSquare = getPieceAt(square);
-
-        if (!myPiece.legalMovement(square, this)){
-            return false;
-        }
-
-        if (targetSquare == null){
-            if(myPiece instanceof Pawn){ //Stops diagonal movement of pawn if there are no enemy pieces
-                return square.getFile() == piecePos.getFile();
-            }
-            return true;
-        } else if(!(targetSquare.getColor().equals(myPiece.getColor()))){
-            if (myPiece instanceof  Pawn){   //Stops pawn capturing frontally
-                return piecePos.getFile() != square.getFile();
-            }
-            return true;
-        }
-        return false;
-    }
-
     public boolean checkGameEnded(){
         return !kingCanMoveFromCheck();
         //TODO: add interception

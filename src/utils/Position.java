@@ -64,12 +64,13 @@ public class Position {
         return rank;
     }
 
-    public void setRank(int rank) {
-        this.rank = rank;
-    }
-
     public int getFile() {
         return file;
+    }
+
+
+    public void setRank(int rank) {
+        this.rank = rank;
     }
 
     public void setFile(int file) {
