@@ -25,34 +25,34 @@ public class ChessBoard {
             BOARD[6][i] = new Pawn(Color.WHITE, new Position(6,i));
         }
 
-        int white = 7;
-        int black = 0;
+        int whiteRank = 7;
+        int blackRank = 0;
 
         //White pieces
-        BOARD[white][0] = new Rook(Color.WHITE, new Position(white,0));
-        BOARD[white][7] = new Rook(Color.WHITE, new Position(white,7));
-        BOARD[white][1] = new Knight(Color.WHITE, new Position(white,1));
-        BOARD[white][6] = new Knight(Color.WHITE, new Position(white,6));
-        BOARD[white][2] = new Bishop(Color.WHITE, new Position(white,2));
-        BOARD[white][5] = new Bishop(Color.WHITE, new Position(white,5));
-        BOARD[white][3] = new Queen(Color.WHITE, new Position(white,3));
+        BOARD[whiteRank][0] = new Rook(Color.WHITE, new Position(whiteRank,0));
+        BOARD[whiteRank][7] = new Rook(Color.WHITE, new Position(whiteRank,7));
+        BOARD[whiteRank][1] = new Knight(Color.WHITE, new Position(whiteRank,1));
+        BOARD[whiteRank][6] = new Knight(Color.WHITE, new Position(whiteRank,6));
+        BOARD[whiteRank][2] = new Bishop(Color.WHITE, new Position(whiteRank,2));
+        BOARD[whiteRank][5] = new Bishop(Color.WHITE, new Position(whiteRank,5));
+        BOARD[whiteRank][3] = new Queen(Color.WHITE, new Position(whiteRank,3));
 
-        King whiteKing = new King(Color.WHITE, new Position(white,4));
+        King whiteKing = new King(Color.WHITE, new Position(whiteRank,4));
         this.whiteKing = whiteKing;
-        BOARD[white][4] = whiteKing;
+        BOARD[whiteRank][4] = whiteKing;
 
         //Black Pieces
-        BOARD[black][0] = new Rook(Color.BLACK, new Position(black,0));
-        BOARD[black][7] = new Rook(Color.BLACK, new Position(black,7));
-        BOARD[black][1] = new Knight(Color.BLACK, new Position(black,1));
-        BOARD[black][6] = new Knight(Color.BLACK, new Position(black,6));
-        BOARD[black][2] = new Bishop(Color.BLACK, new Position(black,2));
-        BOARD[black][5] = new Bishop(Color.BLACK, new Position(black,5));
-        BOARD[black][3] = new Queen(Color.BLACK, new Position(black,3));
+        BOARD[blackRank][0] = new Rook(Color.BLACK, new Position(blackRank,0));
+        BOARD[blackRank][7] = new Rook(Color.BLACK, new Position(blackRank,7));
+        BOARD[blackRank][1] = new Knight(Color.BLACK, new Position(blackRank,1));
+        BOARD[blackRank][6] = new Knight(Color.BLACK, new Position(blackRank,6));
+        BOARD[blackRank][2] = new Bishop(Color.BLACK, new Position(blackRank,2));
+        BOARD[blackRank][5] = new Bishop(Color.BLACK, new Position(blackRank,5));
+        BOARD[blackRank][3] = new Queen(Color.BLACK, new Position(blackRank,3));
 
-        King blackKing = new King(Color.BLACK, new Position(black,4));
+        King blackKing = new King(Color.BLACK, new Position(blackRank,4));
         this.blackKing = blackKing;
-        BOARD[black][4] = blackKing;
+        BOARD[blackRank][4] = blackKing;
 
         //Add players pieces to their array
         for (Piece[] pieces : BOARD) {
@@ -66,25 +66,8 @@ public class ChessBoard {
                 }
             }
         }
-
-
     }
 
-    /*
-    public ChessBoard(String fen){
-        char[] letters = fen.toCharArray();
-        List<Character> letter = List.of(letters);
-
-
-        int rank = 0;
-        for (int i = 0; i < letters.length; i++){
-            if (letters[i] == )
-        }
-
-
-        return;
-    }
-*/
     public void printBoard() {
 
         for (int i = 0; i < 3; i++){
@@ -122,7 +105,6 @@ public class ChessBoard {
     public Piece getPieceAt(Position position){
         return BOARD[position.getRank()][position.getFile()];
     }
-
 
     public boolean movePiece(Position originalSquare, Position targetSquare){
 
@@ -165,121 +147,68 @@ public class ChessBoard {
                 default -> {}
             }
             return true;
-
-
-
-
-
-//        if (canCapture(piece, targetSquare)){
-//            Position originalSquare = piece.getPosition();
-//            Piece captured = capture(piece, targetSquare);
-//            if (isMyKingChecked(piece)){
-//                System.out.println("You left your king vulnerable");
-//                capture(piece,originalSquare);
-//                if (captured != null){
-//                    if (captured.getColor().equals(Color.WHITE)){
-//                        whitePieces.add(captured);
-//                    }else {
-//                        blackPieces.add(captured);
-//                    }
-//                    insertPiece(captured, targetSquare);
-//                }
-//                return false;
-//            }
-//            switch (piece) {
-//                case Pawn p -> p.setHasMoved(true);
-//                case King k -> k.setHasMoved(true);
-//                case Rook r -> r.setHasMoved(true);
-//                default -> {}
-//            }
-//            return true;
-//        }
-
-
-//        System.out.println("Error");
-//        return false;
-
-
-//        System.out.println("\nYou moved " + piece + " from " + piece.getPosition().getX().boardCharacter(from.getY()) + from.boardNumber(from.getX()));
-
-    }
-
-    private void move(Piece piece, Position targetSquare){
-        BOARD[piece.getPosition().getRank()][piece.getPosition().getFile()] = null;
-        piece.setPosition(targetSquare);
-        BOARD[targetSquare.getRank()][targetSquare.getFile()] = piece;
-
-    }
-
-    private void capture(Piece myPiece, Piece targetPiece){
-
-        Color targetColor = targetPiece.getColor();
-
-        if (targetColor.equals(Color.WHITE)){
-            whitePieces.remove(targetPiece);
-        }else {
-            blackPieces.remove(targetPiece);
-        }
-
-        move(myPiece, targetPiece.getPosition());
-
-
-
-//        if (targetSquare != null){
-//            if (targetSquare.getColor().equals(Color.WHITE)){
-//                whitePieces.remove(targetSquare);
-//            }else {
-//                blackPieces.remove(targetSquare);
-//            }
-//        }
-//
-//        BOARD[myPos.getRank()][myPos.getFile()] = null;
-//        myPiece.setPosition(targetPos);
-//        BOARD[targetPos.getRank()][targetPos.getFile()] = myPiece;
-    }
-
-    private void reverseCapture(Piece capturedPiece, Position originalSquare){
-
-        Piece myPiece = getPieceAt(capturedPiece.getPosition());
-
-        Color capturedColor = capturedPiece.getColor();
-
-        if (capturedColor.equals(Color.WHITE)){
-            whitePieces.add(capturedPiece);
-        }else {
-            blackPieces.add(capturedPiece);
-        }
-
-        move(myPiece, originalSquare);
-        insertPiece(capturedPiece, capturedPiece.getPosition());
-
-
     }
 
     private boolean canCaptureOrMove(Piece myPiece, Position targetSquare){
-
-        Position piecePos = myPiece.getPosition();
 
         if (!myPiece.legalMovement(targetSquare, this)){
             return false;
         }
 
         if (squareIsEmpty(targetSquare)){
-            if(myPiece instanceof Pawn){ //Stops diagonal movement of pawn if there are no enemy pieces at targetsquare
-                return targetSquare.getFile() == piecePos.getFile();
-            }
             return true;
         } else{
             Piece targetPiece = getPieceAt(targetSquare);
             if (!(targetPiece.getColor().equals(myPiece.getColor()))){
-                if (myPiece instanceof  Pawn){   //Stops pawn capturing frontally
-                    return piecePos.getFile() != targetSquare.getFile();
-                }
                 return true;
             }
             System.out.println("Cannot capture piece of same color");
         }
         return false;
+    }
+
+    private void move(Piece piece, Position targetSquare){
+        removePiece(piece.getPosition());
+        insertPiece(piece, targetSquare);
+    }
+
+    private void capture(Piece myPiece, Piece targetPiece){
+        move(myPiece, targetPiece.getPosition());
+    }
+
+    private void reverseCapture(Piece capturedPiece, Position originalSquare){
+        Piece myPiece = getPieceAt(capturedPiece.getPosition());
+        move(myPiece, originalSquare);
+    }
+
+    public void insertPiece(Piece piece, Position targetSquare){
+        BOARD[targetSquare.getRank()][targetSquare.getFile()] = piece;
+        piece.setPosition(targetSquare);
+        Color pieceColor = piece.getColor();
+        List<Piece> list = pieceColor.equals(Color.WHITE) ? whitePieces : blackPieces;
+        if (!list.contains(piece)) list.add(piece);
+
+        if (piece instanceof King){
+            if (pieceColor.equals(Color.WHITE)){
+                whiteKing.setPosition(piece.getPosition());
+            }
+            else {
+                blackKing.setPosition(piece.getPosition());
+            }
+        }
+    }
+
+    public void insertPieces(Piece ... pieces){
+        for (Piece piece : pieces){
+            insertPiece(piece, piece.getPosition());
+        }
+    }
+
+    public void removePiece(Position targetSquare){
+        Piece piece = getPieceAt(targetSquare);
+        if (piece == null) return;
+        BOARD[targetSquare.getRank()][targetSquare.getFile()] = null;
+        (piece.getColor().equals(Color.WHITE) ? whitePieces : blackPieces).remove(piece);
     }
 
     private boolean isKingChecked(){
@@ -347,6 +276,11 @@ public class ChessBoard {
         }
         return false;
     }
+
+    public boolean isInCheck(Color color){
+        return isMyKingChecked(color.equals(Color.WHITE) ? whiteKing : blackKing);
+    }
+
     public boolean checkGameEnded(){
         return !kingCanMoveFromCheck();
         //TODO: add interception
@@ -385,14 +319,63 @@ public class ChessBoard {
         return false;
     }
 
-    public void insertPiece(Piece piece, Position position){
-        BOARD[position.getRank()][position.getFile()] = piece;
+    public Piece promotePawn(Pawn pawn, String newPiece){
+
+        Color color = pawn.getColor();
+        Position position = pawn.getPosition();
+
+        Piece promoted = null;
+
+
+        switch (newPiece.toUpperCase()){
+            case "QUEEN" -> {
+                promoted = new Queen(color, position);
+            }
+            case "BISHOP" -> {
+                promoted = new Bishop(color, position);
+            }
+            case "KNIGHT" -> {
+                promoted = new Knight(color, position);
+            }
+            case "ROOK" -> {
+                Rook rook = new Rook(color, position);
+                rook.setHasMoved(true);
+                promoted = rook;
+            }
+            default -> {
+            }
+        }
+
+        if (color.equals(Color.WHITE)){
+            whitePieces.remove(pawn);
+            whitePieces.add(promoted);
+        }else {
+            blackPieces.remove(pawn);
+            blackPieces.add(promoted);
+        }
+
+        insertPiece(promoted, position);
+
+        return promoted;
     }
+
 
     public boolean isEmpty(Piece[][] board){
         return false;
     }
+
     public Piece[][] getBOARD(){
+        return this.BOARD;
+    }
+
+    public Piece[][] clearBoard(){
+        for (int i = 0; i < this.BOARD.length; i++){
+            for (int j = 0; j < this.BOARD.length; j++){
+                this.BOARD[i][j] = null;
+            }
+        }
+        blackPieces.clear();
+        whitePieces.clear();
         return this.BOARD;
     }
 }

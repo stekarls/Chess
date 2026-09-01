@@ -17,6 +17,20 @@ public class Position {
         this.file = getFile(file);
     }
 
+    public Position(char file, char rank){
+        this.rank = boardNumber(Character.getNumericValue(rank));
+        this.file = getFile(file);
+    }
+
+    public Position (String chessNotation){
+        char file = chessNotation.charAt(0);
+        char rank = chessNotation.charAt(1);
+        this.rank = boardNumber(Character.getNumericValue(rank));
+        this.file = getFile(file);
+
+
+    }
+
     public int getFile(char letter){
         return switch (Character.toUpperCase(letter)){
             case 'A' -> 0;
@@ -93,6 +107,10 @@ public class Position {
 
     public String chessNotation(){
         return boardCharacter(this.file) + boardNumber(this.rank) + "";
+    }
 
+    @Override
+    public String toString() {
+        return "Rank: " + this.getRank() + "File: " + this.getFile();
     }
 }
