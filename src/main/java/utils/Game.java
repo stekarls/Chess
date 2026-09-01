@@ -28,10 +28,10 @@ public class Game {
             }
 
             if (Pattern.matches("[A-Ha-h][1-8]-[A-Ha-h][1-8]", move)){
-                Position piecePos = new Position(move.charAt(0), Character.getNumericValue(move.charAt(1)));
+                Position piecePos = new Position(move.charAt(0), move.charAt(1));
 
                 if (checkPlayerTurn(board, piecePos, totalMoves)){
-                   if (board.movePiece(piecePos, new Position(move.charAt(3), Character.getNumericValue(move.charAt(4))))){
+                   if (board.movePiece(piecePos, new Position(move.charAt(3), move.charAt(4)))){
                        totalMoves++;
                        board.printBoard();
                        if (board.checkGameEnded()){

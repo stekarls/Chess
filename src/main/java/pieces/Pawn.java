@@ -20,17 +20,32 @@ public class Pawn extends Piece{
 
         ArrayList<Position> legalMoves = new ArrayList<>();
 
-        if (this.color.equals(Color.WHITE)){
-            legalMoves.add(new Position(this.position.getRank() - 1, this.position.getFile()));
-            legalMoves.add(new Position(this.position.getRank() - 1, this.position.getFile() - 1));
-            legalMoves.add(new Position(this.position.getRank() - 1, this.position.getFile() + 1));
-            if(!this.hasMoved) legalMoves.add(new Position(this.position.getRank() - 2, this.position.getFile()));
-            
-        }else{
-            legalMoves.add(new Position(this.position.getRank() + 1, this.position.getFile()));
-            legalMoves.add(new Position(this.position.getRank() + 1, this.position.getFile() - 1));
-            legalMoves.add(new Position(this.position.getRank() + 1, this.position.getFile() + 1));
-            if(!this.hasMoved) legalMoves.add(new Position(this.position.getRank() + 2, this.position.getFile()));
+        Color color = this.getColor();
+        int value = color.equals(Color.WHITE) ? 1 : -1;
+
+
+
+        Piece enemyPiece = board.getPieceAt(targetSquare);
+        if (enemyPiece != null){
+            if (!enemyPiece.color.equals(this.color)){
+                legalMoves.add(new Position(this.position.getRank() - value, this.position.getFile() - value));
+                legalMoves.add(new Position(this.position.getRank() - value, this.position.getFile() + value));
+            }
+
+            //Stops vertically capturing
+            if (position.getFile() != enemyPiece.getPosition().getFile()){
+                legalMoves.add(new Position(this.position.getRank() - value, this.position.getFile()));
+
+                if(!this.hasMoved){
+                    legalMoves.add(new Position(this.position.getRank() - 2 * value, this.position.getFile()));
+                }
+            }
+        }else {
+            legalMoves.add(new Position(this.position.getRank() - value, this.position.getFile()));
+
+            if(!this.hasMoved){
+                legalMoves.add(new Position(this.position.getRank() - 2 * value, this.position.getFile()));
+            }
         }
 
         return legalMoves.contains(targetSquare);
