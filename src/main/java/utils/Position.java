@@ -107,6 +107,10 @@ public class Position {
 
     public String chessNotation(){
         return boardCharacter(this.file) + boardNumber(this.rank) + "";
+    }
 
+    @Override
+    public String toString() {
+        return "Rank: " + this.getRank() + "File: " + this.getFile();
     }
 }

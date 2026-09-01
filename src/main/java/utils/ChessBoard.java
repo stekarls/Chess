@@ -149,61 +149,7 @@ public class ChessBoard {
             return true;
     }
 
-    private void move(Piece piece, Position targetSquare){
-        BOARD[piece.getPosition().getRank()][piece.getPosition().getFile()] = null;
-        piece.setPosition(targetSquare);
-        BOARD[targetSquare.getRank()][targetSquare.getFile()] = piece;
-
-    }
-
-    private void capture(Piece myPiece, Piece targetPiece){
-
-        Color targetColor = targetPiece.getColor();
-
-        if (targetColor.equals(Color.WHITE)){
-            whitePieces.remove(targetPiece);
-        }else {
-            blackPieces.remove(targetPiece);
-        }
-
-        move(myPiece, targetPiece.getPosition());
-
-
-
-//        if (targetSquare != null){
-//            if (targetSquare.getColor().equals(Color.WHITE)){
-//                whitePieces.remove(targetSquare);
-//            }else {
-//                blackPieces.remove(targetSquare);
-//            }
-//        }
-//
-//        BOARD[myPos.getRank()][myPos.getFile()] = null;
-//        myPiece.setPosition(targetPos);
-//        BOARD[targetPos.getRank()][targetPos.getFile()] = myPiece;
-    }
-
-    private void reverseCapture(Piece capturedPiece, Position originalSquare){
-
-        Piece myPiece = getPieceAt(capturedPiece.getPosition());
-
-        Color capturedColor = capturedPiece.getColor();
-
-        if (capturedColor.equals(Color.WHITE)){
-            whitePieces.add(capturedPiece);
-        }else {
-            blackPieces.add(capturedPiece);
-        }
-
-        move(myPiece, originalSquare);
-        insertPiece(capturedPiece, capturedPiece.getPosition());
-
-
-    }
-
     private boolean canCaptureOrMove(Piece myPiece, Position targetSquare){
-
-        Position piecePos = myPiece.getPosition();
 
         if (!myPiece.legalMovement(targetSquare, this)){
             return false;
@@ -219,6 +165,50 @@ public class ChessBoard {
             System.out.println("Cannot capture piece of same color");
         }
         return false;
+    }
+
+    private void move(Piece piece, Position targetSquare){
+        removePiece(piece.getPosition());
+        insertPiece(piece, targetSquare);
+    }
+
+    private void capture(Piece myPiece, Piece targetPiece){
+        move(myPiece, targetPiece.getPosition());
+    }
+
+    private void reverseCapture(Piece capturedPiece, Position originalSquare){
+        Piece myPiece = getPieceAt(capturedPiece.getPosition());
+        move(myPiece, originalSquare);
+    }
+
+    public void insertPiece(Piece piece, Position targetSquare){
+        BOARD[targetSquare.getRank()][targetSquare.getFile()] = piece;
+        piece.setPosition(targetSquare);
+        Color pieceColor = piece.getColor();
+        List<Piece> list = pieceColor.equals(Color.WHITE) ? whitePieces : blackPieces;
+        if (!list.contains(piece)) list.add(piece);
+
+        if (piece instanceof King){
+            if (pieceColor.equals(Color.WHITE)){
+                whiteKing.setPosition(piece.getPosition());
+            }
+            else {
+                blackKing.setPosition(piece.getPosition());
+            }
+        }
+    }
+
+    public void insertPieces(Piece ... pieces){
+        for (Piece piece : pieces){
+            insertPiece(piece, piece.getPosition());
+        }
+    }
+
+    public void removePiece(Position targetSquare){
+        Piece piece = getPieceAt(targetSquare);
+        if (piece == null) return;
+        BOARD[targetSquare.getRank()][targetSquare.getFile()] = null;
+        (piece.getColor().equals(Color.WHITE) ? whitePieces : blackPieces).remove(piece);
     }
 
     private boolean isKingChecked(){
@@ -285,6 +275,10 @@ public class ChessBoard {
             }
         }
         return false;
+    }
+
+    public boolean isInCheck(Color color){
+        return isMyKingChecked(color.equals(Color.WHITE) ? whiteKing : blackKing);
     }
 
     public boolean checkGameEnded(){
@@ -365,15 +359,6 @@ public class ChessBoard {
         return promoted;
     }
 
-    public void insertPiece(Piece piece, Position position){
-        BOARD[position.getRank()][position.getFile()] = piece;
-    }
-
-    public void insertPieces(Piece ... pieces){
-        for (Piece piece : pieces){
-            BOARD[piece.getPosition().getRank()][piece.getPosition().getFile()] = piece;
-        }
-    }
 
     public boolean isEmpty(Piece[][] board){
         return false;
@@ -389,6 +374,8 @@ public class ChessBoard {
                 this.BOARD[i][j] = null;
             }
         }
+        blackPieces.clear();
+        whitePieces.clear();
         return this.BOARD;
     }
 }
