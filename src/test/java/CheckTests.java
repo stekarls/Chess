@@ -17,9 +17,10 @@ public class CheckTests {
     class Check{
 
         @BeforeEach
-        void setupChessBoard(){
+        void setupChessBoardForCheck(){
             board = new ChessBoard();
             board.clearBoard();
+            board.setPlayerTurn(2); //Blacks turn
         }
 
         @Test
@@ -75,14 +76,30 @@ public class CheckTests {
             board.insertPieces(list);
             assertFalse(board.checkGameEnded());
         }
+
+        @Test
+        public void rookCanInterceptCheckButLeavesKingInAnotherCheck(){
+            Piece[] list = new Piece[]{
+                    new King(Color.BLACK, new Position("H8")),
+                    new Rook(Color.BLACK, new Position("F6")),
+                    new Knight(Color.BLACK, new Position("F7")),
+                    new Bishop(Color.WHITE, new Position("B2")),
+                    new King(Color.WHITE, new Position("A1")),
+                    new Queen(Color.WHITE, new Position("H1")),
+                    new Rook(Color.WHITE, new Position("G1"))
+            };
+            board.insertPieces(list);
+            board.printBoard();
+            assertFalse(board.checkGameEnded());
+
+        }
     }
 
 
     @Nested
     class Remis{
-
         @BeforeEach
-        void setupChessBoard(){
+        void setupChessBoardForRemis(){
             board = new ChessBoard();
             board.clearBoard();
             Piece[] list = new Piece[]{
@@ -90,6 +107,7 @@ public class CheckTests {
                     new King(Color.WHITE, new Position("B2")),
             };
             board.insertPieces(list);
+            board.setPlayerTurn(2); //Blacks turn
         }
 
         @Test
