@@ -136,6 +136,7 @@ public class GameRulesTest {
 
     @Nested
     class Remis{
+
         @BeforeEach
         void setupChessBoardForRemis(){
             board = new ChessBoard();
@@ -187,15 +188,55 @@ public class GameRulesTest {
             board.insertPiece(new Queen(Color.WHITE, new Position("G4")), new Position("G4"));
             board.insertPiece(new Queen(Color.WHITE, new Position("F8")), new Position("F8"));
             board.insertPiece(new King(Color.BLACK, new Position("H7")), new Position("H7"));
-            board.printBoard();
             assertTrue(board.checkGameEnded());
         }
 
-        //TODO: EDGE CASES: King and Two Knights vs. King:
-        // (Note: Checkmate is legally possible if the lone king walks into it, but it cannot be forced.
-        // FIDE rules state that if the lone king runs out of time here, the game is an automatic draw).
-        // Blocked Pawn Chains: All pawns are locked face-to-face, and neither king can bypass them to
-        // attack or promote (e.g., White pawns on a4, b4, c4; Black pawns on a5, b5, c5, with kings stuck behind them).
+        @Test
+        public void shouldNotTriggerFiftyTurnRule(){
+
+            board.insertPiece(new Rook(Color.BLACK, new Position("E5")), new Position("E5"));
+
+            Position oldPositionBlack = new Position("G7");
+            Position newPositionBlack = new Position("H7");
+
+            Position oldPositionWhite = new Position("B2");
+            Position newPositionWhite = new Position("A1");
+
+            for (int i = 0; i < 24; i++){
+                board.movePiece(oldPositionBlack, newPositionBlack);
+                board.checkGameEnded();
+                board.movePiece(newPositionBlack, oldPositionBlack);
+                board.checkGameEnded();
+                board.movePiece(oldPositionWhite, newPositionWhite);
+                board.checkGameEnded();
+                board.movePiece(newPositionWhite, oldPositionWhite);
+                board.checkGameEnded();
+            }
+            assertFalse(board.checkGameEnded());
+        }
+
+        @Test
+        public void shouldTriggerFiftyTurnRule(){
+            board.insertPiece(new Rook(Color.BLACK, new Position("E5")), new Position("E5"));
+
+            Position oldPositionBlack = new Position("G7");
+            Position newPositionBlack = new Position("H7");
+
+            Position oldPositionWhite = new Position("B2");
+            Position newPositionWhite = new Position("A1");
+
+            for (int i = 0; i < 25; i++){
+                board.movePiece(oldPositionBlack, newPositionBlack);
+                board.checkGameEnded();
+                board.movePiece(newPositionBlack, oldPositionBlack);
+                board.checkGameEnded();
+                board.movePiece(oldPositionWhite, newPositionWhite);
+                board.checkGameEnded();
+                board.movePiece(newPositionWhite, oldPositionWhite);
+                board.checkGameEnded();
+            }
+            assertTrue(board.checkGameEnded());
+        }
 
 
     }

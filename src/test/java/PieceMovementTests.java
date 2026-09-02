@@ -315,6 +315,17 @@ public class PieceMovementTests {
             board.insertPiece(new Bishop(Color.BLACK, new Position("E4")), new Position("E4"));
             assertTrue(board.movePiece(rook.getPosition(), new Position("E4")));
         }
+
+        @Test
+        public void checkRookHasMovedAfterMoving(){
+            fd
+        }
+
+        @Test
+        public void checkRookHasMovedAfterIllegalMove(){
+            f
+
+        }
     }
 
     @Nested
@@ -414,7 +425,24 @@ public class PieceMovementTests {
     class KnightRules{}
 
     @Nested
-    class KingRules{}
+    class KingRules{
+
+        @Test
+        public void kingCanNotThreatenOtherKing(){
+
+        }
+
+        @Test
+        public void checkKingHasMovedAfterMoving(){
+
+        }
+
+        @Test
+        public void checkKingHasMovedAfterIllegalMove(){
+
+
+        }
+    }
 
 
 

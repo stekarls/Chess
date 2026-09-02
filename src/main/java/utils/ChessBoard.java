@@ -6,6 +6,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class ChessBoard {
     private final int RANKS = 8;
@@ -17,6 +18,7 @@ public class ChessBoard {
     private final King blackKing;
     private boolean isKingChecked;
     private int turns = 1;
+    private int fiftyTurnRule = 0;
     private final Deque<MoveRecord> moveHistoryStack = new ArrayDeque<>();
 
     public ChessBoard(){
@@ -237,9 +239,30 @@ public class ChessBoard {
     }
 
     public boolean checkGameEnded(){
+
+
+        //TODO: fix nullpointer on captured an then merge two if statements
+        MoveRecord moveRecord = moveHistoryStack.peek();
+        if (moveRecord != null && moveRecord.captured() == null){
+            fiftyTurnRule++;
+        }
+        if (moveRecord != null && getPieceAt(moveRecord.toPos()) instanceof Pawn){
+            fiftyTurnRule++;
+        }
+
+        if (fiftyTurnRule >= 100){
+            return true;
+        }
+
         if (isMyKingChecked()){
             if (!kingCanMoveFromCheck()){
                 return !pieceCanInterceptCheck();
+            }
+        }else {
+            if (isStaleMate()){
+                return true;
+            }else {
+                return isInsufficientMaterial();
             }
         }
 
@@ -247,13 +270,81 @@ public class ChessBoard {
         //TODO: If total piece count is less than (number) start checking for insufficient material
     }
 
+    private boolean isInsufficientMaterial(){
+
+        int blackPieceSize = blackPieces.size();
+        int whitePieceSize = whitePieces.size();
+
+        if (blackPieceSize > 2 || whitePieceSize > 2){
+            return false;
+        }
+
+        if (blackPieces.size() == 1 && whitePieces.size() == 1){
+            return true;
+        }
+
+        List <Piece> allPieces = Stream.concat(blackPieces.stream(), whitePieces.stream()).toList();
+        List <Piece> withoutKing = allPieces.stream().filter(p -> !(p instanceof King)).toList();
+        List <Piece> whiteWithoutKing = whitePieces.stream().filter(p -> !(p instanceof King)).toList();
+        List <Piece> blackWithoutKing = blackPieces.stream().filter(p -> !(p instanceof King)).toList();
+
+
+
+        //TODO: Maybe check if there is an instance of something else than bishop and knight first to skip following tests
+
+        //Checks if it is king and (bishop or knight) vs lone king.
+        if (whitePieceSize != blackPieceSize){
+            if (whitePieceSize > blackPieceSize){
+                Piece lastPiece = whiteWithoutKing.getFirst();
+                return lastPiece instanceof Knight || lastPiece instanceof Bishop;
+            }else {
+                Piece lastPiece = blackWithoutKing.getFirst();
+                return lastPiece instanceof Knight || lastPiece instanceof Bishop;
+            }
+        }else {
+            Piece whitePiece = whiteWithoutKing.getFirst();
+            Piece blackPiece = blackWithoutKing.getFirst();
+
+            if (whitePiece instanceof Bishop && blackPiece instanceof Bishop){
+                return whitePiece.getPosition().getSquareColor().equals(blackPiece.getPosition().getSquareColor());
+            }
+        }
+
+
+
+
+
+        return false;
+    }
+
+    private boolean isStaleMate(){
+
+        int blackPieceSize = blackPieces.size();
+        int whitePieceSize = whitePieces.size();
+
+        Color checkedKingColor = calculatePlayerTurn();
+        King myKing = checkedKingColor.equals(Color.WHITE) ? whiteKing : blackKing;
+        Position kingPos = myKing.getPosition();
+
+        if (!canKingMove(myKing, kingPos)){
+
+        }
+
+        return false;
+    }
+
+    //TODO: Duplicate, same as canKingMove
     private boolean kingCanMoveFromCheck(){
 
         Color checkedKingColor = calculatePlayerTurn();
         King checkedKing = checkedKingColor.equals(Color.WHITE) ? whiteKing : blackKing;
         Position kingPos = checkedKing.getPosition();
 
-        for (Position pos : checkedKing.getMoves(this)){
+        return canKingMove(checkedKing, kingPos);
+    }
+
+    private boolean canKingMove(King king, Position kingPos){
+        for (Position pos : king.getMoves(this)){
             if (movePiece(kingPos, pos)){
                 reverseMovePiece();
                 return true;
