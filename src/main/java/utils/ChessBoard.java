@@ -244,7 +244,6 @@ public class ChessBoard {
         }
 
         return false;
-        //TODO: add interception
         //TODO: If total piece count is less than (number) start checking for insufficient material
     }
 
@@ -268,7 +267,7 @@ public class ChessBoard {
 
         Position myKingPos = colorTurn.equals(Color.WHITE) ? whiteKing.getPosition() : blackKing.getPosition();
         List<Piece> enemyPieces = colorTurn.equals(Color.WHITE) ? blackPieces : whitePieces;
-        List<Piece> myPieces = colorTurn.equals(Color.WHITE) ? whitePieces : blackPieces;
+        List<Piece> myPieces = new ArrayList<>(colorTurn.equals(Color.WHITE) ? whitePieces : blackPieces);
         List<Piece> kingThreats = enemyPieces.stream().filter(piece -> canCaptureOrMove(piece, myKingPos)).toList();
         List<Position> squaresToIntercept = new ArrayList<>();
 
@@ -299,7 +298,6 @@ public class ChessBoard {
             }
             for (Position square : squaresToIntercept){
                 if (canCaptureOrMove(piece, square)){
-                    //TODO: NEED TO CHECK FOR ALL PIECES, NOT RETURN AFTER FIRST FOUND, OR DO I?
                     if (movePiece(piece.getPosition(), square)) {
                         return true;
                     }
@@ -327,17 +325,12 @@ public class ChessBoard {
                 promoted = rook;
             }
             default -> {
+                return null;
             }
         }
 
-        if (color.equals(Color.WHITE)){
-            whitePieces.remove(pawn);
-            whitePieces.add(promoted);
-        }else {
-            blackPieces.remove(pawn);
-            blackPieces.add(promoted);
-        }
-
+        List<Piece> list = color.equals(Color.WHITE) ? whitePieces : blackPieces;
+        list.remove(pawn);
         insertPiece(promoted, position);
 
         return promoted;

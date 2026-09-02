@@ -30,6 +30,8 @@ public class Bishop extends Piece{
         if (rankAbs != fileAbs){
             return false;
         }
+
+
         if (rankSteps > 0 && fileSteps > 0){
             for (int i = 0; i < rankSteps - 1; i++){
                 if (board.getBOARD()[++rankPos][++filePos] != null){
@@ -42,14 +44,14 @@ public class Bishop extends Piece{
                     return false;
                 }
             }
-        } else if (rankSteps < 0 && fileSteps > 0){
-            for (int i = 0; i < rankSteps - 1; i++){
+        } else if (rankSteps < 0 && fileSteps > 0){ // -7
+            for (int i = 0; i > rankSteps + 1; i--){
                 if (board.getBOARD()[--rankPos][++filePos] != null){
                     return false;
                 }
             }
         }else {
-            for (int i = 0; i < rankSteps - 1; i++){
+            for (int i = 0; i > rankSteps + 1; i--){
                 if (board.getBOARD()[--rankPos][--filePos] != null){
                     return false;
                 }

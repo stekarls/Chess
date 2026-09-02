@@ -9,10 +9,22 @@ import utils.Position;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CheckTests {
+public class GameRulesTest {
 
     private ChessBoard board;
 
+
+    @Nested
+    class Castling{
+
+        @BeforeEach
+        void setupChessBoardForCheck(){
+            board = new ChessBoard();
+            board.clearBoard();
+            board.setPlayerTurn(2); //Blacks turn
+        }
+
+    }
     @Nested
     class Check{
 
@@ -42,7 +54,7 @@ public class CheckTests {
         }
 
         @Test
-        public void canNotExposeOwnKingToCheck(){
+        public void canNotExposeOwnKingToCheckWhenPinned(){
             King king = new King(Color.BLACK, new Position("E8"));
             Rook rook = new Rook(Color.BLACK, new Position("E7"));
             board.insertPiece(king, king.getPosition());
@@ -50,6 +62,18 @@ public class CheckTests {
             board.insertPiece(new Rook(Color.WHITE, new Position("E6")), new Position("E6"));
             board.insertPiece(new King(Color.WHITE, new Position("H2")), new Position("H2"));
             assertFalse(board.movePiece(rook.getPosition(), new Position("A7")));
+            board.printBoard();
+        }
+    }
+
+    @Nested
+    class Checkmate{
+
+        @BeforeEach
+        void setupChessBoardForCheck(){
+            board = new ChessBoard();
+            board.clearBoard();
+            board.setPlayerTurn(2); //Blacks turn
         }
 
         @Test
@@ -89,14 +113,26 @@ public class CheckTests {
                     new Rook(Color.WHITE, new Position("G1"))
             };
             board.insertPieces(list);
-            board.printBoard();
             assertFalse(board.checkGameEnded());
+        }
 
+        @Test
+        public void bishopCanCaptureAttackerToPreventCheck(){
+            Piece[] list = new Piece[]{
+                    new King(Color.BLACK, new Position("H8")),
+                    new Rook(Color.BLACK, new Position("F6")),
+                    new Bishop(Color.BLACK, new Position("A8")),
+                    new Bishop(Color.WHITE, new Position("B2")),
+                    new King(Color.WHITE, new Position("A1")),
+                    new Queen(Color.WHITE, new Position("H1")),
+                    new Rook(Color.WHITE, new Position("G1"))
+            };
+            board.insertPieces(list);
+            assertFalse(board.checkGameEnded());
         }
 
         //TODO: ADD advanced check test where legalmoves look like it is checkmate, but pawn can promote to save
     }
-
 
     @Nested
     class Remis{

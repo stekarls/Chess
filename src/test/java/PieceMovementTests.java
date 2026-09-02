@@ -231,7 +231,7 @@ public class PieceMovementTests {
         public void bishopCanNotMoveHorizontally(){
             Bishop bishop = new Bishop(Color.WHITE, new Position("A1"));
             board.insertPiece(bishop, new Position("A1"));
-            assertFalse(board.movePiece(bishop.getPosition(), new Position("")));
+            assertFalse(board.movePiece(bishop.getPosition(), new Position("C1")));
         }
 
 
@@ -247,6 +247,7 @@ public class PieceMovementTests {
             Bishop bishop = new Bishop(Color.WHITE, new Position("A1"));
             board.insertPiece(bishop, new Position("A1"));
             board.insertPiece(new Rook(Color.BLACK, new Position("G7")), new Position("G7"));
+            board.printBoard();
             assertFalse(board.movePiece(bishop.getPosition(), new Position("H8")));
         }
 
@@ -317,7 +318,97 @@ public class PieceMovementTests {
     }
 
     @Nested
-    class QueenRules{}
+    class QueenRules{
+
+        Position queenPosition;
+
+        @BeforeEach
+        public void boardSetup(){
+            board = new ChessBoard();
+            board.clearBoard();
+            board.insertPiece(new Queen(Color.WHITE, new Position("D4")), new Position("D4"));
+            queenPosition = new Position("D4");
+        }
+
+        @Test
+        public void queenCanMoveDiagonally(){
+            assertTrue(board.movePiece(queenPosition, new Position("A1")));
+        }
+
+        @Test
+        public void queenCanMoveHorizontally(){
+            assertTrue(board.movePiece(queenPosition, new Position("H4")));
+
+        }
+
+        @Test
+        public void queenCanMoveVertically(){
+            assertTrue(board.movePiece(queenPosition, new Position("D8")));
+        }
+
+        @Test
+        public void queenCanNotMoveOtherWays(){
+            assertFalse(board.movePiece(queenPosition, new Position("G2")));
+        }
+
+        @Test
+        public void queenCanNotMoveThroughEnemyPieceVertically(){
+            board.insertPiece(new Bishop(Color.BLACK, new Position("D7")), new Position("D7"));
+            assertFalse(board.movePiece(queenPosition, new Position("D8")));
+        }
+
+        @Test
+        public void queenCanNotMoveThroughEnemyPieceHorizontally(){
+            board.insertPiece(new Bishop(Color.BLACK, new Position("F4")), new Position("F4"));
+            assertFalse(board.movePiece(queenPosition, new Position("H4")));
+        }
+
+        @Test
+        public void queenCanNotMoveThroughEnemyPieceDiagonally(){
+            board.insertPiece(new Bishop(Color.BLACK, new Position("F6")), new Position("F6"));
+            assertFalse(board.movePiece(queenPosition, new Position("H8")));
+        }
+
+        @Test
+        public void queenCanNotMoveThroughMyPieceVertically(){
+            board.insertPiece(new Bishop(Color.WHITE, new Position("D6")), new Position("D6"));
+            assertFalse(board.movePiece(queenPosition, new Position("D8")));
+        }
+
+        @Test
+        public void queenCanNotMoveThroughMyPieceHorizontally(){
+            board.insertPiece(new Bishop(Color.WHITE, new Position("F4")), new Position("F4"));
+            assertFalse(board.movePiece(queenPosition, new Position("H4")));
+
+        }
+
+        @Test
+        public void queenCanNotMoveThroughMyPieceDiagonally(){
+            board.insertPiece(new Bishop(Color.WHITE, new Position("F6")), new Position("F6"));
+            assertFalse(board.movePiece(queenPosition, new Position("H8")));
+        }
+
+        @Test
+        public void queenCanCaptureEnemyPieceVertically(){
+            board.insertPiece(new Bishop(Color.BLACK, new Position("D6")), new Position("D6"));
+            assertTrue(board.movePiece(queenPosition, new Position("D6")));
+        }
+
+        @Test
+        public void queenCanCaptureEnemyPieceHorizontally(){
+            board.insertPiece(new Bishop(Color.BLACK, new Position("F4")), new Position("F4"));
+            assertTrue(board.movePiece(queenPosition, new Position("F4")));
+        }
+
+        @Test
+        public void queenCanCaptureEnemyPieceDiagonally(){
+            board.insertPiece(new Bishop(Color.BLACK, new Position("F6")), new Position("F6"));
+            assertTrue(board.movePiece(queenPosition, new Position("F6")));
+        }
+
+
+
+    }
 
     @Nested
     class KnightRules{}
