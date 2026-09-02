@@ -239,7 +239,7 @@ public class ChessBoard {
     public boolean checkGameEnded(){
         if (isMyKingChecked()){
             if (!kingCanMoveFromCheck()){
-                return pieceCanInterceptCheck();
+                return !pieceCanInterceptCheck();
             }
         }
 
@@ -259,7 +259,6 @@ public class ChessBoard {
                 reverseMovePiece();
                 return true;
             }
-            reverseMovePiece();
         }
         return false;
     }
@@ -269,17 +268,45 @@ public class ChessBoard {
 
         Position myKingPos = colorTurn.equals(Color.WHITE) ? whiteKing.getPosition() : blackKing.getPosition();
         List<Piece> enemyPieces = colorTurn.equals(Color.WHITE) ? blackPieces : whitePieces;
+        List<Piece> myPieces = colorTurn.equals(Color.WHITE) ? whitePieces : blackPieces;
         List<Piece> kingThreats = enemyPieces.stream().filter(piece -> canCaptureOrMove(piece, myKingPos)).toList();
+        List<Position> squaresToIntercept = new ArrayList<>();
 
-        //Get squares threatening king (including the threat agent)
+        if ((kingThreats.size() > 1)){
+            return false;
+        }
 
+        for (Piece piece : kingThreats){
+            if (!(piece instanceof Knight)){
+                int rankDifference = myKingPos.getRank() - piece.getPosition().getRank();
+                int fileDifference = myKingPos.getFile() - piece.getPosition().getFile();
 
-        //Check if any piece can intercept or capture that piece
+                int rankStep = Integer.compare(rankDifference, 0);
+                int fileStep = Integer.compare(fileDifference, 0);
 
+                Position square = piece.getPosition();
+                do {
+                    squaresToIntercept.add(new Position(square.getRank(), square.getFile()));
+                    square.setRank(square.getRank() + rankStep);
+                    square.setFile(square.getFile() + fileStep);
+                } while (getPieceAt(square) == null);
+            }
+        }
 
-        //Ned test case when a piece can intercept but leaves king in check again by doing so.
-
-        return true;
+        for (Piece piece : myPieces){
+            if (piece instanceof King){
+                continue;
+            }
+            for (Position square : squaresToIntercept){
+                if (canCaptureOrMove(piece, square)){
+                    //TODO: NEED TO CHECK FOR ALL PIECES, NOT RETURN AFTER FIRST FOUND, OR DO I?
+                    if (movePiece(piece.getPosition(), square)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public Piece promotePawn(Pawn pawn, String newPiece){

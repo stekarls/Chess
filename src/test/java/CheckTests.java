@@ -93,6 +93,8 @@ public class CheckTests {
             assertFalse(board.checkGameEnded());
 
         }
+
+        //TODO: ADD advanced check test where legalmoves look like it is checkmate, but pawn can promote to save
     }
 
 
