@@ -41,10 +41,19 @@ public class PieceMovementTests {
             }
 
             @Test
-            public void setHasMovedIsSetAfterMovingFirstTime(){
+            public void hasMovedIsSetAfterMovingFirstTime(){
                 Pawn pawn = (Pawn) board.getPieceAt(new Position("A2"));
+                boolean beforeMove = pawn.getHasMoved();
                 board.movePiece(pawn.getPosition(), new Position("A3"));
-                assertTrue(pawn.getHasMoved());
+                assertNotEquals(pawn.getHasMoved(), beforeMove);
+            }
+
+            @Test
+            public void hasMovedIsNotSetAfterIllegalMove(){
+                Pawn pawn = (Pawn) board.getPieceAt(new Position("A2"));
+                boolean beforeMove = pawn.getHasMoved();
+                board.movePiece(pawn.getPosition(), new Position("B2"));
+                assertEquals(pawn.getHasMoved(), beforeMove);
             }
 
             @Test
@@ -301,7 +310,7 @@ public class PieceMovementTests {
         }
 
         @Test
-        public void bishopCanNotMoveThroughMyPieces(){
+        public void rookCanNotMoveThroughMyPieces(){
             Rook rook = new Rook(Color.WHITE, new Position("A1"));
             board.insertPiece(rook, new Position("A1"));
             board.insertPiece(new Rook(Color.WHITE, new Position("A7")), new Position("A7"));
@@ -318,13 +327,22 @@ public class PieceMovementTests {
 
         @Test
         public void checkRookHasMovedAfterMoving(){
-            fd
+            Rook rook = new Rook(Color.WHITE, new Position("E1"));
+            boolean beforeMove = rook.isHasMoved();
+            board.insertPiece(rook, new Position("E1"));
+            board.insertPiece(new Bishop(Color.BLACK, new Position("E4")), new Position("E4"));
+            board.movePiece(rook.getPosition(), new Position("E4"));
+            assertNotEquals(rook.isHasMoved(), beforeMove);
         }
 
         @Test
         public void checkRookHasMovedAfterIllegalMove(){
-            f
-
+            Rook rook = new Rook(Color.WHITE, new Position("A1"));
+            boolean beforeMove = rook.isHasMoved();
+            board.insertPiece(rook, new Position("A1"));
+            board.insertPiece(new Rook(Color.BLACK, new Position("A7")), new Position("A7"));
+            board.movePiece(rook.getPosition(), new Position("A8"));
+            assertEquals(rook.isHasMoved(), beforeMove);
         }
     }
 
