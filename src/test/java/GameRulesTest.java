@@ -192,6 +192,21 @@ public class GameRulesTest {
         }
 
         @Test
+        public void remisStalematePawnCanMoveButIsPinned(){
+            board.clearBoard();
+            board.insertPiece(new King(Color.WHITE, new Position("D1")), new Position("D1"));
+            board.insertPiece(new Rook(Color.WHITE, new Position("G1")), new Position("G1"));
+            board.insertPiece(new Rook(Color.WHITE, new Position("A7")), new Position("A7"));
+            board.insertPiece(new Queen(Color.WHITE, new Position("B1")), new Position("B1"));
+            board.insertPiece(new Queen(Color.WHITE, new Position("A2")), new Position("A2"));
+            board.insertPiece(new Bishop(Color.WHITE, new Position("A1")), new Position("A1"));
+            board.insertPiece(new King(Color.BLACK, new Position("H8")), new Position("H8"));
+            board.insertPiece(new Pawn(Color.BLACK, new Position("G7")), new Position("G7"));
+            board.printBoard();
+            assertTrue(board.checkGameEnded());
+        }
+
+        @Test
         public void shouldNotTriggerFiftyTurnRule(){
 
             board.insertPiece(new Rook(Color.BLACK, new Position("E5")), new Position("E5"));
