@@ -6,20 +6,24 @@ public class Position {
 
     private int rank;
     private int file;
+    private final SquareColor squareColor;
 
     public Position(int rank, int file){
         this.rank = rank;
         this.file = file;
+        this.squareColor = calculateSquareColor(this.getRank(), this.getFile());
     }
 
     public Position(char file, int rank){
         this.rank = boardNumber(rank);
         this.file = getFile(file);
+        this.squareColor = calculateSquareColor(this.getRank(), this.getFile());
     }
 
     public Position(char file, char rank){
         this.rank = boardNumber(Character.getNumericValue(rank));
         this.file = getFile(file);
+        this.squareColor = calculateSquareColor(this.getRank(), this.getFile());
     }
 
     public Position (String chessNotation){
@@ -27,8 +31,7 @@ public class Position {
         char rank = chessNotation.charAt(1);
         this.rank = boardNumber(Character.getNumericValue(rank));
         this.file = getFile(file);
-
-
+        this.squareColor = calculateSquareColor(this.getRank(), this.getFile());
     }
 
     public int getFile(char letter){
@@ -75,11 +78,11 @@ public class Position {
     }
 
     public int getRank() {
-        return rank;
+        return this.rank;
     }
 
     public int getFile() {
-        return file;
+        return this.file;
     }
 
 
@@ -89,6 +92,10 @@ public class Position {
 
     public void setFile(int file) {
         this.file = file;
+    }
+
+    public SquareColor getSquareColor() {
+        return squareColor;
     }
 
     @Override
@@ -109,8 +116,14 @@ public class Position {
         return boardCharacter(this.file) + boardNumber(this.rank) + "";
     }
 
-    @Override
-    public String toString() {
-        return "Rank: " + this.getRank() + "File: " + this.getFile();
+    private SquareColor calculateSquareColor(int rank, int file){
+        if (rank % 2 == file % 2){
+            return SquareColor.LIGHT;
+        }
+        return SquareColor.DARK;
     }
+//    @Override
+//    public String toString() {
+//        return boardCharacter(this.getFile()) + boardNumber(this.getRank()) +"";
+//    }
 }

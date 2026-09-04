@@ -10,7 +10,6 @@ public class Game {
     public static void main(String[] args) {
 
         Color playerTurn;
-        int totalMoves = 1;
         Scanner input = new Scanner(System.in);
 
         ChessBoard board = new ChessBoard();
@@ -19,20 +18,25 @@ public class Game {
         board.printBoard();
 
         while (true){
-            playerTurn = totalMoves % 2 == 0 ? Color.BLACK : Color.WHITE;
+            playerTurn = board.calculatePlayerTurn();
             System.out.print("(" + playerTurn + ") " + "Enter a valid move: ");
             String move = input.nextLine();
 
             if (move.equals("exit")){
                 break;
             }
+            if (move.equals("regret")){
+                board.reverseMovePiece();
+                board.printBoard();
+                continue;
+            }
 
             if (Pattern.matches("[A-Ha-h][1-8]-[A-Ha-h][1-8]", move)){
-                Position piecePos = new Position(move.charAt(0), move.charAt(1));
+                Position fromPos = new Position(move.charAt(0), move.charAt(1));
+                Position toPos = new Position(move.charAt(3), move.charAt(4));
 
-                if (checkPlayerTurn(board, piecePos, totalMoves)){
-                   if (board.movePiece(piecePos, new Position(move.charAt(3), move.charAt(4)))){
-                       totalMoves++;
+                if (verifyPlayerTurn(board, fromPos, playerTurn)){
+                   if (board.movePiece(fromPos, toPos)){
                        board.printBoard();
                        if (board.checkGameEnded()){
                            System.out.println("King unable to move, checkmate");
@@ -49,17 +53,25 @@ public class Game {
         }
     }
 
-    private static boolean checkPlayerTurn(ChessBoard board, Position position, int totalMoves){
+    private static boolean verifyPlayerTurn(ChessBoard board, Position position, Color playerTurn){
         Piece piece = board.getPieceAt(position);
         if (piece != null){
-            Color pieceColor = piece.getColor();
-            boolean isWhite = pieceColor.equals(Color.WHITE);
-            if (isWhite && totalMoves % 2 != 0){
-                return true;
-            } else return !isWhite && totalMoves % 2 == 0;
+            return piece.getColor().equals(playerTurn);
         }
         return false;
 
+
+
+
+//        Piece piece = board.getPieceAt(position);
+//        if (piece != null){
+//            Color pieceColor = piece.getColor();
+//            boolean isWhite = pieceColor.equals(Color.WHITE);
+//            if (isWhite && totalMoves % 2 != 0){
+//                return true;
+//            } else return !isWhite && totalMoves % 2 == 0;
+//        }
+//        return false;
     }
 
 

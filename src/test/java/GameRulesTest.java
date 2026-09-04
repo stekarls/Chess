@@ -9,17 +9,30 @@ import utils.Position;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CheckTests {
+public class GameRulesTest {
 
     private ChessBoard board;
 
+
+    @Nested
+    class Castling{
+
+        @BeforeEach
+        void setupChessBoardForCheck(){
+            board = new ChessBoard();
+            board.clearBoard();
+            board.setPlayerTurn(2); //Blacks turn
+        }
+
+    }
     @Nested
     class Check{
 
         @BeforeEach
-        void setupChessBoard(){
+        void setupChessBoardForCheck(){
             board = new ChessBoard();
             board.clearBoard();
+            board.setPlayerTurn(2); //Blacks turn
         }
 
         @Test
@@ -41,7 +54,7 @@ public class CheckTests {
         }
 
         @Test
-        public void canNotExposeOwnKingToCheck(){
+        public void canNotExposeOwnKingToCheckWhenPinned(){
             King king = new King(Color.BLACK, new Position("E8"));
             Rook rook = new Rook(Color.BLACK, new Position("E7"));
             board.insertPiece(king, king.getPosition());
@@ -49,6 +62,18 @@ public class CheckTests {
             board.insertPiece(new Rook(Color.WHITE, new Position("E6")), new Position("E6"));
             board.insertPiece(new King(Color.WHITE, new Position("H2")), new Position("H2"));
             assertFalse(board.movePiece(rook.getPosition(), new Position("A7")));
+            board.printBoard();
+        }
+    }
+
+    @Nested
+    class Checkmate{
+
+        @BeforeEach
+        void setupChessBoardForCheck(){
+            board = new ChessBoard();
+            board.clearBoard();
+            board.setPlayerTurn(2); //Blacks turn
         }
 
         @Test
@@ -75,14 +100,45 @@ public class CheckTests {
             board.insertPieces(list);
             assertFalse(board.checkGameEnded());
         }
-    }
 
+        @Test
+        public void rookCanInterceptCheckButLeavesKingInAnotherCheck(){
+            Piece[] list = new Piece[]{
+                    new King(Color.BLACK, new Position("H8")),
+                    new Rook(Color.BLACK, new Position("F6")),
+                    new Knight(Color.BLACK, new Position("F7")),
+                    new Bishop(Color.WHITE, new Position("B2")),
+                    new King(Color.WHITE, new Position("A1")),
+                    new Queen(Color.WHITE, new Position("H1")),
+                    new Rook(Color.WHITE, new Position("G1"))
+            };
+            board.insertPieces(list);
+            assertFalse(board.checkGameEnded());
+        }
+
+        @Test
+        public void bishopCanCaptureAttackerToPreventCheck(){
+            Piece[] list = new Piece[]{
+                    new King(Color.BLACK, new Position("H8")),
+                    new Rook(Color.BLACK, new Position("F6")),
+                    new Bishop(Color.BLACK, new Position("A8")),
+                    new Bishop(Color.WHITE, new Position("B2")),
+                    new King(Color.WHITE, new Position("A1")),
+                    new Queen(Color.WHITE, new Position("H1")),
+                    new Rook(Color.WHITE, new Position("G1"))
+            };
+            board.insertPieces(list);
+            assertFalse(board.checkGameEnded());
+        }
+
+        //TODO: ADD advanced check test where legalmoves look like it is checkmate, but pawn can promote to save
+    }
 
     @Nested
     class Remis{
 
         @BeforeEach
-        void setupChessBoard(){
+        void setupChessBoardForRemis(){
             board = new ChessBoard();
             board.clearBoard();
             Piece[] list = new Piece[]{
@@ -90,6 +146,7 @@ public class CheckTests {
                     new King(Color.WHITE, new Position("B2")),
             };
             board.insertPieces(list);
+            board.setPlayerTurn(2); //Blacks turn
         }
 
         @Test
@@ -131,15 +188,70 @@ public class CheckTests {
             board.insertPiece(new Queen(Color.WHITE, new Position("G4")), new Position("G4"));
             board.insertPiece(new Queen(Color.WHITE, new Position("F8")), new Position("F8"));
             board.insertPiece(new King(Color.BLACK, new Position("H7")), new Position("H7"));
+            assertTrue(board.checkGameEnded());
+        }
+
+        @Test
+        public void remisStalematePawnCanMoveButIsPinned(){
+            board.clearBoard();
+            board.insertPiece(new King(Color.WHITE, new Position("D1")), new Position("D1"));
+            board.insertPiece(new Rook(Color.WHITE, new Position("G1")), new Position("G1"));
+            board.insertPiece(new Rook(Color.WHITE, new Position("A7")), new Position("A7"));
+            board.insertPiece(new Queen(Color.WHITE, new Position("B1")), new Position("B1"));
+            board.insertPiece(new Queen(Color.WHITE, new Position("A2")), new Position("A2"));
+            board.insertPiece(new Bishop(Color.WHITE, new Position("A1")), new Position("A1"));
+            board.insertPiece(new King(Color.BLACK, new Position("H8")), new Position("H8"));
+            board.insertPiece(new Pawn(Color.BLACK, new Position("G7")), new Position("G7"));
             board.printBoard();
             assertTrue(board.checkGameEnded());
         }
 
-        //TODO: EDGE CASES: King and Two Knights vs. King:
-        // (Note: Checkmate is legally possible if the lone king walks into it, but it cannot be forced.
-        // FIDE rules state that if the lone king runs out of time here, the game is an automatic draw).
-        // Blocked Pawn Chains: All pawns are locked face-to-face, and neither king can bypass them to
-        // attack or promote (e.g., White pawns on a4, b4, c4; Black pawns on a5, b5, c5, with kings stuck behind them).
+        @Test
+        public void shouldNotTriggerFiftyTurnRule(){
+
+            board.insertPiece(new Rook(Color.BLACK, new Position("E5")), new Position("E5"));
+
+            Position oldPositionBlack = new Position("G7");
+            Position newPositionBlack = new Position("H7");
+
+            Position oldPositionWhite = new Position("B2");
+            Position newPositionWhite = new Position("A1");
+
+            for (int i = 0; i < 24; i++){
+                board.movePiece(oldPositionBlack, newPositionBlack);
+                board.checkGameEnded();
+                board.movePiece(newPositionBlack, oldPositionBlack);
+                board.checkGameEnded();
+                board.movePiece(oldPositionWhite, newPositionWhite);
+                board.checkGameEnded();
+                board.movePiece(newPositionWhite, oldPositionWhite);
+                board.checkGameEnded();
+            }
+            assertFalse(board.checkGameEnded());
+        }
+
+        @Test
+        public void shouldTriggerFiftyTurnRule(){
+            board.insertPiece(new Rook(Color.BLACK, new Position("E5")), new Position("E5"));
+
+            Position oldPositionBlack = new Position("G7");
+            Position newPositionBlack = new Position("H7");
+
+            Position oldPositionWhite = new Position("B2");
+            Position newPositionWhite = new Position("A1");
+
+            for (int i = 0; i < 25; i++){
+                board.movePiece(oldPositionBlack, newPositionBlack);
+                board.checkGameEnded();
+                board.movePiece(newPositionBlack, oldPositionBlack);
+                board.checkGameEnded();
+                board.movePiece(oldPositionWhite, newPositionWhite);
+                board.checkGameEnded();
+                board.movePiece(newPositionWhite, oldPositionWhite);
+                board.checkGameEnded();
+            }
+            assertTrue(board.checkGameEnded());
+        }
 
 
     }

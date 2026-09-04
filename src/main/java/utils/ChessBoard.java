@@ -2,8 +2,11 @@ package utils;
 
 import pieces.*;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class ChessBoard {
     private final int RANKS = 8;
@@ -13,7 +16,10 @@ public class ChessBoard {
     private final List<Piece> blackPieces = new ArrayList<>();
     private final King whiteKing;
     private final King blackKing;
-    private King kingInCheck;
+    private boolean isKingChecked;
+    private int turns = 1;
+    private int fiftyTurnRule = 0;
+    private final Deque<MoveRecord> moveHistoryStack = new ArrayDeque<>();
 
     public ChessBoard(){
 
@@ -85,18 +91,11 @@ public class ChessBoard {
                     continue;
                 }
                 char symbol = piece.getSymbol();
-                if (piece.getColor().equals(Color.BLACK)) {
-                    System.out.print(symbol + space);
-                } else {
-                    System.out.print(symbol + space);
-                }
+                System.out.print(symbol + space);
             }
         }
         System.out.println("\n\n    " + space + "A" + space + "B" + space + "C" + space + "D" + space + "E" + space + "F" + space + "G" + space + "H" + "\n");
-        //System.out.println("White pieces: " + whitePieces);
-        //System.out.println("Black pieces: " + blackPieces);
     }
-
 
     private boolean squareIsEmpty(Position position){
         return BOARD[position.getRank()][position.getFile()] == null;
@@ -117,20 +116,14 @@ public class ChessBoard {
 
         Piece targetPiece = getPieceAt(targetSquare);
 
-        //TODO: squareIsEmpty is also checked in canCaptureOrMove, redundant check
-        //Move or capture square
         if (canCaptureOrMove(piece, targetSquare)){
-            if (squareIsEmpty(targetSquare)){
-                move(piece, targetSquare);
-            }else{
-                capture(piece, targetPiece);
-            }
+            move(piece, targetSquare);
         }else {
             return false;
         }
 
         //Reverse move or reverse capture if own king is checked
-        if (isMyKingChecked(piece)){
+        if (isMyKingChecked()){
             if (targetPiece != null){
                 reverseCapture(targetPiece, originalSquare);
             }else {
@@ -146,7 +139,29 @@ public class ChessBoard {
                 case Rook r -> r.setHasMoved(true);
                 default -> {}
             }
-            return true;
+
+        moveHistoryStack.push(new MoveRecord(originalSquare, targetSquare, targetPiece));
+        turns++;
+
+        return true;
+    }
+
+    public void reverseMovePiece(){
+
+        MoveRecord lastTurn = moveHistoryStack.pop();
+        Position originalSquare = lastTurn.fromPos();
+        Position capturedSquare = lastTurn.toPos();
+        Piece capturedPiece = lastTurn.captured();
+
+
+        if (capturedPiece != null){
+            reverseCapture(capturedPiece, originalSquare);
+        }else {
+            move(getPieceAt(capturedSquare), originalSquare);
+        }
+
+        //TODO: Logic for reversing has moved
+        turns--;
     }
 
     private boolean canCaptureOrMove(Piece myPiece, Position targetSquare){
@@ -172,13 +187,10 @@ public class ChessBoard {
         insertPiece(piece, targetSquare);
     }
 
-    private void capture(Piece myPiece, Piece targetPiece){
-        move(myPiece, targetPiece.getPosition());
-    }
-
     private void reverseCapture(Piece capturedPiece, Position originalSquare){
         Piece myPiece = getPieceAt(capturedPiece.getPosition());
         move(myPiece, originalSquare);
+        insertPiece(capturedPiece, capturedPiece.getPosition());
     }
 
     public void insertPiece(Piece piece, Position targetSquare){
@@ -211,111 +223,178 @@ public class ChessBoard {
         (piece.getColor().equals(Color.WHITE) ? whitePieces : blackPieces).remove(piece);
     }
 
-    private boolean isKingChecked(){
-        Position blackKingPos = blackKing.getPosition();
-        Position whiteKingPos = whiteKing.getPosition();
+    private boolean isMyKingChecked(){
 
-        for (Piece piece : whitePieces){
-            if (canCaptureOrMove(piece, blackKingPos)){
-                System.out.println(piece + " can capture king");
-                return true;
-            }
-        }
+        Color colorTurn = calculatePlayerTurn();
 
-        for (Piece piece : blackPieces){
-            if (canCaptureOrMove(piece, whiteKingPos)){
-                System.out.println(piece + " can capture king");
-                return true;
-            }
-        }
+        Position myKingPos = colorTurn.equals(Color.WHITE) ? whiteKing.getPosition() : blackKing.getPosition();
+        List<Piece> enemyPieces = colorTurn.equals(Color.WHITE) ? blackPieces : whitePieces;
+        List<Piece> kingThreats = enemyPieces.stream().filter(piece -> canCaptureOrMove(piece, myKingPos)).toList();
 
-        return false;
+        return !kingThreats.isEmpty();
     }
 
-    private Color checkedKingColor(){
-        Position blackKingPos = blackKing.getPosition();
-        Position whiteKingPos = whiteKing.getPosition();
-
-        for (Piece piece : whitePieces){
-            if (canCaptureOrMove(piece, blackKingPos)){
-                System.out.println(piece + " can capture king");
-                return Color.BLACK;
-            }
-        }
-
-        for (Piece piece : blackPieces){
-            if (canCaptureOrMove(piece, whiteKingPos)){
-                System.out.println(piece + " can capture king");
-                return Color.BLACK;
-            }
-        }
+    private ArrayList<Piece> piecesAttackingKing(){
         return null;
     }
 
-    private boolean isMyKingChecked(Piece myPiece){
-
-        //TODO: Maybe isMyKingChecked kan take color instead of piece, so we dont have to figure out color every time.
-
-        Position blackKingPos = blackKing.getPosition();
-        Position whiteKingPos = whiteKing.getPosition();
-
-        if (myPiece.getColor().equals(Color.WHITE)){
-            for (Piece piece : blackPieces){
-                if (canCaptureOrMove(piece, whiteKingPos)){
-                    return true;
-                }
-            }
-        }
-
-        if (myPiece.getColor().equals(Color.BLACK)){
-            for (Piece piece : whitePieces){
-                if (canCaptureOrMove(piece, blackKingPos)){
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public boolean isInCheck(Color color){
-        return isMyKingChecked(color.equals(Color.WHITE) ? whiteKing : blackKing);
-    }
-
     public boolean checkGameEnded(){
-        return !kingCanMoveFromCheck();
-        //TODO: add interception
+
+
+        //TODO: fix nullpointer on captured an then merge two if statements
+        MoveRecord moveRecord = moveHistoryStack.peek();
+        if (moveRecord != null && moveRecord.captured() == null){
+            fiftyTurnRule++;
+        }
+        if (moveRecord != null && getPieceAt(moveRecord.toPos()) instanceof Pawn){
+            fiftyTurnRule++;
+        }
+
+        if (fiftyTurnRule >= 100){
+            return true;
+        }
+
+        if (isMyKingChecked()){
+            if (!kingCanMoveFromCheck()){
+                return !pieceCanInterceptCheck();
+            }
+        }else {
+            if (isStaleMate()){
+                return true;
+            }else {
+                return isInsufficientMaterial();
+            }
+        }
+
+        return false;
+        //TODO: If total piece count is less than (number) start checking for insufficient material
     }
 
-    private boolean kingCanMoveFromCheck(){
-        Color checkedKingColor = checkedKingColor();
-        if (checkedKingColor == null) return true;
+    private boolean isInsufficientMaterial(){
 
-        if (checkedKingColor.equals(Color.WHITE)) {
-            Position kingPos = whiteKing.getPosition();
-            for (Position pos : whiteKing.getMoves(this)){
-                movePiece(whiteKing.getPosition(), pos);
-                if (!isMyKingChecked(whiteKing)){
-                    reverseCapture(whiteKing, kingPos);
-                    return true;
-                }
-                reverseCapture(whiteKing, kingPos);
+        int blackPieceSize = blackPieces.size();
+        int whitePieceSize = whitePieces.size();
+
+        if (blackPieceSize > 2 || whitePieceSize > 2){
+            return false;
+        }
+
+        if (blackPieces.size() == 1 && whitePieces.size() == 1){
+            return true;
+        }
+
+        List <Piece> allPieces = Stream.concat(blackPieces.stream(), whitePieces.stream()).toList();
+        List <Piece> withoutKing = allPieces.stream().filter(p -> !(p instanceof King)).toList();
+        List <Piece> whiteWithoutKing = whitePieces.stream().filter(p -> !(p instanceof King)).toList();
+        List <Piece> blackWithoutKing = blackPieces.stream().filter(p -> !(p instanceof King)).toList();
+
+
+
+        //TODO: Maybe check if there is an instance of something else than bishop and knight first to skip following tests
+
+        //Checks if it is king and (bishop or knight) vs lone king.
+        if (whitePieceSize != blackPieceSize){
+            if (whitePieceSize > blackPieceSize){
+                Piece lastPiece = whiteWithoutKing.getFirst();
+                return lastPiece instanceof Knight || lastPiece instanceof Bishop;
+            }else {
+                Piece lastPiece = blackWithoutKing.getFirst();
+                return lastPiece instanceof Knight || lastPiece instanceof Bishop;
             }
-
         }else {
-            Position kingPos = blackKing.getPosition();
-            for (Position pos : blackKing.getMoves(this)){
-                movePiece(blackKing.getPosition(), pos);
-                if (!isMyKingChecked(blackKing)){
-                    reverseCapture(blackKing, kingPos);
-                    return true;
-                }
-                reverseCapture(blackKing, kingPos);
+            Piece whitePiece = whiteWithoutKing.getFirst();
+            Piece blackPiece = blackWithoutKing.getFirst();
+
+            if (whitePiece instanceof Bishop && blackPiece instanceof Bishop){
+                return whitePiece.getPosition().getSquareColor().equals(blackPiece.getPosition().getSquareColor());
+            }
+        }
+
+
+
+
+
+        return false;
+    }
+
+    private boolean isStaleMate(){
+
+        int blackPieceSize = blackPieces.size();
+        int whitePieceSize = whitePieces.size();
+
+        Color checkedKingColor = calculatePlayerTurn();
+        King myKing = checkedKingColor.equals(Color.WHITE) ? whiteKing : blackKing;
+        Position kingPos = myKing.getPosition();
+
+        if (!canKingMove(myKing, kingPos)){
+
+        }
+
+        return false;
+    }
+
+    //TODO: Duplicate, same as canKingMove
+    private boolean kingCanMoveFromCheck(){
+
+        Color checkedKingColor = calculatePlayerTurn();
+        King checkedKing = checkedKingColor.equals(Color.WHITE) ? whiteKing : blackKing;
+        Position kingPos = checkedKing.getPosition();
+
+        return canKingMove(checkedKing, kingPos);
+    }
+
+    private boolean canKingMove(King king, Position kingPos){
+        for (Position pos : king.getMoves(this)){
+            if (movePiece(kingPos, pos)){
+                reverseMovePiece();
+                return true;
             }
         }
         return false;
     }
 
-    private boolean checkInterception(Piece myPiece){
+    private boolean pieceCanInterceptCheck(){
+        Color colorTurn = calculatePlayerTurn();
+
+        Position myKingPos = colorTurn.equals(Color.WHITE) ? whiteKing.getPosition() : blackKing.getPosition();
+        List<Piece> enemyPieces = colorTurn.equals(Color.WHITE) ? blackPieces : whitePieces;
+        List<Piece> myPieces = new ArrayList<>(colorTurn.equals(Color.WHITE) ? whitePieces : blackPieces);
+        List<Piece> kingThreats = enemyPieces.stream().filter(piece -> canCaptureOrMove(piece, myKingPos)).toList();
+        List<Position> squaresToIntercept = new ArrayList<>();
+
+        if ((kingThreats.size() > 1)){
+            return false;
+        }
+
+        for (Piece piece : kingThreats){
+            if (!(piece instanceof Knight)){
+                int rankDifference = myKingPos.getRank() - piece.getPosition().getRank();
+                int fileDifference = myKingPos.getFile() - piece.getPosition().getFile();
+
+                int rankStep = Integer.compare(rankDifference, 0);
+                int fileStep = Integer.compare(fileDifference, 0);
+
+                Position square = piece.getPosition();
+                do {
+                    squaresToIntercept.add(new Position(square.getRank(), square.getFile()));
+                    square.setRank(square.getRank() + rankStep);
+                    square.setFile(square.getFile() + fileStep);
+                } while (getPieceAt(square) == null);
+            }
+        }
+
+        for (Piece piece : myPieces){
+            if (piece instanceof King){
+                continue;
+            }
+            for (Position square : squaresToIntercept){
+                if (canCaptureOrMove(piece, square)){
+                    if (movePiece(piece.getPosition(), square)) {
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 
@@ -328,40 +407,24 @@ public class ChessBoard {
 
 
         switch (newPiece.toUpperCase()){
-            case "QUEEN" -> {
-                promoted = new Queen(color, position);
-            }
-            case "BISHOP" -> {
-                promoted = new Bishop(color, position);
-            }
-            case "KNIGHT" -> {
-                promoted = new Knight(color, position);
-            }
+            case "QUEEN" -> promoted = new Queen(color, position);
+            case "BISHOP" -> promoted = new Bishop(color, position);
+            case "KNIGHT" -> promoted = new Knight(color, position);
             case "ROOK" -> {
                 Rook rook = new Rook(color, position);
                 rook.setHasMoved(true);
                 promoted = rook;
             }
             default -> {
+                return null;
             }
         }
 
-        if (color.equals(Color.WHITE)){
-            whitePieces.remove(pawn);
-            whitePieces.add(promoted);
-        }else {
-            blackPieces.remove(pawn);
-            blackPieces.add(promoted);
-        }
-
+        List<Piece> list = color.equals(Color.WHITE) ? whitePieces : blackPieces;
+        list.remove(pawn);
         insertPiece(promoted, position);
 
         return promoted;
-    }
-
-
-    public boolean isEmpty(Piece[][] board){
-        return false;
     }
 
     public Piece[][] getBOARD(){
@@ -377,6 +440,18 @@ public class ChessBoard {
         blackPieces.clear();
         whitePieces.clear();
         return this.BOARD;
+    }
+
+    public Color calculatePlayerTurn(){
+        return this.turns % 2 == 0 ? Color.BLACK : Color.WHITE;
+    }
+
+    public int getPlayerTurn() {
+        return turns;
+    }
+
+    public void setPlayerTurn(int num){
+        this.turns = num;
     }
 }
 
