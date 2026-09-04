@@ -4,6 +4,8 @@ import utils.ChessBoard;
 import utils.Color;
 import utils.Position;
 
+import java.util.List;
+
 public abstract class Piece {
 
     protected Color color;
@@ -32,7 +34,6 @@ public abstract class Piece {
 
 
     public abstract boolean legalMovement(Position position, ChessBoard chessBoard);
-
 
     public Color getColor(){
         return this.color;

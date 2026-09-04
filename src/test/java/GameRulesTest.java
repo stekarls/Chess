@@ -62,7 +62,6 @@ public class GameRulesTest {
             board.insertPiece(new Rook(Color.WHITE, new Position("E6")), new Position("E6"));
             board.insertPiece(new King(Color.WHITE, new Position("H2")), new Position("H2"));
             assertFalse(board.movePiece(rook.getPosition(), new Position("A7")));
-            board.printBoard();
         }
     }
 
@@ -202,7 +201,6 @@ public class GameRulesTest {
             board.insertPiece(new Bishop(Color.WHITE, new Position("A1")), new Position("A1"));
             board.insertPiece(new King(Color.BLACK, new Position("H8")), new Position("H8"));
             board.insertPiece(new Pawn(Color.BLACK, new Position("G7")), new Position("G7"));
-            board.printBoard();
             assertTrue(board.checkGameEnded());
         }
 

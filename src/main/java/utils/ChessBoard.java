@@ -261,7 +261,7 @@ public class ChessBoard {
         }else {
             if (isStaleMate()){
                 return true;
-            }else {
+            }else if (whitePieces.size() + blackPieces.size() < 5){
                 return isInsufficientMaterial();
             }
         }
@@ -319,18 +319,31 @@ public class ChessBoard {
 
     private boolean isStaleMate(){
 
-        int blackPieceSize = blackPieces.size();
-        int whitePieceSize = whitePieces.size();
-
         Color checkedKingColor = calculatePlayerTurn();
         King myKing = checkedKingColor.equals(Color.WHITE) ? whiteKing : blackKing;
         Position kingPos = myKing.getPosition();
 
-        if (!canKingMove(myKing, kingPos)){
-
+        List<Piece> myPieces = new ArrayList<>(myKing.getColor().equals(Color.WHITE) ? whitePieces : blackPieces);
+        for (Piece piece : myPieces){
+            if (canPieceMove(piece)){
+                return false;
+            }
         }
 
+        return true;
+    }
+
+    private boolean canPieceMove(Piece piece){
+        for (int i = 0; i < BOARD.length; i++){
+            for (int j = 0; j < BOARD[i].length; j++){
+                if (movePiece(piece.getPosition(), new Position(i, j))){
+                    reverseMovePiece();
+                    return true;
+                }
+            }
+        }
         return false;
+
     }
 
     //TODO: Duplicate, same as canKingMove
