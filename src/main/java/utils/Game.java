@@ -39,7 +39,7 @@ public class Game {
                    if (board.movePiece(fromPos, toPos)){
                        board.printBoard();
                        if (board.checkGameEnded()){
-                           System.out.println("King unable to move, checkmate");
+                           System.out.println("King unable to move, checkmate"); //TODO: a game does not allways end in checkmate
                            break;
                        }
                    }
