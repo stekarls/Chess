@@ -33,9 +33,8 @@ This project was built to practice object-oriented design in Java by modeling a 
 This is an active work-in-progress portfolio project, not a finished game. Currently missing or incomplete:
 
 - **En passant** and **castling** are not yet implemented
-- Checkmate detection only checks whether the king itself can move to safety — it does **not** yet account for another piece blocking the check or capturing the attacker, so it can report checkmate too early in some positions
 - No pawn promotion
-- No draw / stalemate / threefold repetition detection
+- No stalemate detection
 - Limited input validation and error handling around edge cases
 
 See [`src/todo.txt`](src/todo.txt) for the running list of planned fixes and features.
