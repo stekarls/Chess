@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class King extends Piece{
-    private boolean hasMoved = false;
 
     public King(Color color, Position position) {
         super(color, position);
@@ -62,10 +61,6 @@ public class King extends Piece{
     }
 
 
-
-    public void setHasMoved(boolean hasMoved){
-        this.hasMoved = hasMoved;
-    }
 
     public boolean getHasMoved(){
         return hasMoved;

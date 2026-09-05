@@ -3,7 +3,7 @@
 A chess engine and playable command-line game written in plain Java (no external chess libraries), modeling the full board, piece movement rules, and check detection using object-oriented design. Was initially a challenge to write a complete chess game just from my knowledge of Java without aid or AI.
 
 ```
-    A  B  C  D  E  F  G  H
+
 
 8   r  n  b  q  k  b  n  r
 7   p  p  p  p  p  p  p  p
@@ -13,6 +13,8 @@ A chess engine and playable command-line game written in plain Java (no external
 3   .  .  .  .  .  .  .  .
 2   P  P  P  P  P  P  P  P
 1   R  N  B  Q  K  B  N  R
+
+    A  B  C  D  E  F  G  H
 ```
 
 ## About
@@ -30,11 +32,11 @@ This project was built to practice object-oriented design in Java by modeling a 
 
 ## Known limitations / in progress
 
-This is an active work-in-progress portfolio project, not a finished game. Currently missing or incomplete:
+This is an active work-in-progress project, not a finished game. Currently missing or incomplete:
 
-- **En passant** and **castling** are not yet implemented
+- **castling** are not yet implemented
 - No pawn promotion
-- No stalemate detection
+- No threefold repetition detection
 - Limited input validation and error handling around edge cases
 
 See [`src/todo.txt`](src/todo.txt) for the running list of planned fixes and features.
@@ -57,7 +59,9 @@ src/
     ├── Game.java        # Entry point / game loop, handles input parsing and turns
     ├── ChessBoard.java  # Board state, move execution, capture logic, check detection
     ├── Position.java    # Board coordinate representation
-    └── Color.java       # Enum for White / Black
+    ├── Color.java       # Enum for White / Black
+    └── SquareColor.java # Enum for Dark / Light squares
+   
 ```
 
 ## License

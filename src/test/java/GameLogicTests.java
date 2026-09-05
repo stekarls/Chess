@@ -32,6 +32,7 @@ public class GameLogicTests {
         board.movePiece(board.getPieceAt(new Position("H5")).getPosition(), new Position("G6"));
         board.movePiece(board.getPieceAt(new Position("F7")).getPosition(), new Position("E6"));
         assertNotNull(board.getPieceAt(new Position("E6")));
-
     }
+
+    //TODO: TEST FULLMOVE and halfmoveclock and player color updating correctly every turn
 }

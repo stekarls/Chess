@@ -11,10 +11,12 @@ public abstract class Piece {
     protected Color color;
     protected Position position;
     protected char symbol;
+    boolean hasMoved;
 
     public Piece(Color color, Position position){
         this.color = color;
         this.position = position;
+        this.hasMoved = false;
 
 
         char symbol = 0;
@@ -49,4 +51,11 @@ public abstract class Piece {
         return this.position;
     }
 
+    public boolean hasMoved() {
+        return hasMoved;
+    }
+
+    public void setHasMoved(boolean hasMoved) {
+        this.hasMoved = hasMoved;
+    }
 }

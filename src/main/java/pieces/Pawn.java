@@ -2,13 +2,12 @@ package pieces;
 
 import utils.ChessBoard;
 import utils.Color;
+import utils.MoveRecord;
 import utils.Position;
 
 import java.util.ArrayList;
 
 public class Pawn extends Piece{
-
-    private boolean hasMoved = false;
 
     public Pawn(Color color, Position position) {
         super(color, position);
@@ -24,6 +23,12 @@ public class Pawn extends Piece{
         int value = color.equals(Color.WHITE) ? 1 : -1;
 
 
+        MoveRecord lastMove = board.getMoveHistoryStack().peek();
+        if (board.getEnPassant() != null && lastMove != null){
+            if (!board.getPieceAt(lastMove.toPos()).getColor().equals(color)){ //problem
+                legalMoves.add(board.getEnPassant());
+            }
+        }
 
         Piece enemyPiece = board.getPieceAt(targetSquare);
         if (enemyPiece != null){
@@ -54,10 +59,6 @@ public class Pawn extends Piece{
 
     public boolean getHasMoved(){
         return this.hasMoved;
-    }
-
-    public void setHasMoved(boolean hasMoved){
-        this.hasMoved = hasMoved;
     }
 
     @Override
