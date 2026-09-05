@@ -45,6 +45,7 @@ public class PieceMovementTests {
                 Pawn pawn = (Pawn) board.getPieceAt(new Position("A2"));
                 boolean beforeMove = pawn.getHasMoved();
                 board.movePiece(pawn.getPosition(), new Position("A3"));
+                board.checkGameEnded();
                 assertNotEquals(pawn.getHasMoved(), beforeMove);
             }
 
@@ -256,7 +257,6 @@ public class PieceMovementTests {
             Bishop bishop = new Bishop(Color.WHITE, new Position("A1"));
             board.insertPiece(bishop, new Position("A1"));
             board.insertPiece(new Rook(Color.BLACK, new Position("G7")), new Position("G7"));
-            board.printBoard();
             assertFalse(board.movePiece(bishop.getPosition(), new Position("H8")));
         }
 
@@ -319,19 +319,23 @@ public class PieceMovementTests {
 
         @Test
         public void rookCanCapturePiece(){
-            Rook rook = new Rook(Color.WHITE, new Position("E1"));
-            board.insertPiece(rook, new Position("E1"));
-            board.insertPiece(new Bishop(Color.BLACK, new Position("E4")), new Position("E4"));
-            assertTrue(board.movePiece(rook.getPosition(), new Position("E4")));
+            Rook rook = new Rook(Color.WHITE, new Position("C2"));
+            board.insertPiece(rook, new Position("C2"));
+            board.insertPiece(new Bishop(Color.BLACK, new Position("C8")), new Position("C8"));
+            assertTrue(board.movePiece(rook.getPosition(), new Position("C8")));
         }
 
         @Test
         public void checkRookHasMovedAfterMoving(){
-            Rook rook = new Rook(Color.WHITE, new Position("E1"));
+            board.clearBoard();
+            Rook rook = new Rook(Color.WHITE, new Position("A2"));
             boolean beforeMove = rook.isHasMoved();
-            board.insertPiece(rook, new Position("E1"));
-            board.insertPiece(new Bishop(Color.BLACK, new Position("E4")), new Position("E4"));
-            board.movePiece(rook.getPosition(), new Position("E4"));
+            board.insertPiece(rook, new Position("A2"));
+            board.insertPiece(new Bishop(Color.BLACK, new Position("A8")), new Position("A8"));
+            board.insertPiece(new King(Color.BLACK, new Position("H5")), new Position("H5"));
+            board.insertPiece(new King(Color.WHITE, new Position("E5")), new Position("E5"));
+            board.movePiece(rook.getPosition(), new Position("A8"));
+            board.checkGameEnded();
             assertNotEquals(rook.isHasMoved(), beforeMove);
         }
 

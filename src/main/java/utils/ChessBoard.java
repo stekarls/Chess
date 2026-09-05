@@ -14,8 +14,8 @@ public class ChessBoard {
     private final Piece[][] BOARD = new Piece[RANKS][FILES];
     private final List<Piece> whitePieces = new ArrayList<>();
     private final List<Piece> blackPieces = new ArrayList<>();
-    private final King whiteKing;
-    private final King blackKing;
+    private King whiteKing;
+    private King blackKing;
     private Position enPassant;
     private int turns = 1;
     private int fullMoves = 0;
@@ -226,12 +226,12 @@ public class ChessBoard {
         List<Piece> list = pieceColor.equals(Color.WHITE) ? whitePieces : blackPieces;
         if (!list.contains(piece)) list.add(piece);
 
-        if (piece instanceof King){
+        if (piece instanceof King king){
             if (pieceColor.equals(Color.WHITE)){
-                whiteKing.setPosition(piece.getPosition());
+                whiteKing = king;
             }
             else {
-                blackKing.setPosition(piece.getPosition());
+                blackKing = king;
             }
         }
     }
@@ -253,7 +253,6 @@ public class ChessBoard {
         Position myKingPos = color.equals(Color.WHITE) ? whiteKing.getPosition() : blackKing.getPosition();
         List<Piece> enemyPieces = color.equals(Color.WHITE) ? blackPieces : whitePieces;
         List<Piece> kingThreats = enemyPieces.stream().filter(piece -> canCaptureOrMove(piece, myKingPos)).toList();
-
         return !kingThreats.isEmpty();
     }
 
