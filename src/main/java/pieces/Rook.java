@@ -7,7 +7,6 @@ import utils.Position;
 import java.util.ArrayList;
 
 public class Rook extends Piece{
-    private boolean hasMoved = false;
 
 
     public Rook(Color color, Position position){
@@ -64,9 +63,6 @@ public class Rook extends Piece{
         return hasMoved;
     }
 
-    public void setHasMoved(boolean hasMoved) {
-        this.hasMoved = hasMoved;
-    }
     @Override
     public String toString(){
         return "Rook";

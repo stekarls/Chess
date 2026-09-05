@@ -18,7 +18,7 @@ public class Game {
         board.printBoard();
 
         while (true){
-            playerTurn = board.calculatePlayerTurn();
+            playerTurn = board.getTurnColor();
             System.out.print("(" + playerTurn + ") " + "Enter a valid move: ");
             String move = input.nextLine();
 

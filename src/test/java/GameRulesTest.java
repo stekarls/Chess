@@ -6,8 +6,7 @@ import utils.ChessBoard;
 import utils.Color;
 import utils.Position;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GameRulesTest {
 
@@ -72,11 +71,23 @@ public class GameRulesTest {
         void setupChessBoardForCheck(){
             board = new ChessBoard();
             board.clearBoard();
-            board.setPlayerTurn(2); //Blacks turn
         }
 
         @Test
         public void ladderCheckMate(){
+            Piece[] list = new Piece[]{
+                    new King(Color.BLACK, new Position("H8")),
+                    new King(Color.WHITE, new Position("A1")),
+                    new Queen(Color.WHITE, new Position("H1")),
+                    new Rook(Color.WHITE, new Position("G1"))
+            };
+            board.insertPieces(list);
+            assertTrue(board.checkGameEnded());
+        }
+
+        @Test
+        public void ladderCheckMateOtherPlayersTurn(){
+            board.setPlayerTurn(3);
             Piece[] list = new Piece[]{
                     new King(Color.BLACK, new Position("H8")),
                     new King(Color.WHITE, new Position("A1")),
@@ -146,6 +157,7 @@ public class GameRulesTest {
             };
             board.insertPieces(list);
             board.setPlayerTurn(2); //Blacks turn
+            board.calculatePlayerTurn();
         }
 
         @Test
@@ -178,6 +190,7 @@ public class GameRulesTest {
             board.insertPiece(new King(Color.WHITE, new Position("F6")), new Position("F6"));
             board.insertPiece(new Pawn(Color.WHITE, new Position("F7")), new Position("F7"));
             board.insertPiece(new King(Color.BLACK, new Position("F8")), new Position("F8"));
+            board.printBoard();
             assertTrue(board.checkGameEnded());
         }
         @Test
@@ -254,5 +267,94 @@ public class GameRulesTest {
 
     }
 
+    @Nested
+    class enPassant{
 
+        @BeforeEach
+        void setupChessBoardForCheck(){
+            board = new ChessBoard();
+        }
+
+
+        @Test
+        public void checkCorrectEnPassantPositionAfterTwoPawnStepsWhite(){
+            board.movePiece(new Position("A2"), new Position("A4"));
+            board.checkGameEnded();
+            assertEquals(new Position("A3"), board.getEnPassant());
+        }
+
+        @Test
+        public void checkCorrectEnPassantPositionAfterTwoPawnStepsBlack(){
+            board.setPlayerTurn(2);
+            board.movePiece(new Position("B7"), new Position("B5"));
+            board.checkGameEnded();
+            assertEquals(new Position("B6"), board.getEnPassant());
+        }
+
+        @Test
+        public void pawnOnlyMovesOneSquareShouldNotTriggerEnPassantWhite(){
+            board.movePiece(new Position("A2"), new Position("A3"));
+            board.checkGameEnded();
+            assertNull(board.getEnPassant());
+        }
+
+        @Test
+        public void pawnOnlyMovesOneSquareShouldNotTriggerEnPassantBlack(){
+            board.setPlayerTurn(2); //Blacks turn
+            board.movePiece(new Position("B7"), new Position("B6"));
+            board.checkGameEnded();
+            assertNull(board.getEnPassant());
+        }
+
+        @Test
+        public void enPassantShouldBeSetToNullAfterOneTurn(){
+            board.movePiece(new Position("A2"), new Position("A4"));
+            board.checkGameEnded();
+            board.movePiece(new Position("H7"), new Position("H6"));
+            board.checkGameEnded();
+            assertNull(board.getEnPassant());
+        }
+
+        @Test
+        public void correctEnPassantAfterDoublePawnMoveMultipleTimes(){
+            board.movePiece(new Position("A2"), new Position("A4"));
+            board.checkGameEnded();
+            board.movePiece(new Position("B7"), new Position("B6"));
+            board.checkGameEnded();
+            board.movePiece(new Position("B2"), new Position("B4"));
+            board.checkGameEnded();
+            assertNotNull(board.getPieceAt(new Position("B4")));
+        }
+
+        @Test
+        public void testEnPassantCaptureWhite(){
+            board.movePiece(new Position("A2"), new Position("A4"));
+            board.checkGameEnded();
+            board.movePiece(new Position("H7"), new Position("H5"));
+            board.checkGameEnded();
+            board.movePiece(new Position("A4"), new Position("A5"));
+            board.checkGameEnded();
+            board.movePiece(new Position("B7"), new Position("B5"));
+            board.checkGameEnded();
+            board.movePiece(new Position("A5"), new Position("B6"));
+            board.checkGameEnded();
+            assertNull(board.getPieceAt(new Position("B5")));
+        }
+
+//        @Test
+//        public void testEnPassantCaptureBlack(){
+//            board.movePiece(new Position("A2"), new Position("A4"));
+//            board.checkGameEnded();
+//            board.movePiece(new Position("C7"), new Position("C5"));
+//            board.checkGameEnded();
+//            board.movePiece(new Position("A4"), new Position("A5"));
+//            board.checkGameEnded();
+//            board.movePiece(new Position("B7"), new Position("B5"));
+//            board.checkGameEnded();
+//            board.movePiece(new Position("A5"), new Position("B6"));
+//            board.checkGameEnded();
+//            assertNull(board.getPieceAt(new Position("B4")));
+//        }
+
+    }
 }
