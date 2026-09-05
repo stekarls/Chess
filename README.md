@@ -37,7 +37,7 @@ This is an active work-in-progress project, not a finished game. Currently missi
 - **castling** are not yet implemented
 - No pawn promotion
 - No threefold repetition detection
-- Limited input validation and error handling around edge cases
+- Need more detailed feedback on errors or bad input/moves
 
 See [`src/todo.txt`](src/todo.txt) for the running list of planned fixes and features.
 
