@@ -20,7 +20,30 @@ public class GameRulesTest {
         void setupChessBoardForCheck(){
             board = new ChessBoard();
             board.clearBoard();
-            board.setPlayerTurn(2); //Blacks turn
+        }
+
+        @Test
+        public void castleQueenSideWhite(){
+
+
+        }
+
+        @Test
+        public void castleQueenSideBlack(){
+            board.setPlayerTurn(2); //Is this needed for all tests?
+
+        }
+
+        @Test
+        public void castleKingSideWhite(){
+
+        }
+
+        @Test
+        public void castleKingSideBlack(){
+            board.setPlayerTurn(2); //Is this needed for all tests?
+
+
         }
 
     }
@@ -31,7 +54,6 @@ public class GameRulesTest {
         void setupChessBoardForCheck(){
             board = new ChessBoard();
             board.clearBoard();
-            board.setPlayerTurn(2); //Blacks turn
         }
 
         @Test
@@ -87,7 +109,6 @@ public class GameRulesTest {
 
         @Test
         public void ladderCheckMateOtherPlayersTurn(){
-            board.setPlayerTurn(3);
             Piece[] list = new Piece[]{
                     new King(Color.BLACK, new Position("H8")),
                     new King(Color.WHITE, new Position("A1")),
@@ -151,12 +172,13 @@ public class GameRulesTest {
         void setupChessBoardForRemis(){
             board = new ChessBoard();
             board.clearBoard();
-            Piece[] list = new Piece[]{
-                    new King(Color.BLACK, new Position("G7")),
-                    new King(Color.WHITE, new Position("B2")),
-            };
-            board.insertPieces(list);
-            board.setPlayerTurn(2); //Blacks turn
+            Piece blackKing = new King(Color.BLACK, new Position("G7"));
+            Piece whiteKing = new King(Color.WHITE, new Position("B2"));
+            blackKing.setHasMoved(true);
+            whiteKing.setHasMoved(true);
+            board.insertPiece(blackKing, blackKing.getPosition());
+            board.insertPiece(whiteKing, whiteKing.getPosition());
+            board.setPlayerTurn(2); //TODO: Could i refactor so this is not needed?
             board.calculatePlayerTurn();
         }
 
@@ -185,12 +207,22 @@ public class GameRulesTest {
         }
 
         @Test
+        public void remisKingAndBishopVsKingAndBishopOpositeSquareColorBishops(){
+            board.insertPiece(new Bishop(Color.WHITE, new Position("A4")), new Position("A4"));
+            board.insertPiece(new Bishop(Color.BLACK, new Position("H1")), new Position("H2"));
+            assertFalse(board.checkGameEnded());
+        }
+
+        @Test
         public void remisStalemateKingAndPawnVsKing(){
             board.clearBoard();
             board.insertPiece(new King(Color.WHITE, new Position("F6")), new Position("F6"));
             board.insertPiece(new Pawn(Color.WHITE, new Position("F7")), new Position("F7"));
             board.insertPiece(new King(Color.BLACK, new Position("F8")), new Position("F8"));
-            board.printBoard();
+
+            board.getPieceAt(new Position("F6")).setHasMoved(true);
+            board.getPieceAt(new Position("F8")).setHasMoved(true);
+            board.getPieceAt(new Position("F7")).setHasMoved(true);
             assertTrue(board.checkGameEnded());
         }
         @Test
@@ -200,6 +232,8 @@ public class GameRulesTest {
             board.insertPiece(new Queen(Color.WHITE, new Position("G4")), new Position("G4"));
             board.insertPiece(new Queen(Color.WHITE, new Position("F8")), new Position("F8"));
             board.insertPiece(new King(Color.BLACK, new Position("H7")), new Position("H7"));
+            board.getPieceAt(new Position("D3")).setHasMoved(true);
+            board.getPieceAt(new Position("H7")).setHasMoved(true);
             assertTrue(board.checkGameEnded());
         }
 
@@ -214,13 +248,21 @@ public class GameRulesTest {
             board.insertPiece(new Bishop(Color.WHITE, new Position("A1")), new Position("A1"));
             board.insertPiece(new King(Color.BLACK, new Position("H8")), new Position("H8"));
             board.insertPiece(new Pawn(Color.BLACK, new Position("G7")), new Position("G7"));
+
+            board.getPieceAt(new Position("G1")).setHasMoved(true);
+            board.getPieceAt(new Position("A7")).setHasMoved(true);
+            board.getPieceAt(new Position("D1")).setHasMoved(true);
+            board.getPieceAt(new Position("H8")).setHasMoved(true);
             assertTrue(board.checkGameEnded());
         }
 
         @Test
         public void shouldNotTriggerFiftyTurnRule(){
 
-            board.insertPiece(new Rook(Color.BLACK, new Position("E5")), new Position("E5"));
+            Piece rook = new Rook(Color.BLACK, new Position("E5"));
+            rook.setHasMoved(true);
+            board.insertPiece(rook, rook.getPosition());
+
 
             Position oldPositionBlack = new Position("G7");
             Position newPositionBlack = new Position("H7");
@@ -243,7 +285,9 @@ public class GameRulesTest {
 
         @Test
         public void shouldTriggerFiftyTurnRule(){
-            board.insertPiece(new Rook(Color.BLACK, new Position("E5")), new Position("E5"));
+            Piece rook = new Rook(Color.BLACK, new Position("E5"));
+            rook.setHasMoved(true);
+            board.insertPiece(rook, rook.getPosition());
 
             Position oldPositionBlack = new Position("G7");
             Position newPositionBlack = new Position("H7");
