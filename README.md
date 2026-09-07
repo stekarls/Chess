@@ -37,6 +37,7 @@ This is an active work-in-progress project, not a finished game. Currently missi
 
 - No pawn promotion
 - No threefold repetition detection
+- FEN position import and export
 - Need more detailed feedback on errors or bad input/moves
 
 See [`src/todo.txt`](src/todo.txt) for the running list of planned fixes and features.
