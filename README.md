@@ -1,6 +1,6 @@
 # Command-Line Chess
 
-A chess engine and playable command-line game written in plain Java (no external chess libraries), modeling the full board, piece movement rules, and check detection using object-oriented design. Was initially a challenge to write a complete chess game just from my knowledge of Java without aid or AI. Project has been developed and tested with the aid of the JUnit testing framework.
+A chess engine and playable command-line game written in plain Java (no external chess libraries), modeling the full board, piece movement rules, and check detection using object-oriented design. Was initially a challenge to write a complete chess game just from my knowledge of Java without aid or AI. The project has been developed and tested with the aid of the JUnit testing framework.
 
 ```
 
@@ -29,12 +29,12 @@ This project was built to practice object-oriented design in Java by modeling a 
 -  Capturing, including special-cased pawn capture rules (no forward capture, diagonal-only)
 -  Check detection — a move that would leave your own king in check is rejected
 -  Basic checkmate detection (ends the game when the king in check has no legal square to move to)
+-  Castling and enPassant rules
 
 ## Known limitations / in progress
 
 This is an active work-in-progress project, not a finished game. Currently missing or incomplete:
 
-- **castling** are not yet implemented
 - No pawn promotion
 - No threefold repetition detection
 - Need more detailed feedback on errors or bad input/moves
