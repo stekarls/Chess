@@ -20,28 +20,54 @@ public class GameRulesTest {
         void setupChessBoardForCheck(){
             board = new ChessBoard();
             board.clearBoard();
+
+            board.insertPiece(new King(Color.WHITE, new Position("E1")), new Position("E1"));
+            board.insertPiece(new Rook(Color.WHITE, new Position("A1")), new Position("A1"));
+            board.insertPiece(new Rook(Color.WHITE, new Position("H1")), new Position("H1"));
+
+            board.insertPiece(new King(Color.BLACK, new Position("E8")), new Position("E8"));
+            board.insertPiece(new Rook(Color.BLACK, new Position("A8")), new Position("A8"));
+            board.insertPiece(new Rook(Color.BLACK, new Position("H8")), new Position("H8"));
         }
 
         @Test
         public void castleQueenSideWhite(){
-
-
+            Piece king = board.getPieceAt(new Position("E1"));
+            board.movePiece(king.getPosition(), new Position("C1"));
+            boolean kingPos = king.getPosition().equals(new Position("C1"));
+            boolean rookPos = board.getPieceAt(new Position("D1")) != null;
+            assertTrue(kingPos && rookPos);
         }
 
         @Test
         public void castleQueenSideBlack(){
             board.setPlayerTurn(2); //Is this needed for all tests?
+            Piece king = board.getPieceAt(new Position("E8"));
+            board.movePiece(king.getPosition(), new Position("C8"));
+            boolean kingPos = king.getPosition().equals(new Position("C8"));
+            boolean rookPos = board.getPieceAt(new Position("D8")) != null;
+            board.printBoard();
+            assertTrue(kingPos && rookPos);
 
         }
 
         @Test
         public void castleKingSideWhite(){
-
+            Piece king = board.getPieceAt(new Position("E1"));
+            board.movePiece(king.getPosition(), new Position("G1"));
+            boolean kingPos = king.getPosition().equals(new Position("G1"));
+            boolean rookPos = board.getPieceAt(new Position("F1")) != null;
+            assertTrue(kingPos && rookPos);
         }
 
         @Test
         public void castleKingSideBlack(){
             board.setPlayerTurn(2); //Is this needed for all tests?
+            Piece king = board.getPieceAt(new Position("E8"));
+            board.movePiece(king.getPosition(), new Position("G8"));
+            boolean kingPos = king.getPosition().equals(new Position("G8"));
+            boolean rookPos = board.getPieceAt(new Position("F8")) != null;
+            assertTrue(kingPos && rookPos);
 
 
         }
@@ -249,8 +275,6 @@ public class GameRulesTest {
             board.insertPiece(new King(Color.BLACK, new Position("H8")), new Position("H8"));
             board.insertPiece(new Pawn(Color.BLACK, new Position("G7")), new Position("G7"));
 
-            board.getPieceAt(new Position("G1")).setHasMoved(true);
-            board.getPieceAt(new Position("A7")).setHasMoved(true);
             board.getPieceAt(new Position("D1")).setHasMoved(true);
             board.getPieceAt(new Position("H8")).setHasMoved(true);
             assertTrue(board.checkGameEnded());
@@ -260,7 +284,6 @@ public class GameRulesTest {
         public void shouldNotTriggerFiftyTurnRule(){
 
             Piece rook = new Rook(Color.BLACK, new Position("E5"));
-            rook.setHasMoved(true);
             board.insertPiece(rook, rook.getPosition());
 
 
@@ -286,7 +309,6 @@ public class GameRulesTest {
         @Test
         public void shouldTriggerFiftyTurnRule(){
             Piece rook = new Rook(Color.BLACK, new Position("E5"));
-            rook.setHasMoved(true);
             board.insertPiece(rook, rook.getPosition());
 
             Position oldPositionBlack = new Position("G7");

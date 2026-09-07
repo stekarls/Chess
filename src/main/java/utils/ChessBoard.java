@@ -120,9 +120,15 @@ public class ChessBoard {
             return false;
         }
 
+        //TODO REFACTOR FOR CLEANER CODE WITH CASTLING LOGIC
+        boolean castledLastMove = false;
+        if (!piece.hasMoved() && (piece instanceof King)){
+            castledLastMove = checkForCastlingMove(piece, targetSquare);
+        }
+
         Piece targetPiece = getPieceAt(targetSquare);
 
-        if (canCaptureOrMove(piece, targetSquare)){ //Problem here
+        if (!castledLastMove && canCaptureOrMove(piece, targetSquare)){ //!hasCastled &&
             move(piece, targetSquare);
         }else {
             return false;
@@ -141,6 +147,25 @@ public class ChessBoard {
         }
 
         return true;
+    }
+
+    private boolean checkForCastlingMove(Piece piece, Position targetSquare){
+
+        int rankOffset = piece.getColor().equals(Color.WHITE) ? 7 : 0;
+
+        Position queenSide = new Position(rankOffset, 2);
+        Position kingSide = new Position(rankOffset, 6);
+        Piece rookQueenSide = getPieceAt(new Position(rankOffset, 0));
+        Piece rookKingSide = getPieceAt(new Position(rankOffset, 7));
+
+        if (targetSquare.equals(queenSide)){
+            move(piece, targetSquare);
+            move(rookQueenSide, new Position(rankOffset, 3));
+        }else if (targetSquare.equals(kingSide)){
+            move(piece, targetSquare);
+            move(rookKingSide, new Position(rankOffset, 5));
+        }
+        return false;
     }
 
     private void move(Piece piece, Position targetSquare){
@@ -210,8 +235,6 @@ public class ChessBoard {
         }
         return false;
     }
-
-
 
     private void reverseCapture(Piece capturedPiece, Position originalSquare){
         Piece myPiece = getPieceAt(capturedPiece.getPosition());
@@ -302,7 +325,6 @@ public class ChessBoard {
             }
         }
 
-        turns++;
         if (turnColor.equals(Color.BLACK)){
             turnColor = Color.WHITE;
 
@@ -491,20 +513,12 @@ public class ChessBoard {
         return this.BOARD;
     }
 
-//    public Color calculatePlayerTurn(){
-//        return this.turns % 2 == 0 ? Color.BLACK : Color.WHITE;
-//    }
-
     public void calculatePlayerTurn(){
         turnColor = this.turns % 2 == 0 ? Color.BLACK : Color.WHITE;
     }
 
     public Position getEnPassant() {
         return enPassant;
-    }
-
-    public int getPlayerTurn() {
-        return turns;
     }
 
     public void setPlayerTurn(int num){
