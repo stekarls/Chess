@@ -127,31 +127,30 @@ public class ChessBoard {
         }
 
 
-        if (!castledLastMove && canCaptureOrMove(piece, targetSquare)){ //!hasCastled &&
+        if (!castledLastMove && canCaptureOrMove(piece, targetSquare)){
             move(piece, targetSquare);
         }else {
             return false;
         }
 
-        Piece[] promotion = null;
+        boolean promotion = false;
         if (piece instanceof Pawn p){
             int rank = p.getColor().equals(Color.WHITE) ? 0 : 7;
             if (targetSquare.getRank() == rank){
-                Piece queen = promotePawn(p, "queen");
-                promotion = new Piece[]{piece, queen};
+                promotePawn(p, "queen");
+                promotion = true;
             }
         }
 
-        moveHistoryStack.push(new MoveRecord(originalSquare, targetSquare, targetPiece, promotion));
+        moveHistoryStack.push(new MoveRecord(piece, originalSquare, targetSquare, targetPiece, promotion, !piece.hasMoved()));
 
         //Reverse move or reverse capture if own king is checked
         if (isMyKingChecked(piece.getColor())){
             if (targetPiece != null){
                 reverseCapture(targetPiece, originalSquare);
             }else {
-                move(piece, originalSquare);
+                reverseMovePiece();
             }
-            moveHistoryStack.pop();
             return false;
         }
 
@@ -214,10 +213,18 @@ public class ChessBoard {
     public void reverseMovePiece(){
 
         MoveRecord lastTurn = moveHistoryStack.pop();
+        Piece piece = getPieceAt(lastTurn.toPos());
         Position originalSquare = lastTurn.fromPos();
         Position capturedSquare = lastTurn.toPos();
         Piece capturedPiece = lastTurn.captured();
 
+        if (lastTurn.firstMove()){
+            piece.setHasMoved(false);
+        }
+
+        if (lastTurn.promoted()){
+            demote(piece, lastTurn);
+        }
 
         if (capturedPiece != null){
             reverseCapture(capturedPiece, originalSquare);
@@ -225,7 +232,6 @@ public class ChessBoard {
             move(getPieceAt(capturedSquare), originalSquare);
         }
 
-        //TODO: Logic for reversing has moved
     }
 
     private boolean canCaptureOrMove(Piece myPiece, Position targetSquare){
@@ -249,6 +255,10 @@ public class ChessBoard {
         Piece myPiece = getPieceAt(capturedPiece.getPosition());
         move(myPiece, originalSquare);
         insertPiece(capturedPiece, capturedPiece.getPosition());
+    }
+
+    public void undo(){
+        reverseMovePiece();
     }
 
     public void insertPiece(Piece piece, Position targetSquare){
@@ -304,8 +314,7 @@ public class ChessBoard {
         MoveRecord moveRecord = moveHistoryStack.peek();
 
         if (moveRecord != null){
-            //TODO: WONT COUNT PROMOTED PIECES
-            Piece piece = getPieceAt(moveRecord.toPos());
+            Piece piece = moveRecord.piece();
             if (piece instanceof  Pawn || moveRecord.captured() != null){
                 halfMoveClock = 0;
             }
@@ -357,8 +366,6 @@ public class ChessBoard {
             return true;
         }
 
-        List <Piece> allPieces = Stream.concat(blackPieces.stream(), whitePieces.stream()).toList();
-        List <Piece> withoutKing = allPieces.stream().filter(p -> !(p instanceof King)).toList();
         List <Piece> whiteWithoutKing = whitePieces.stream().filter(p -> !(p instanceof King)).toList();
         List <Piece> blackWithoutKing = blackPieces.stream().filter(p -> !(p instanceof King)).toList();
 
@@ -505,6 +512,14 @@ public class ChessBoard {
         insertPiece(promoted, position);
 
         return promoted;
+    }
+
+    public void demote(Piece promoted, MoveRecord lastTurn){
+        Color color = promoted.getColor();
+
+        List<Piece> list = color.equals(Color.WHITE) ? whitePieces : blackPieces;
+        list.remove(promoted);
+        insertPiece(lastTurn.piece(), lastTurn.fromPos());
     }
 
     public Piece[][] getBOARD(){

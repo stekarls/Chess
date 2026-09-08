@@ -36,5 +36,7 @@ public class GameLogicTests {
 
     //TODO: TEST FULLMOVE and halfmoveclock and player color updating correctly every turn
 
-    //TODO: REDO CHANGES PROMOTED PAWN TO ORIGINAL PAWN
+    //TODO: REDO MUST DEMOTE PROMOTED PAWN
+
+    //TODO: REDO MUST CHANGE HASMOVED if it was first move
 }
