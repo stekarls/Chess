@@ -39,14 +39,19 @@ public class Game {
                 break;
             }
             if (move.equalsIgnoreCase("undo")){
-                //TODO: Need own method that switches turn colors and variables with undo
-                board.reverseMovePiece();
+                if (!board.undo()){
+                    System.out.println("No more moves to undo");
+                    continue;
+                }
                 board.printBoard();
                 continue;
             }
 
 //            if (move.equalsIgnoreCase("REDO")){
-//                board.redo();
+//                if (!board.redo()){
+//                    System.out.println("No more moves to undo");
+//                    continue;
+//                }
 //                board.printBoard();
 //                continue;
 //            }

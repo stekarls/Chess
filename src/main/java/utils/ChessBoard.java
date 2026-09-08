@@ -154,6 +154,10 @@ public class ChessBoard {
             return false;
         }
 
+        if (!piece.hasMoved()){
+            piece.setHasMoved(true);
+        }
+
         return true;
     }
 
@@ -229,7 +233,7 @@ public class ChessBoard {
         if (capturedPiece != null){
             reverseCapture(capturedPiece, originalSquare);
         }else {
-            move(getPieceAt(capturedSquare), originalSquare);
+            move(lastTurn.piece(), originalSquare);
         }
 
     }
@@ -244,11 +248,9 @@ public class ChessBoard {
             return true;
         } else{
             Piece targetPiece = getPieceAt(targetSquare);
-            if (!(targetPiece.getColor().equals(myPiece.getColor()))){
-                return true;
-            }
+
+            return !(targetPiece.getColor().equals(myPiece.getColor()));
         }
-        return false;
     }
 
     private void reverseCapture(Piece capturedPiece, Position originalSquare){
@@ -257,8 +259,18 @@ public class ChessBoard {
         insertPiece(capturedPiece, capturedPiece.getPosition());
     }
 
-    public void undo(){
+    public boolean undo(){
+        if (moveHistoryStack.isEmpty()){
+            return false;
+        }
         reverseMovePiece();
+        if (turnColor.equals(Color.BLACK)){
+            turnColor = Color.WHITE;
+
+        }else{
+            turnColor = Color.BLACK;
+        }
+        return true;
     }
 
     public void insertPiece(Piece piece, Position targetSquare){
@@ -319,10 +331,9 @@ public class ChessBoard {
                 halfMoveClock = 0;
             }
             halfMoveClock++;
+
+            //TODO: Could be moved to movePiece logic
             enPassantUpdate();
-            if(!piece.hasMoved()){
-                piece.setHasMoved(true);
-            }
         }
 
         if (halfMoveClock >= 100){
@@ -369,19 +380,12 @@ public class ChessBoard {
         List <Piece> whiteWithoutKing = whitePieces.stream().filter(p -> !(p instanceof King)).toList();
         List <Piece> blackWithoutKing = blackPieces.stream().filter(p -> !(p instanceof King)).toList();
 
-
-
         //TODO: Maybe check if there is an instance of something else than bishop and knight first to skip following tests
 
         //Checks if it is king and (bishop or knight) vs lone king.
         if (whitePieceSize != blackPieceSize){
-            if (whitePieceSize > blackPieceSize){
-                Piece lastPiece = whiteWithoutKing.getFirst();
-                return lastPiece instanceof Knight || lastPiece instanceof Bishop;
-            }else {
-                Piece lastPiece = blackWithoutKing.getFirst();
-                return lastPiece instanceof Knight || lastPiece instanceof Bishop;
-            }
+            Piece lastPiece = whitePieceSize > blackPieceSize ? whiteWithoutKing.getFirst() : blackWithoutKing.getFirst();
+            return lastPiece instanceof Knight || lastPiece instanceof Bishop;
         }else {
             Piece whitePiece = whiteWithoutKing.getFirst();
             Piece blackPiece = blackWithoutKing.getFirst();
@@ -390,10 +394,6 @@ public class ChessBoard {
                 return whitePiece.getPosition().getSquareColor().equals(blackPiece.getPosition().getSquareColor());
             }
         }
-
-
-
-
 
         return false;
     }
@@ -517,9 +517,7 @@ public class ChessBoard {
     public void demote(Piece promoted, MoveRecord lastTurn){
         Color color = promoted.getColor();
 
-        List<Piece> list = color.equals(Color.WHITE) ? whitePieces : blackPieces;
-        list.remove(promoted);
-        insertPiece(lastTurn.piece(), lastTurn.fromPos());
+        removePiece(promoted.getPosition());
     }
 
     public Piece[][] getBOARD(){
