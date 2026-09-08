@@ -8,6 +8,7 @@ import utils.ChessBoard;
 import utils.Color;
 import utils.Position;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class GameLogicTests {
@@ -34,5 +35,23 @@ public class GameLogicTests {
         assertNotNull(board.getPieceAt(new Position("E6")));
     }
 
+
+    @Test
+    public void undoPawmPromotionDemotesPawn(){
+        Piece[] pieces = new Piece[] {
+                new King(Color.BLACK, new Position("A8")),
+                new King(Color.BLACK, new Position("A1")),
+                new Pawn(Color.BLACK, new Position("F2")),
+                new Pawn(Color.WHITE, new Position("E7"))
+        };
+
+        board.insertPieces(pieces);
+        board.movePiece(board.getPieceAt(new Position("E7")).getPosition(), new Position("E8"));
+        board.undo();
+        assertInstanceOf(Pawn.class, board.getPieceAt(new Position("E7")));
+    }
+
     //TODO: TEST FULLMOVE and halfmoveclock and player color updating correctly every turn
+
+    //TODO: REDO MUST CHANGE HASMOVED if it was first move
 }

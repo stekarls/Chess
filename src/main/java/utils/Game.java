@@ -1,5 +1,7 @@
 package utils;
 
+import pieces.King;
+import pieces.Pawn;
 import pieces.Piece;
 
 import java.util.Scanner;
@@ -13,6 +15,17 @@ public class Game {
         Scanner input = new Scanner(System.in);
 
         ChessBoard board = new ChessBoard();
+
+        board.clearBoard();
+
+        Piece[] pieces = new Piece[] {
+                new Pawn(Color.WHITE, new Position("G7")),
+                new King(Color.WHITE, new Position("A1")),
+                new King(Color.BLACK, new Position("A8")),
+                new Pawn(Color.BLACK, new Position("E2"))
+        };
+        board.insertPieces(pieces);
+
         System.out.println("\n\n\n\n\n\n------Welcome to Command Line Chess------");
         System.out.println("Valid move format: FROM-TO. EXAMPLE: A2-A4");
         board.printBoard();
@@ -25,11 +38,23 @@ public class Game {
             if (move.equals("exit")){
                 break;
             }
-            if (move.equals("regret")){
-                board.reverseMovePiece();
+            if (move.equalsIgnoreCase("undo")){
+                if (!board.undo()){
+                    System.out.println("No more moves to undo");
+                    continue;
+                }
                 board.printBoard();
                 continue;
             }
+
+//            if (move.equalsIgnoreCase("REDO")){
+//                if (!board.redo()){
+//                    System.out.println("No more moves to undo");
+//                    continue;
+//                }
+//                board.printBoard();
+//                continue;
+//            }
 
             if (Pattern.matches("[A-Ha-h][1-8]-[A-Ha-h][1-8]", move)){
                 Position fromPos = new Position(move.charAt(0), move.charAt(1));

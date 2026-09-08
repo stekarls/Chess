@@ -17,7 +17,7 @@ public class GameRulesTest {
     class Castling{
 
         @BeforeEach
-        void setupChessBoardForCheck(){
+        void setupChessBoardForCastlingk(){
             board = new ChessBoard();
             board.clearBoard();
 
@@ -46,7 +46,6 @@ public class GameRulesTest {
             board.movePiece(king.getPosition(), new Position("C8"));
             boolean kingPos = king.getPosition().equals(new Position("C8"));
             boolean rookPos = board.getPieceAt(new Position("D8")) != null;
-            board.printBoard();
             assertTrue(kingPos && rookPos);
 
         }
@@ -116,7 +115,7 @@ public class GameRulesTest {
     class Checkmate{
 
         @BeforeEach
-        void setupChessBoardForCheck(){
+        void setupChessBoardForCheckmate(){
             board = new ChessBoard();
             board.clearBoard();
         }
@@ -334,10 +333,10 @@ public class GameRulesTest {
     }
 
     @Nested
-    class enPassant{
+    class EnPassant {
 
         @BeforeEach
-        void setupChessBoardForCheck(){
+        void setupChessBoardForEnPassant(){
             board = new ChessBoard();
         }
 
@@ -421,6 +420,73 @@ public class GameRulesTest {
 //            board.checkGameEnded();
 //            assertNull(board.getPieceAt(new Position("B4")));
 //        }
+
+    }
+
+    @Nested
+    class Promotion{
+
+        @BeforeEach
+        void setupChessBoardPromotingSituation(){
+            board = new ChessBoard();
+            board.clearBoard();
+
+            Piece[] pieces = new Piece[] {
+                    new Pawn(Color.WHITE, new Position("G7")),
+                    new King(Color.WHITE, new Position("A1")),
+                    new King(Color.BLACK, new Position("A8")),
+                    new Pawn(Color.BLACK, new Position("E2"))
+            };
+            board.insertPieces(pieces);
+
+
+//                8     .  .  .  .  .  .  .  .
+//                7     k  .  .  .  .  .  P  .
+//                6     .  .  .  .  .  .  .  .
+//                5     .  .  .  .  .  .  .  .
+//                4     .  .  .  .  .  .  .  .
+//                3     .  .  .  .  .  .  .  .
+//                2     .  .  .  .  p  .  .  .
+//                1     K  .  .  .  .  .  .  .
+//
+//                      A  B  C  D  E  F  G  H
+        }
+
+        @Test
+        void testPawnBeingPromotedByMovePieceMethodWhite(){
+            Piece whitePawn = board.getPieceAt(new Position("G7"));
+            board.movePiece(whitePawn.getPosition(), new Position("G8"));
+            assertInstanceOf(Queen.class, board.getPieceAt(new Position("G8")));
+        }
+
+        @Test
+        void testPawnBeingPromotedByMovePieceMethodBlack(){
+            Piece blackPawn = board.getPieceAt(new Position("E2"));
+            board.movePiece(blackPawn.getPosition(), new Position("E1"));
+            assertInstanceOf(Queen.class, board.getPieceAt(new Position("E1")));
+        }
+
+        @Test
+        void testPawnBeingPromotedCreatingCheckmatePosition(){
+            board.insertPiece(new Rook(Color.WHITE, new Position("H7")), new Position("H7"));
+            Piece whitePawn = board.getPieceAt(new Position("G7"));
+            board.movePiece(whitePawn.getPosition(), new Position("G8"));
+            assertTrue(board.checkGameEnded());
+
+        }
+
+        @Test
+        void testReversingPromotionBecauseOfIllegalMove(){
+            board.insertPiece(new Rook(Color.WHITE, new Position("H7")), new Position("H7"));
+            board.insertPiece(new Bishop(Color.BLACK, new Position("H8")), new Position("H8"));
+            Piece whitePawn = board.getPieceAt(new Position("G7"));
+            board.movePiece(whitePawn.getPosition(), new Position("G8"));
+            board.printBoard();
+            assertFalse(board.checkGameEnded());
+        }
+
+
+
 
     }
 }
