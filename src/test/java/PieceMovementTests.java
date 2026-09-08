@@ -150,18 +150,6 @@ public class PieceMovementTests {
                         new Pawn(Color.BLACK, new Position("E2"))
                 };
                 board.insertPieces(pieces);
-
-
-//                8     .  .  .  .  .  .  .  .
-//                7     k  .  .  .  .  .  P  .
-//                6     .  .  .  .  .  .  .  .
-//                5     .  .  .  .  .  .  .  .
-//                4     .  .  .  .  .  .  .  .
-//                3     .  .  .  .  .  .  .  .
-//                2     .  .  .  .  p  .  .  .
-//                1     K  .  .  .  .  .  .  .
-//
-//                      A  B  C  D  E  F  G  H
             }
 
             @Test
@@ -200,17 +188,7 @@ public class PieceMovementTests {
                 assertInstanceOf(Rook.class, newPiece);
             }
 
-            //TODO: Add En Passant rules
-
-
-
-
         }
-
-
-
-
-
 
     }
 

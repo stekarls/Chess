@@ -114,19 +114,18 @@ public class ChessBoard {
     public boolean movePiece(Position originalSquare, Position targetSquare){
 
         Piece piece = getPieceAt(originalSquare);
+        Piece targetPiece = getPieceAt(targetSquare);
 
         if (piece == null){
             System.out.println("No piece is in " + originalSquare.boardCharacter(originalSquare.getFile()) + originalSquare.getRank());
             return false;
         }
 
-        //TODO REFACTOR FOR CLEANER CODE WITH CASTLING LOGIC
         boolean castledLastMove = false;
         if (!piece.hasMoved() && (piece instanceof King)){
             castledLastMove = checkForCastlingMove(piece, targetSquare);
         }
 
-        Piece targetPiece = getPieceAt(targetSquare);
 
         if (!castledLastMove && canCaptureOrMove(piece, targetSquare)){ //!hasCastled &&
             move(piece, targetSquare);
@@ -134,7 +133,16 @@ public class ChessBoard {
             return false;
         }
 
-        moveHistoryStack.push(new MoveRecord(originalSquare, targetSquare, targetPiece));
+        Piece[] promotion = null;
+        if (piece instanceof Pawn p){
+            int rank = p.getColor().equals(Color.WHITE) ? 0 : 7;
+            if (targetSquare.getRank() == rank){
+                Piece queen = promotePawn(p, "queen");
+                promotion = new Piece[]{piece, queen};
+            }
+        }
+
+        moveHistoryStack.push(new MoveRecord(originalSquare, targetSquare, targetPiece, promotion));
 
         //Reverse move or reverse capture if own king is checked
         if (isMyKingChecked(piece.getColor())){
@@ -143,6 +151,7 @@ public class ChessBoard {
             }else {
                 move(piece, originalSquare);
             }
+            moveHistoryStack.pop();
             return false;
         }
 
@@ -295,12 +304,12 @@ public class ChessBoard {
         MoveRecord moveRecord = moveHistoryStack.peek();
 
         if (moveRecord != null){
+            //TODO: WONT COUNT PROMOTED PIECES
             Piece piece = getPieceAt(moveRecord.toPos());
-            if (moveRecord.captured() == null){
-                halfMoveClock++;
-            }else if (piece instanceof Pawn){
-                halfMoveClock++;
+            if (piece instanceof  Pawn || moveRecord.captured() != null){
+                halfMoveClock = 0;
             }
+            halfMoveClock++;
             enPassantUpdate();
             if(!piece.hasMoved()){
                 piece.setHasMoved(true);
