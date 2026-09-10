@@ -4,10 +4,13 @@ import utils.ChessBoard;
 import utils.Color;
 import utils.Position;
 
+import java.util.List;
+
 public class Bishop extends Piece{
 
     public Bishop(Color color, Position position) {
         super(color, position);
+        super.pieceValue = 9;
     }
 
     @Override
@@ -60,6 +63,13 @@ public class Bishop extends Piece{
         }
         return true;
     }
+
+    @Override
+    public List<Position> getMoves(ChessBoard board) {
+        return List.of();
+    }
+
+
     @Override
     public String toString(){
         return "Bishop";

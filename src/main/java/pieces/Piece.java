@@ -11,12 +11,14 @@ public abstract class Piece {
     protected Color color;
     protected Position position;
     protected char symbol;
-    boolean hasMoved;
+    protected boolean hasMoved;
+    protected int pieceValue;
 
     public Piece(Color color, Position position){
         this.color = color;
         this.position = position;
         this.hasMoved = false;
+        this.pieceValue = 0;
 
 
         char symbol = 0;
@@ -36,6 +38,8 @@ public abstract class Piece {
 
 
     public abstract boolean legalMovement(Position position, ChessBoard chessBoard);
+
+    public abstract List<Position> getMoves(ChessBoard board);
 
     public Color getColor(){
         return this.color;
@@ -57,5 +61,9 @@ public abstract class Piece {
 
     public void setHasMoved(boolean hasMoved) {
         this.hasMoved = hasMoved;
+    }
+
+    public int getPieceValue() {
+        return pieceValue;
     }
 }

@@ -6,11 +6,13 @@ import utils.MoveRecord;
 import utils.Position;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Pawn extends Piece{
 
     public Pawn(Color color, Position position) {
         super(color, position);
+        super.pieceValue = 1;
     }
 
     @Override
@@ -56,6 +58,12 @@ public class Pawn extends Piece{
         return legalMoves.contains(targetSquare);
 
     }
+
+    @Override
+    public List<Position> getMoves(ChessBoard board) {
+        return List.of();
+    }
+
 
     public boolean getHasMoved(){
         return this.hasMoved;

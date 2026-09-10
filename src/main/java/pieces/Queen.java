@@ -4,10 +4,13 @@ import utils.ChessBoard;
 import utils.Color;
 import utils.Position;
 
+import java.util.List;
+
 public class Queen extends Piece{
 
     public Queen(Color color, Position position) {
         super(color, position);
+        super.pieceValue = 9;
     }
 
     @Override
@@ -45,84 +48,14 @@ public class Queen extends Piece{
         }
 
         Piece destination = board.getBOARD()[targetSquare.getRank()][targetSquare.getFile()];
-        if (destination != null && destination.getColor() == this.color){
-            return false;
-        }
-
-        return true;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //Moves diagonally
-//        if (rankDifference != 0 && fileDifference != 0){
-//            if (rankDifference > 0 && fileDifference > 0){
-//                for (int i = 0; i < rankDifference - 1; i++){
-//                    if (board.getBOARD()[++rankPos][++filePos] != null){
-//                        return false;
-//                    }
-//                }
-//            } else if (rankDifference > 0){
-//                for (int i = 0; i < rankDifference - 1; i++){
-//                    if (board.getBOARD()[++rankPos][--filePos] != null){
-//                        return false;
-//                    }
-//                }
-//            } else if (fileDifference > 0){
-//                for (int i = 0; i < rankDifference - 1; i++){
-//                    if (board.getBOARD()[--rankPos][++filePos] != null){
-//                        return false;
-//                    }
-//                }
-//            }else {
-//                for (int i = 0; i < rankDifference - 1; i++){
-//                    if (board.getBOARD()[--rankPos][--filePos] != null){
-//                        return false;
-//                    }
-//                }
-//            }
-//        } else if (rankDifference != 0 || fileDifference != 0) {
-//            if(rankDifference > 0){
-//                for (int i = 0; i < rankDifference - 1; i++){
-//                    if (board.getBOARD()[++rankPos][filePos] != null){
-//                        return false;
-//                    }
-//                }
-//            }else {
-//                for (int i = 0; i > rankDifference + 1; i--){
-//                    if (board.getBOARD()[--rankPos][filePos] != null){
-//                        return false;
-//                    }
-//                }
-//            }
-//            if(fileDifference > 0){
-//                for (int i = 0; i < fileDifference - 1; i++){
-//                    if (board.getBOARD()[rankPos][++filePos] != null){
-//                        return false;
-//                    }
-//                }
-//
-//            }else {
-//                for (int i = 0; i > fileDifference + 1; i--){
-//                    if (board.getBOARD()[rankPos][--filePos] != null){
-//                        return false;
-//                    }
-//                }
-//            }
-//
-//        }
-//        return true;
+        return destination == null || destination.getColor() != this.color;
     }
+
+    @Override
+    public List<Position> getMoves(ChessBoard board) {
+        return List.of();
+    }
+
 
     @Override
     public String toString(){

@@ -11,6 +11,7 @@ public class King extends Piece{
 
     public King(Color color, Position position) {
         super(color, position);
+        super.pieceValue = 100;
 
     }
 
@@ -54,6 +55,8 @@ public class King extends Piece{
         }
         return reachable;
     }
+
+
 
     public boolean canMove(ChessBoard chessboard){
         List<Position> moves = getMoves(chessboard);

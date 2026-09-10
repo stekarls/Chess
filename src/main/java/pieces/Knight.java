@@ -4,10 +4,13 @@ import utils.ChessBoard;
 import utils.Color;
 import utils.Position;
 
+import java.util.List;
+
 public class Knight extends Piece{
 
     public Knight(Color color, Position position) {
         super(color, position);
+        super.pieceValue = 3;
     }
 
     @Override
@@ -22,6 +25,12 @@ public class Knight extends Piece{
 
         return lPattern1 || lPattern2;
     }
+
+    @Override
+    public List<Position> getMoves(ChessBoard board) {
+        return List.of();
+    }
+
 
     @Override
     public String toString(){

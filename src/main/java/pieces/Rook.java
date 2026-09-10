@@ -4,13 +4,14 @@ import utils.ChessBoard;
 import utils.Color;
 import utils.Position;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Rook extends Piece{
 
 
     public Rook(Color color, Position position){
         super(color, position);
+        super.pieceValue = 5;
     }
 
 
@@ -58,6 +59,12 @@ public class Rook extends Piece{
         }
         return true;
     }
+
+    @Override
+    public List<Position> getMoves(ChessBoard board) {
+        return List.of();
+    }
+
 
     public boolean isHasMoved() {
         return hasMoved;

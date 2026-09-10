@@ -144,7 +144,7 @@ public class ChessBoard {
         moveHistoryStack.push(new MoveRecord(piece, originalSquare, targetSquare, targetPiece, promotion, !piece.hasMoved()));
 
         //Reverse move or reverse capture if own king is checked
-        if (isMyKingChecked(piece.getColor())){
+        if (isKingChecked(piece.getColor())){
             if (targetPiece != null){
                 reverseCapture(targetPiece, originalSquare);
             }else {
@@ -302,7 +302,7 @@ public class ChessBoard {
         (piece.getColor().equals(Color.WHITE) ? whitePieces : blackPieces).remove(piece);
     }
 
-    private boolean isMyKingChecked(Color color){
+    public boolean isKingChecked(Color color){
         Position myKingPos = color.equals(Color.WHITE) ? whiteKing.getPosition() : blackKing.getPosition();
         List<Piece> enemyPieces = color.equals(Color.WHITE) ? blackPieces : whitePieces;
         List<Piece> kingThreats = enemyPieces.stream().filter(piece -> canCaptureOrMove(piece, myKingPos)).toList();
@@ -310,9 +310,9 @@ public class ChessBoard {
     }
 
     private Color isAnyKingChecked(){
-        if (isMyKingChecked(Color.WHITE)){
+        if (isKingChecked(Color.WHITE)){
             return Color.WHITE;
-        }else if (isMyKingChecked(Color.BLACK)){
+        }else if (isKingChecked(Color.BLACK)){
             return Color.BLACK;
         }
         return null;
@@ -487,6 +487,21 @@ public class ChessBoard {
         return false;
     }
 
+
+    //TODO: canCaptureOrMove does not take own king into account from attacking piece, does not matter in isMyKingChecked because you can not put yourself in check
+    public List<Piece> whoCanCapturePiece(Piece piece){
+        List<Piece> enemyPieces = piece.getColor().equals(Color.WHITE) ? blackPieces : whitePieces;
+        List<Piece> attackers = new ArrayList<>();
+
+        for (Piece enemyPiece : enemyPieces){
+            if (movePiece(enemyPiece.getPosition(), piece.getPosition())){
+                attackers.add(enemyPiece);
+                reverseMovePiece();
+            }
+        }
+        return attackers;
+    }
+
     public Piece promotePawn(Pawn pawn, String newPiece){
 
         Color color = pawn.getColor();
@@ -553,5 +568,15 @@ public class ChessBoard {
     public Color getTurnColor() {
         return turnColor;
     }
+
+    public List<Piece> getBlackPieces() {
+        return blackPieces;
+    }
+
+    public List<Piece> getWhitePieces() {
+        return whitePieces;
+    }
 }
+
+
 
