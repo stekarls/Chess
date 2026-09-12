@@ -1,5 +1,7 @@
 package utils;
 
+import enums.SquareColor;
+
 import java.util.Objects;
 
 public class Position {
@@ -15,13 +17,13 @@ public class Position {
     }
 
     public Position(char file, int rank){
-        this.rank = boardNumber(rank);
+        this.rank = inputToBoardNumber(rank);
         this.file = getFile(file);
         this.squareColor = calculateSquareColor(this.getRank(), this.getFile());
     }
 
     public Position(char file, char rank){
-        this.rank = boardNumber(Character.getNumericValue(rank));
+        this.rank = inputToBoardNumber(Character.getNumericValue(rank));
         this.file = getFile(file);
         this.squareColor = calculateSquareColor(this.getRank(), this.getFile());
     }
@@ -29,7 +31,7 @@ public class Position {
     public Position (String chessNotation){
         char file = chessNotation.charAt(0);
         char rank = chessNotation.charAt(1);
-        this.rank = boardNumber(Character.getNumericValue(rank));
+        this.rank = inputToBoardNumber(Character.getNumericValue(rank));
         this.file = getFile(file);
         this.squareColor = calculateSquareColor(this.getRank(), this.getFile());
     }
@@ -48,7 +50,7 @@ public class Position {
         };
     }
 
-    public int boardNumber(int rank){
+    public int inputToBoardNumber(int rank){
         return switch (rank){
             case 8 -> 0;
             case 7 -> 1;
@@ -58,6 +60,20 @@ public class Position {
             case 3 -> 5;
             case 2 -> 6;
             case 1 -> 7;
+            default -> throw new IllegalStateException("Unexpected value: " + rank);
+        };
+    }
+
+    public int boardNumberToOutput(int rank){
+        return switch (rank){
+            case 7 -> 1;
+            case 6 -> 2;
+            case 5 -> 3;
+            case 4 -> 4;
+            case 3 -> 5;
+            case 2 -> 6;
+            case 1 -> 7;
+            case 0 -> 8;
             default -> throw new IllegalStateException("Unexpected value: " + rank);
         };
     }
@@ -74,7 +90,6 @@ public class Position {
             case 7 -> 'H';
             default -> throw new IllegalStateException("Unexpected value: " + file);
         };
-
     }
 
     public int getRank() {
@@ -84,7 +99,6 @@ public class Position {
     public int getFile() {
         return this.file;
     }
-
 
     public void setRank(int rank) {
         this.rank = rank;
@@ -98,22 +112,23 @@ public class Position {
         return squareColor;
     }
 
+    public boolean legalPosition(){
+        return (this.rank < 8 && this.rank >= 0) && (this.file < 8 && this.file >= 0);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Position position)) return false;
         return rank == position.rank && file == position.file;
     }
 
-    public boolean legalPosition(){
-        return (this.rank < 8 && this.rank >= 0) && (this.file < 8 && this.file >= 0);
-    }
     @Override
     public int hashCode() {
         return Objects.hash(rank, file);
     }
 
     public String chessNotation(){
-        return boardCharacter(this.file) + boardNumber(this.rank) + "";
+        return boardCharacter(this.file) + inputToBoardNumber(this.rank) + "";
     }
 
     private SquareColor calculateSquareColor(int rank, int file){
@@ -122,8 +137,12 @@ public class Position {
         }
         return SquareColor.DARK;
     }
-//    @Override
-//    public String toString() {
-//        return boardCharacter(this.getFile()) + boardNumber(this.getRank()) +"";
-//    }
+
+    @Override
+    public String toString() {
+        String file = Character.toString(boardCharacter(this.file));
+        int rank = boardNumberToOutput(this.rank);
+
+        return file + rank + "";
+    }
 }

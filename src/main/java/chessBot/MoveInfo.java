@@ -1,6 +1,7 @@
-package utils;
+package chessBot;
 
 import pieces.Piece;
+import utils.Position;
 
 public class MoveInfo {
 

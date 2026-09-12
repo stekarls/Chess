@@ -1,7 +1,7 @@
 package pieces;
 
 import utils.ChessBoard;
-import utils.Color;
+import enums.Color;
 import utils.Position;
 
 import java.util.List;

@@ -1,9 +1,10 @@
 package pieces;
 
 import utils.ChessBoard;
-import utils.Color;
+import enums.Color;
 import utils.Position;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Queen extends Piece{
@@ -16,6 +17,7 @@ public class Queen extends Piece{
     @Override
     public boolean legalMovement(Position targetSquare, ChessBoard board){
 
+        //TODO: create virtual rook and bishop so simulate move
         if (!targetSquare.legalPosition()) return false;
 
         int rankPos = this.position.getRank();
@@ -42,18 +44,27 @@ public class Queen extends Piece{
         for (int i = 1; i < steps; i++){
             rankPos += rankStep;
             filePos += fileStep;
-            if (board.getBOARD()[rankPos][filePos] != null){
+            if (board.getBoard()[rankPos][filePos] != null){
                 return false;
             }
         }
 
-        Piece destination = board.getBOARD()[targetSquare.getRank()][targetSquare.getFile()];
+        Piece destination = board.getBoard()[targetSquare.getRank()][targetSquare.getFile()];
         return destination == null || destination.getColor() != this.color;
     }
 
     @Override
     public List<Position> getMoves(ChessBoard board) {
-        return List.of();
+
+        List<Position> moveList = new ArrayList<>();
+
+        Bishop virtualBishop = new Bishop(this.color, this.getPosition());
+        Rook virtualRook = new Rook(this.color, this.getPosition());
+
+        moveList.addAll(virtualRook.getMoves(board));
+        moveList.addAll(virtualBishop.getMoves(board));
+
+        return moveList;
     }
 
 

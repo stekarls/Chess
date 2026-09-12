@@ -1,7 +1,8 @@
 package utils;
 
-import pieces.King;
-import pieces.Pawn;
+import chessBot.ChessBot;
+import enums.Color;
+import pieces.*;
 import pieces.Piece;
 
 import java.util.Scanner;
@@ -74,9 +75,11 @@ public class Game {
                            System.out.println("King unable to move, checkmate"); //TODO: a game does not allways end in checkmate
                            break;
                        }
+                       board.printBoard();
                    }
                }else {
                    System.out.println("Not this player's turn");
+                    board.printBoard();
                }
             }else {
                 System.out.println("Move is not written in right format, example: A4-C2");
@@ -140,12 +143,17 @@ public class Game {
 
                 if (board.getPieceAt(fromPos).getColor().equals(chosenColor)){
                     if (board.movePiece(fromPos, toPos)){
-                        chessBot.play();
-                        board.printBoard();
                         if (board.checkGameEnded()){
                             System.out.println("Game Over");
                             break;
                         }
+                        chessBot.play();
+                        if (board.checkGameEnded()){
+                            System.out.println("Game Over");
+                            break;
+                        }
+                        board.printBoard();
+
                     }
                 }else {
                     System.out.println("You cannot move another player's pieces");
@@ -156,8 +164,32 @@ public class Game {
 
 
         }
-
     }
+
+    public void simulateChessGame(){
+
+        ChessBot chessBotWhite = new ChessBot(Color.WHITE, board);
+        ChessBot chessBotBlack = new ChessBot(Color.BLACK, board);
+        while (true){
+            chessBotWhite.play();
+            if (board.checkGameEnded()){
+                System.out.println("Game Over");
+                break;
+            }
+            chessBotBlack.play();
+            if (board.checkGameEnded()){
+                System.out.println("Game Over");
+                break;
+            }
+
+            board.printBoard();
+
+        }
+    }
+
+
+
+
 
     private void playerTurn(){
 
@@ -183,7 +215,4 @@ public class Game {
 //        }
 //        return false;
     }
-
-
-
 }

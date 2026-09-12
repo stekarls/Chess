@@ -1,9 +1,10 @@
 package pieces;
 
 import utils.ChessBoard;
-import utils.Color;
+import enums.Color;
 import utils.Position;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Knight extends Piece{
@@ -28,7 +29,28 @@ public class Knight extends Piece{
 
     @Override
     public List<Position> getMoves(ChessBoard board) {
-        return List.of();
+        List<Position> moveList = new ArrayList<>();
+        Position myPiece = this.getPosition();
+
+        int[][] offsets = {
+                { 2, 1}, { 2, -1},
+                {-2, 1}, {-2, -1},
+                { 1, 2}, { 1, -2},
+                {-1, 2}, {-1, -2}
+        };
+
+        for (int[] offset : offsets){
+            Position targetSquare = new Position(myPiece.getRank() + offset[0], myPiece.getFile() + offset[1]);
+            if (!targetSquare.legalPosition()){
+                continue;
+            }
+
+            Piece targetPiece = board.getPieceAt(targetSquare);
+            if (targetPiece == null || !targetPiece.getColor().equals(this.color)){
+                moveList.add(targetSquare);
+            }
+        }
+        return moveList;
     }
 
 

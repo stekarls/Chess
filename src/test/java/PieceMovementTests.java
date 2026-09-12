@@ -3,9 +3,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import pieces.*;
 import utils.ChessBoard;
-import utils.Color;
+import enums.Color;
 import utils.Position;
-import utils.SquareColor;
+import enums.SquareColor;
 
 import static org.junit.jupiter.api.Assertions.*;
 

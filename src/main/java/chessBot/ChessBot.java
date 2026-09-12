@@ -1,7 +1,11 @@
-package utils;
+package chessBot;
 
+import enums.Color;
 import pieces.Piece;
+import utils.ChessBoard;
+import utils.Position;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -29,24 +33,28 @@ public class ChessBot {
 
     }).reversed();
 
-    public void play(){
-        MoveInfo moveInfo = evaluateMoves();
-        board.movePiece(moveInfo.getPiece().getPosition(), moveInfo.getTargetSquare());
+    public MoveInfo play(){
+        MoveInfo moveInfo = evaluateBestMove();
+        Position from = moveInfo.getPiece().getPosition();
+        Position to = moveInfo.getTargetSquare();
+        System.out.println("Bot played [" + moveInfo.getPiece() + "] " + from + " -> " + to);
+        board.movePiece(from, to);
+        return moveInfo;
     }
 
-    private MoveInfo evaluateMoves(){
+    public MoveInfo evaluateBestMove(){
         PriorityQueue<MoveInfo> possibleMoves = getAllMoves();
         return possibleMoves.poll();
     }
 
-    private PriorityQueue<MoveInfo> getAllMoves(){
+    public PriorityQueue<MoveInfo> getAllMoves(){
         PriorityQueue<MoveInfo> possibleMoves = new PriorityQueue<>(setPriorityOfMove);
-        List<Piece> myPieces = this.myPieces;
+        List<Piece> myPieces = new ArrayList<>(this.myPieces);
 
         for (Piece piece : myPieces){
             for (Position legalSquare : piece.getMoves(board)){
+                Piece enemyPiece = board.getPieceAt(legalSquare);
                 if (board.movePiece(piece.getPosition(), legalSquare)){ //Or canMoveOrCapture
-                    Piece enemyPiece = board.getPieceAt(legalSquare);
                     boolean canBeCaptured = !board.whoCanCapturePiece(piece).isEmpty();
                     boolean threatensKing = board.isKingChecked(enemyColor);
                     if (enemyPiece != null){

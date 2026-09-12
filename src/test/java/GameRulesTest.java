@@ -3,7 +3,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import pieces.*;
 import utils.ChessBoard;
-import utils.Color;
+import enums.Color;
 import utils.Position;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,7 +17,7 @@ public class GameRulesTest {
     class Castling{
 
         @BeforeEach
-        void setupChessBoardForCastlingk(){
+        void setupChessBoardForCastling(){
             board = new ChessBoard();
             board.clearBoard();
 
@@ -67,9 +67,20 @@ public class GameRulesTest {
             boolean kingPos = king.getPosition().equals(new Position("G8"));
             boolean rookPos = board.getPieceAt(new Position("F8")) != null;
             assertTrue(kingPos && rookPos);
-
-
         }
+
+        @Test
+        public void castleKingSideBlackRookHasMoved(){
+            board.setPlayerTurn(2);
+            board.movePiece(new Position("H8"), new Position("H7"));
+            board.movePiece(new Position("E1"), new Position("E2"));
+            Piece king = board.getPieceAt(new Position("E8"));
+            board.movePiece(king.getPosition(), new Position("G8"));
+            boolean kingPos = king.getPosition().equals(new Position("E8"));
+            boolean rookPos = board.getPieceAt(new Position("F8")) == null;
+            assertTrue(kingPos && rookPos);
+        }
+
 
     }
     @Nested
@@ -129,6 +140,8 @@ public class GameRulesTest {
                     new Rook(Color.WHITE, new Position("G1"))
             };
             board.insertPieces(list);
+            board.getPieceAt(new Position("H8")).setHasMoved(true);
+            board.getPieceAt(new Position("A1")).setHasMoved(true);
             assertTrue(board.checkGameEnded());
         }
 
@@ -141,6 +154,8 @@ public class GameRulesTest {
                     new Rook(Color.WHITE, new Position("G1"))
             };
             board.insertPieces(list);
+            board.getPieceAt(new Position("H8")).setHasMoved(true);
+            board.getPieceAt(new Position("A1")).setHasMoved(true);
             assertTrue(board.checkGameEnded());
         }
 
@@ -154,6 +169,8 @@ public class GameRulesTest {
                     new Rook(Color.WHITE, new Position("G1"))
             };
             board.insertPieces(list);
+            board.getPieceAt(new Position("H8")).setHasMoved(true);
+            board.getPieceAt(new Position("A1")).setHasMoved(true);
             assertFalse(board.checkGameEnded());
         }
 
@@ -169,6 +186,8 @@ public class GameRulesTest {
                     new Rook(Color.WHITE, new Position("G1"))
             };
             board.insertPieces(list);
+            board.getPieceAt(new Position("H8")).setHasMoved(true);
+            board.getPieceAt(new Position("A1")).setHasMoved(true);
             assertFalse(board.checkGameEnded());
         }
 
@@ -184,6 +203,8 @@ public class GameRulesTest {
                     new Rook(Color.WHITE, new Position("G1"))
             };
             board.insertPieces(list);
+            board.getPieceAt(new Position("H8")).setHasMoved(true);
+            board.getPieceAt(new Position("A1")).setHasMoved(true);
             assertFalse(board.checkGameEnded());
         }
 
@@ -481,7 +502,6 @@ public class GameRulesTest {
             board.insertPiece(new Bishop(Color.BLACK, new Position("H8")), new Position("H8"));
             Piece whitePawn = board.getPieceAt(new Position("G7"));
             board.movePiece(whitePawn.getPosition(), new Position("G8"));
-            board.printBoard();
             assertFalse(board.checkGameEnded());
         }
 

@@ -1,7 +1,7 @@
 package pieces;
 
 import utils.ChessBoard;
-import utils.Color;
+import enums.Color;
 import utils.MoveRecord;
 import utils.Position;
 
@@ -27,7 +27,7 @@ public class Pawn extends Piece{
 
         MoveRecord lastMove = board.getMoveHistoryStack().peek();
         if (board.getEnPassant() != null && lastMove != null){
-            if (!board.getPieceAt(lastMove.toPos()).getColor().equals(color)){ //problem
+            if (!board.getPieceAt(lastMove.toPos()).getColor().equals(color)){
                 legalMoves.add(board.getEnPassant());
             }
         }
@@ -61,7 +61,34 @@ public class Pawn extends Piece{
 
     @Override
     public List<Position> getMoves(ChessBoard board) {
-        return List.of();
+
+        List<Position> moveList = new ArrayList<>();
+        Position myPos = this.getPosition();
+        Color color = this.getColor();
+        int value = color.equals(Color.WHITE) ? -1 : 1;
+
+        Position oneStep = new Position(myPos.getRank() + value, myPos.getFile());
+
+        if (legalMovement(oneStep, board)){
+            moveList.add(oneStep);
+
+            Position twoStep = new Position(myPos.getRank() + (value) * 2, myPos.getFile());
+            if (legalMovement(twoStep, board)){
+                moveList.add(twoStep);
+            }
+        }
+
+        Position captureLeft = new Position(myPos.getRank() + value, myPos.getFile() - 1);
+        if(legalMovement(captureLeft, board)){
+            moveList.add(captureLeft);
+        }
+
+        Position captureRight = new Position(myPos.getRank() + value, myPos.getFile() + 1);
+        if(legalMovement(captureRight, board)){
+            moveList.add(captureRight);
+        }
+
+        return moveList;
     }
 
 
