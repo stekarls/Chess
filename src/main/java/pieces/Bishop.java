@@ -1,13 +1,17 @@
 package pieces;
 
 import utils.ChessBoard;
-import utils.Color;
+import enums.Color;
 import utils.Position;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Bishop extends Piece{
 
     public Bishop(Color color, Position position) {
         super(color, position);
+        super.pieceValue = 9;
     }
 
     @Override
@@ -17,8 +21,6 @@ public class Bishop extends Piece{
 
         if (!targetSquare.getSquareColor().equals(this.position.getSquareColor())) return false;
 
-
-        //TODO: IS IT FASTER TO JUST ADD ALL POSSIBLE MOVES IN A LIST?
         int rankPos = this.position.getRank();
         int filePos = this.position.getFile();
 
@@ -35,31 +37,66 @@ public class Bishop extends Piece{
 
         if (rankSteps > 0 && fileSteps > 0){
             for (int i = 0; i < rankSteps - 1; i++){
-                if (board.getBOARD()[++rankPos][++filePos] != null){
+                if (board.getBoard()[++rankPos][++filePos] != null){
                     return false;
                 }
             }
         } else if (rankSteps > 0 && fileSteps < 0){
             for (int i = 0; i < rankSteps - 1; i++){
-                if (board.getBOARD()[++rankPos][--filePos] != null){
+                if (board.getBoard()[++rankPos][--filePos] != null){
                     return false;
                 }
             }
         } else if (rankSteps < 0 && fileSteps > 0){ // -7
             for (int i = 0; i > rankSteps + 1; i--){
-                if (board.getBOARD()[--rankPos][++filePos] != null){
+                if (board.getBoard()[--rankPos][++filePos] != null){
                     return false;
                 }
             }
         }else {
             for (int i = 0; i > rankSteps + 1; i--){
-                if (board.getBOARD()[--rankPos][--filePos] != null){
+                if (board.getBoard()[--rankPos][--filePos] != null){
                     return false;
                 }
             }
         }
         return true;
     }
+
+    @Override
+    public List<Position> getMoves(ChessBoard board) {
+        List<Position> moveList = new ArrayList<>();
+        addMovesToMoveList(board, moveList, 1, 1);
+        addMovesToMoveList(board, moveList, 1, -1);
+        addMovesToMoveList(board, moveList, -1, 1);
+        addMovesToMoveList(board, moveList, -1, -1);
+
+        return moveList;
+    }
+
+    private void addMovesToMoveList(ChessBoard board, List<Position> moveList, int rankDelta, int fileDelta){
+        Position pieceSquare = this.getPosition();
+        int rank = pieceSquare.getRank() + rankDelta;
+        int file = pieceSquare.getFile() + fileDelta;
+
+        while (true){
+            Position nextSquare = new Position(rank, file);
+            if (!nextSquare.legalPosition()) break;
+
+            Piece enemyPiece = board.getPieceAt(nextSquare);
+            if (enemyPiece != null){
+                if (!enemyPiece.getColor().equals(this.color)){
+                    moveList.add(nextSquare);
+                }
+                break;
+            }
+            moveList.add(nextSquare);
+            rank += rankDelta;
+            file += fileDelta;
+        }
+    }
+
+
     @Override
     public String toString(){
         return "Bishop";

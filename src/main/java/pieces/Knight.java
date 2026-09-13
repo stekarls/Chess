@@ -1,13 +1,17 @@
 package pieces;
 
 import utils.ChessBoard;
-import utils.Color;
+import enums.Color;
 import utils.Position;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Knight extends Piece{
 
     public Knight(Color color, Position position) {
         super(color, position);
+        super.pieceValue = 3;
     }
 
     @Override
@@ -22,6 +26,33 @@ public class Knight extends Piece{
 
         return lPattern1 || lPattern2;
     }
+
+    @Override
+    public List<Position> getMoves(ChessBoard board) {
+        List<Position> moveList = new ArrayList<>();
+        Position myPiece = this.getPosition();
+
+        int[][] offsets = {
+                { 2, 1}, { 2, -1},
+                {-2, 1}, {-2, -1},
+                { 1, 2}, { 1, -2},
+                {-1, 2}, {-1, -2}
+        };
+
+        for (int[] offset : offsets){
+            Position targetSquare = new Position(myPiece.getRank() + offset[0], myPiece.getFile() + offset[1]);
+            if (!targetSquare.legalPosition()){
+                continue;
+            }
+
+            Piece targetPiece = board.getPieceAt(targetSquare);
+            if (targetPiece == null || !targetPiece.getColor().equals(this.color)){
+                moveList.add(targetSquare);
+            }
+        }
+        return moveList;
+    }
+
 
     @Override
     public String toString(){

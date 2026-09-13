@@ -1,5 +1,6 @@
 package utils;
 
+import enums.Color;
 import pieces.*;
 
 import java.util.ArrayDeque;
@@ -8,9 +9,9 @@ import java.util.Deque;
 import java.util.List;
 
 public class ChessBoard {
-    private final int RANKS = 8;
-    private final int FILES = 8;
-    private final Piece[][] BOARD = new Piece[RANKS][FILES];
+    private final int ranks = 8;
+    private final int files = 8;
+    private final Piece[][] board = new Piece[ranks][files];
     private final List<Piece> whitePieces = new ArrayList<>();
     private final List<Piece> blackPieces = new ArrayList<>();
     private King whiteKing;
@@ -28,43 +29,43 @@ public class ChessBoard {
 
         //Pawns
         for (int i = 0; i < 8; i++){
-            BOARD[1][i] = new Pawn(Color.BLACK, new Position(1,i));
-            BOARD[6][i] = new Pawn(Color.WHITE, new Position(6,i));
+            board[1][i] = new Pawn(Color.BLACK, new Position(1,i));
+            board[6][i] = new Pawn(Color.WHITE, new Position(6,i));
         }
 
         int whiteRank = 7;
         int blackRank = 0;
 
         //White pieces
-        BOARD[whiteRank][0] = new Rook(Color.WHITE, new Position(whiteRank,0));
-        BOARD[whiteRank][7] = new Rook(Color.WHITE, new Position(whiteRank,7));
-        BOARD[whiteRank][1] = new Knight(Color.WHITE, new Position(whiteRank,1));
-        BOARD[whiteRank][6] = new Knight(Color.WHITE, new Position(whiteRank,6));
-        BOARD[whiteRank][2] = new Bishop(Color.WHITE, new Position(whiteRank,2));
-        BOARD[whiteRank][5] = new Bishop(Color.WHITE, new Position(whiteRank,5));
-        BOARD[whiteRank][3] = new Queen(Color.WHITE, new Position(whiteRank,3));
+        board[whiteRank][0] = new Rook(Color.WHITE, new Position(whiteRank,0));
+        board[whiteRank][7] = new Rook(Color.WHITE, new Position(whiteRank,7));
+        board[whiteRank][1] = new Knight(Color.WHITE, new Position(whiteRank,1));
+        board[whiteRank][6] = new Knight(Color.WHITE, new Position(whiteRank,6));
+        board[whiteRank][2] = new Bishop(Color.WHITE, new Position(whiteRank,2));
+        board[whiteRank][5] = new Bishop(Color.WHITE, new Position(whiteRank,5));
+        board[whiteRank][3] = new Queen(Color.WHITE, new Position(whiteRank,3));
 
         King whiteKing = new King(Color.WHITE, new Position(whiteRank,4));
         this.whiteKing = whiteKing;
-        BOARD[whiteRank][4] = whiteKing;
+        board[whiteRank][4] = whiteKing;
 
         //Black Pieces
-        BOARD[blackRank][0] = new Rook(Color.BLACK, new Position(blackRank,0));
-        BOARD[blackRank][7] = new Rook(Color.BLACK, new Position(blackRank,7));
-        BOARD[blackRank][1] = new Knight(Color.BLACK, new Position(blackRank,1));
-        BOARD[blackRank][6] = new Knight(Color.BLACK, new Position(blackRank,6));
-        BOARD[blackRank][2] = new Bishop(Color.BLACK, new Position(blackRank,2));
-        BOARD[blackRank][5] = new Bishop(Color.BLACK, new Position(blackRank,5));
-        BOARD[blackRank][3] = new Queen(Color.BLACK, new Position(blackRank,3));
+        board[blackRank][0] = new Rook(Color.BLACK, new Position(blackRank,0));
+        board[blackRank][7] = new Rook(Color.BLACK, new Position(blackRank,7));
+        board[blackRank][1] = new Knight(Color.BLACK, new Position(blackRank,1));
+        board[blackRank][6] = new Knight(Color.BLACK, new Position(blackRank,6));
+        board[blackRank][2] = new Bishop(Color.BLACK, new Position(blackRank,2));
+        board[blackRank][5] = new Bishop(Color.BLACK, new Position(blackRank,5));
+        board[blackRank][3] = new Queen(Color.BLACK, new Position(blackRank,3));
 
         King blackKing = new King(Color.BLACK, new Position(blackRank,4));
         this.blackKing = blackKing;
-        BOARD[blackRank][4] = blackKing;
+        board[blackRank][4] = blackKing;
 
 
         //TODO: Use insertpieces() instead so they get added trhough that method
         //Add players pieces to their array
-        for (Piece[] pieces : BOARD) {
+        for (Piece[] pieces : board) {
             for (Piece piece : pieces) {
                 if (piece != null) {
                     if (piece.getColor().equals(Color.WHITE)) {
@@ -87,9 +88,9 @@ public class ChessBoard {
 
         int count = 8;
         String space = "  ";
-        for (Piece[] pieces : BOARD) {
+        for (Piece[] pieces : board) {
             System.out.print("\n" + count-- + "     ");
-            for (int file = 0; file < BOARD.length; file++) {
+            for (int file = 0; file < board.length; file++) {
                 Piece piece = pieces[file];
                 if (piece == null) {
                     System.out.print("." + space);
@@ -103,11 +104,11 @@ public class ChessBoard {
     }
 
     private boolean squareIsEmpty(Position position){
-        return BOARD[position.getRank()][position.getFile()] == null;
+        return board[position.getRank()][position.getFile()] == null;
     }
 
     public Piece getPieceAt(Position position){
-        return BOARD[position.getRank()][position.getFile()];
+        return board[position.getRank()][position.getFile()];
     }
 
     public boolean movePiece(Position originalSquare, Position targetSquare){
@@ -125,8 +126,18 @@ public class ChessBoard {
             castledLastMove = checkForCastlingMove(piece, targetSquare);
         }
 
+        if (castledLastMove){
+            return true;
+        }
 
-        if (!castledLastMove && canCaptureOrMove(piece, targetSquare)){
+        if(piece instanceof Pawn p && targetSquare.equals(enPassant)){
+            if(targetPiece == null){
+                int value = p.getColor().equals(Color.WHITE) ? 1 : - 1;
+                targetPiece = getPieceAt(new Position(targetSquare.getRank() + value, targetSquare.getFile()));
+            }
+        }
+
+        if (canCaptureOrMove(piece, targetSquare)){
             move(piece, targetSquare);
         }else {
             return false;
@@ -141,12 +152,13 @@ public class ChessBoard {
             }
         }
 
-        moveHistoryStack.push(new MoveRecord(piece, originalSquare, targetSquare, targetPiece, promotion, !piece.hasMoved()));
+        MoveRecord newMove = new MoveRecord(piece, originalSquare, targetSquare, targetPiece, promotion, !piece.hasMoved());
+        moveHistoryStack.push(newMove);
 
         //Reverse move or reverse capture if own king is checked
-        if (isMyKingChecked(piece.getColor())){
+        if (isKingChecked(piece.getColor())){
             if (targetPiece != null){
-                reverseCapture(targetPiece, originalSquare);
+                reverseCapture(newMove);
             }else {
                 reverseMovePiece();
             }
@@ -164,29 +176,47 @@ public class ChessBoard {
 
         int rankOffset = piece.getColor().equals(Color.WHITE) ? 7 : 0;
 
-        Position queenSide = new Position(rankOffset, 2);
-        Position kingSide = new Position(rankOffset, 6);
+        Position queenSideCastlingSquare = new Position(rankOffset, 2);
+        Position kingSideCastlingSquare = new Position(rankOffset, 6);
         Piece rookQueenSide = getPieceAt(new Position(rankOffset, 0));
         Piece rookKingSide = getPieceAt(new Position(rankOffset, 7));
 
-        if (targetSquare.equals(queenSide)){
+
+        if (targetSquare.equals(queenSideCastlingSquare) && (rookQueenSide != null && !rookQueenSide.hasMoved())){
+            int fileDiff = Math.abs(rookQueenSide.getPosition().getFile() - piece.getPosition().getFile());
+            for (int i = 1; i < fileDiff; i++) {
+                if (getPieceAt(new Position(piece.getPosition().getRank(), piece.getPosition().getFile() - i)) != null){
+                    return false;
+                }
+            }
             move(piece, targetSquare);
             move(rookQueenSide, new Position(rankOffset, 3));
-        }else if (targetSquare.equals(kingSide)){
+            return true;
+        }else if (targetSquare.equals(kingSideCastlingSquare) && (rookKingSide != null && !rookKingSide.hasMoved())){
+            int fileDiff = rookKingSide.getPosition().getFile() - piece.getPosition().getFile();
+            for (int i = 1; i < fileDiff; i++) {
+                if (getPieceAt(new Position(piece.getPosition().getRank(), piece.getPosition().getFile() + i)) != null){
+                    return false;
+                }
+            }
             move(piece, targetSquare);
             move(rookKingSide, new Position(rankOffset, 5));
+            return true;
         }
         return false;
     }
 
     private void move(Piece piece, Position targetSquare){
 
-
         if(piece instanceof Pawn p && targetSquare.equals(enPassant)){
             int value = p.getColor().equals(Color.WHITE) ? 1 : - 1;
             removePiece(new Position(targetSquare.getRank() + value, targetSquare.getFile()));
         }
+
         removePiece(piece.getPosition());
+        if (getPieceAt(targetSquare) != null){
+            removePiece(targetSquare);
+        }
         insertPiece(piece, targetSquare);
     }
 
@@ -215,10 +245,9 @@ public class ChessBoard {
 
     public void reverseMovePiece(){
 
+        //TODO: REVERSE CASTLING
         MoveRecord lastTurn = moveHistoryStack.pop();
         Piece piece = getPieceAt(lastTurn.toPos());
-        Position originalSquare = lastTurn.fromPos();
-        Position capturedSquare = lastTurn.toPos();
         Piece capturedPiece = lastTurn.captured();
 
         if (lastTurn.firstMove()){
@@ -230,9 +259,9 @@ public class ChessBoard {
         }
 
         if (capturedPiece != null){
-            reverseCapture(capturedPiece, originalSquare);
+            reverseCapture(lastTurn);
         }else {
-            move(lastTurn.piece(), originalSquare);
+            move(lastTurn.piece(), lastTurn.fromPos());
         }
 
     }
@@ -252,9 +281,12 @@ public class ChessBoard {
         }
     }
 
-    private void reverseCapture(Piece capturedPiece, Position originalSquare){
-        Piece myPiece = getPieceAt(capturedPiece.getPosition());
-        move(myPiece, originalSquare);
+    private void reverseCapture(MoveRecord lastMove){
+
+        Piece capturedPiece = lastMove.captured();
+        Piece myPiece = lastMove.piece() instanceof Pawn && lastMove.toPos().equals(enPassant) ? getPieceAt(lastMove.toPos()) : getPieceAt(capturedPiece.getPosition());
+
+        move(myPiece, lastMove.fromPos());
         insertPiece(capturedPiece, capturedPiece.getPosition());
     }
 
@@ -273,7 +305,7 @@ public class ChessBoard {
     }
 
     public void insertPiece(Piece piece, Position targetSquare){
-        BOARD[targetSquare.getRank()][targetSquare.getFile()] = piece;
+        board[targetSquare.getRank()][targetSquare.getFile()] = piece;
         piece.setPosition(targetSquare);
         Color pieceColor = piece.getColor();
         List<Piece> list = pieceColor.equals(Color.WHITE) ? whitePieces : blackPieces;
@@ -298,11 +330,11 @@ public class ChessBoard {
     public void removePiece(Position targetSquare){
         Piece piece = getPieceAt(targetSquare);
         if (piece == null) return;
-        BOARD[targetSquare.getRank()][targetSquare.getFile()] = null;
+        board[targetSquare.getRank()][targetSquare.getFile()] = null;
         (piece.getColor().equals(Color.WHITE) ? whitePieces : blackPieces).remove(piece);
     }
 
-    private boolean isMyKingChecked(Color color){
+    public boolean isKingChecked(Color color){
         Position myKingPos = color.equals(Color.WHITE) ? whiteKing.getPosition() : blackKing.getPosition();
         List<Piece> enemyPieces = color.equals(Color.WHITE) ? blackPieces : whitePieces;
         List<Piece> kingThreats = enemyPieces.stream().filter(piece -> canCaptureOrMove(piece, myKingPos)).toList();
@@ -310,9 +342,9 @@ public class ChessBoard {
     }
 
     private Color isAnyKingChecked(){
-        if (isMyKingChecked(Color.WHITE)){
+        if (isKingChecked(Color.WHITE)){
             return Color.WHITE;
-        }else if (isMyKingChecked(Color.BLACK)){
+        }else if (isKingChecked(Color.BLACK)){
             return Color.BLACK;
         }
         return null;
@@ -328,14 +360,17 @@ public class ChessBoard {
             Piece piece = moveRecord.piece();
             if (piece instanceof  Pawn || moveRecord.captured() != null){
                 halfMoveClock = 0;
+            }else {
+                halfMoveClock++;
             }
-            halfMoveClock++;
 
-            //TODO: Could be moved to movePiece logic
+
+            //TODO: Could be moved to movePiece logic?
             enPassantUpdate();
         }
 
         if (halfMoveClock >= 100){
+            System.out.println("Stalemate, reached 100 moves");
             return true;
         }
 
@@ -398,22 +433,13 @@ public class ChessBoard {
     }
 
     private boolean isStaleMate(){
-
-        King myKing = turnColor.equals(Color.WHITE) ? whiteKing : blackKing;
-
-        List<Piece> myPieces = new ArrayList<>(myKing.getColor().equals(Color.WHITE) ? whitePieces : blackPieces);
-        for (Piece piece : myPieces){
-            if (canPieceMove(piece)){
-                return false;
-            }
-        }
-
-        return true;
+        List<Piece> myPieces = new ArrayList<>(turnColor.equals(Color.WHITE) ? whitePieces : blackPieces);
+        return myPieces.stream().noneMatch(this::canPieceMove);
     }
 
     private boolean canPieceMove(Piece piece){
-        for (int i = 0; i < BOARD.length; i++){
-            for (int j = 0; j < BOARD[i].length; j++){
+        for (int i = 0; i < board.length; i++){
+            for (int j = 0; j < board[i].length; j++){
                 if (movePiece(piece.getPosition(), new Position(i, j))){
                     reverseMovePiece();
                     return true;
@@ -426,11 +452,8 @@ public class ChessBoard {
 
     //TODO: Duplicate, same as canKingMove
     private boolean kingCanMoveFromCheck(Color color){
-
         King checkedKing =  color.equals(Color.WHITE) ? whiteKing : blackKing;
-        Position kingPos = checkedKing.getPosition();
-
-        return canKingMove(checkedKing, kingPos);
+        return canKingMove(checkedKing, checkedKing.getPosition());
     }
 
     private boolean canKingMove(King king, Position kingPos){
@@ -448,14 +471,15 @@ public class ChessBoard {
         Position myKingPos = color.equals(Color.WHITE) ? whiteKing.getPosition() : blackKing.getPosition();
         List<Piece> enemyPieces = color.equals(Color.WHITE) ? blackPieces : whitePieces;
         List<Piece> myPieces = new ArrayList<>(color.equals(Color.WHITE) ? whitePieces : blackPieces);
-        List<Piece> kingThreats = enemyPieces.stream().filter(piece -> canCaptureOrMove(piece, myKingPos)).toList();
+        List<Piece> myKingThreats = enemyPieces.stream().filter(piece -> canCaptureOrMove(piece, myKingPos)).toList();
         List<Position> squaresToIntercept = new ArrayList<>();
 
-        if ((kingThreats.size() > 1)){
+        if ((myKingThreats.size() > 1)){
             return false;
         }
 
-        for (Piece piece : kingThreats){
+        //Calculate all squares that can be intercepted by my pieces to stop check
+        for (Piece piece : myKingThreats){
             if (!(piece instanceof Knight)){
                 int rankDifference = myKingPos.getRank() - piece.getPosition().getRank();
                 int fileDifference = myKingPos.getFile() - piece.getPosition().getFile();
@@ -464,6 +488,7 @@ public class ChessBoard {
                 int fileStep = Integer.compare(fileDifference, 0);
 
                 Position square = piece.getPosition();
+
                 do {
                     squaresToIntercept.add(new Position(square.getRank(), square.getFile()));
                     square.setRank(square.getRank() + rankStep);
@@ -473,18 +498,36 @@ public class ChessBoard {
         }
 
         for (Piece piece : myPieces){
-            if (piece instanceof King){
-                continue;
-            }
-            for (Position square : squaresToIntercept){
-                if (canCaptureOrMove(piece, square)){
-                    if (movePiece(piece.getPosition(), square)) {
-                        return true;
-                    }
+            if (piece instanceof King) continue;
+            if (canIntercept(piece, squaresToIntercept)) return true;
+        }
+        return false;
+    }
+
+    private boolean canIntercept(Piece piece, List<Position> squaresToIntercept) {
+        for (Position square : squaresToIntercept){
+            if (canCaptureOrMove(piece, square)){
+                if (movePiece(piece.getPosition(), square)) {
+                    return true;
                 }
             }
         }
         return false;
+    }
+
+    //TODO: canCaptureOrMove does not take own king into account from attacking piece, does not matter in isKingKingChecked because you can not put yourself in check
+    public List<Piece> whoCanCapturePiece(Piece piece){
+        List<Piece> enemyPieces = piece.getColor().equals(Color.WHITE) ? blackPieces : whitePieces;
+        List<Piece> enemyPiecesCopy = new ArrayList<>(enemyPieces);
+        List<Piece> attackers = new ArrayList<>();
+
+        for (Piece enemyPiece : enemyPiecesCopy){
+            if (movePiece(enemyPiece.getPosition(), piece.getPosition())){
+                attackers.add(enemyPiece);
+                reverseMovePiece();
+            }
+        }
+        return attackers;
     }
 
     public Piece promotePawn(Pawn pawn, String newPiece){
@@ -514,28 +557,26 @@ public class ChessBoard {
     }
 
     public void demote(Piece promoted, MoveRecord lastTurn){
-        Color color = promoted.getColor();
-
         removePiece(promoted.getPosition());
+        insertPiece(lastTurn.piece(), promoted.getPosition());
     }
 
-    public Piece[][] getBOARD(){
-        return this.BOARD;
-    }
-
-    public Piece[][] clearBoard(){
-        for (int i = 0; i < this.BOARD.length; i++){
-            for (int j = 0; j < this.BOARD.length; j++){
-                this.BOARD[i][j] = null;
+    public void clearBoard(){
+        for (int i = 0; i < this.board.length; i++){
+            for (int j = 0; j < this.board.length; j++){
+                this.board[i][j] = null;
             }
         }
         blackPieces.clear();
         whitePieces.clear();
-        return this.BOARD;
     }
 
     public void calculatePlayerTurn(){
         turnColor = this.turns % 2 == 0 ? Color.BLACK : Color.WHITE;
+    }
+
+    public Piece[][] getBoard(){
+        return this.board;
     }
 
     public Position getEnPassant() {
@@ -553,5 +594,15 @@ public class ChessBoard {
     public Color getTurnColor() {
         return turnColor;
     }
+
+    public List<Piece> getBlackPieces() {
+        return blackPieces;
+    }
+
+    public List<Piece> getWhitePieces() {
+        return whitePieces;
+    }
 }
+
+
 

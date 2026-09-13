@@ -9,6 +9,5 @@ public record MoveRecord (
         Piece captured,
         boolean promoted,
         boolean firstMove){}
-//TODO: ADD enpassant field,
 
 

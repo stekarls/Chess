@@ -1,9 +1,9 @@
+import enums.Color;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import pieces.*;
 import utils.ChessBoard;
-import utils.Color;
 import utils.Position;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,7 +17,7 @@ public class GameRulesTest {
     class Castling{
 
         @BeforeEach
-        void setupChessBoardForCastlingk(){
+        void setupChessBoardForCastling(){
             board = new ChessBoard();
             board.clearBoard();
 
@@ -67,9 +67,20 @@ public class GameRulesTest {
             boolean kingPos = king.getPosition().equals(new Position("G8"));
             boolean rookPos = board.getPieceAt(new Position("F8")) != null;
             assertTrue(kingPos && rookPos);
-
-
         }
+
+        @Test
+        public void castleKingSideBlackRookHasMoved(){
+            board.setPlayerTurn(2);
+            board.movePiece(new Position("H8"), new Position("H7"));
+            board.movePiece(new Position("E1"), new Position("E2"));
+            Piece king = board.getPieceAt(new Position("E8"));
+            board.movePiece(king.getPosition(), new Position("G8"));
+            boolean kingPos = king.getPosition().equals(new Position("E8"));
+            boolean rookPos = board.getPieceAt(new Position("F8")) == null;
+            assertTrue(kingPos && rookPos);
+        }
+
 
     }
     @Nested
@@ -129,6 +140,8 @@ public class GameRulesTest {
                     new Rook(Color.WHITE, new Position("G1"))
             };
             board.insertPieces(list);
+            board.getPieceAt(new Position("H8")).setHasMoved(true);
+            board.getPieceAt(new Position("A1")).setHasMoved(true);
             assertTrue(board.checkGameEnded());
         }
 
@@ -141,6 +154,8 @@ public class GameRulesTest {
                     new Rook(Color.WHITE, new Position("G1"))
             };
             board.insertPieces(list);
+            board.getPieceAt(new Position("H8")).setHasMoved(true);
+            board.getPieceAt(new Position("A1")).setHasMoved(true);
             assertTrue(board.checkGameEnded());
         }
 
@@ -154,6 +169,8 @@ public class GameRulesTest {
                     new Rook(Color.WHITE, new Position("G1"))
             };
             board.insertPieces(list);
+            board.getPieceAt(new Position("H8")).setHasMoved(true);
+            board.getPieceAt(new Position("A1")).setHasMoved(true);
             assertFalse(board.checkGameEnded());
         }
 
@@ -169,6 +186,8 @@ public class GameRulesTest {
                     new Rook(Color.WHITE, new Position("G1"))
             };
             board.insertPieces(list);
+            board.getPieceAt(new Position("H8")).setHasMoved(true);
+            board.getPieceAt(new Position("A1")).setHasMoved(true);
             assertFalse(board.checkGameEnded());
         }
 
@@ -184,6 +203,8 @@ public class GameRulesTest {
                     new Rook(Color.WHITE, new Position("G1"))
             };
             board.insertPieces(list);
+            board.getPieceAt(new Position("H8")).setHasMoved(true);
+            board.getPieceAt(new Position("A1")).setHasMoved(true);
             assertFalse(board.checkGameEnded());
         }
 
@@ -406,20 +427,62 @@ public class GameRulesTest {
             assertNull(board.getPieceAt(new Position("B5")));
         }
 
-//        @Test
-//        public void testEnPassantCaptureBlack(){
-//            board.movePiece(new Position("A2"), new Position("A4"));
-//            board.checkGameEnded();
-//            board.movePiece(new Position("C7"), new Position("C5"));
-//            board.checkGameEnded();
-//            board.movePiece(new Position("A4"), new Position("A5"));
-//            board.checkGameEnded();
-//            board.movePiece(new Position("B7"), new Position("B5"));
-//            board.checkGameEnded();
-//            board.movePiece(new Position("A5"), new Position("B6"));
-//            board.checkGameEnded();
-//            assertNull(board.getPieceAt(new Position("B4")));
-//        }
+        @Test
+        public void shouldNotBeAbleToCaptureEnPassantSquareFromFarAway(){
+            board.movePiece(new Position("C2"), new Position("C4"));
+            board.checkGameEnded();
+            board.movePiece(new Position("H7"), new Position("C3"));
+            board.checkGameEnded();
+            board.printBoard();
+            assertNull(board.getPieceAt(new Position("C3")));
+        }
+
+        @Test
+        public void testEnPassantCaptureBlack(){
+            board.movePiece(new Position("A2"), new Position("A4"));
+            board.checkGameEnded();
+            board.movePiece(new Position("C7"), new Position("C5"));
+            board.checkGameEnded();
+            board.movePiece(new Position("A4"), new Position("A5"));
+            board.checkGameEnded();
+            board.movePiece(new Position("B7"), new Position("B5"));
+            board.checkGameEnded();
+            board.movePiece(new Position("A5"), new Position("B6"));
+            board.checkGameEnded();
+            assertNull(board.getPieceAt(new Position("B4")));
+        }
+
+        @Test
+        public void reverseMoveShouldReverseEnPassant(){
+            ChessBoard board = new ChessBoard();
+            board.clearBoard();
+
+            Piece[] pieces = new Piece[] {
+                    new King(Color.WHITE, new Position("G1")),
+                    new Pawn(Color.WHITE, new Position("A7")),
+                    new Pawn(Color.WHITE, new Position("B6")),
+                    new Pawn(Color.WHITE, new Position("C2")),
+                    new Pawn(Color.WHITE, new Position("F2")),
+                    new Pawn(Color.WHITE, new Position("G2")),
+                    new Pawn(Color.WHITE, new Position("H3")),
+                    new Rook(Color.WHITE, new Position("C6")),
+
+
+                    new King(Color.BLACK, new Position("B7")),
+                    new Pawn(Color.BLACK, new Position("D4")),
+                    new Pawn(Color.BLACK, new Position("H4")),
+                    new Rook(Color.BLACK, new Position("G8")),
+            };
+            board.insertPieces(pieces);
+            board.movePiece(board.getPieceAt(new Position("C2")).getPosition(), new Position("C4"));
+            board.checkGameEnded();
+            board.movePiece(board.getPieceAt(new Position("D4")).getPosition(), new Position("C3"));
+            board.reverseMovePiece();
+
+            boolean capturedPawn = board.getPieceAt(new Position("C4")) != null;
+            boolean attackingPawn = board.getPieceAt(new Position("D4")) != null;
+            assertTrue(capturedPawn && attackingPawn);
+        }
 
     }
 
@@ -481,7 +544,6 @@ public class GameRulesTest {
             board.insertPiece(new Bishop(Color.BLACK, new Position("H8")), new Position("H8"));
             Piece whitePawn = board.getPieceAt(new Position("G7"));
             board.movePiece(whitePawn.getPosition(), new Position("G8"));
-            board.printBoard();
             assertFalse(board.checkGameEnded());
         }
 

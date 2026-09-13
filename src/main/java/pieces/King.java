@@ -1,7 +1,7 @@
 package pieces;
 
 import utils.ChessBoard;
-import utils.Color;
+import enums.Color;
 import utils.Position;
 
 import java.util.ArrayList;
@@ -11,6 +11,7 @@ public class King extends Piece{
 
     public King(Color color, Position position) {
         super(color, position);
+        super.pieceValue = 100;
 
     }
 
@@ -26,6 +27,7 @@ public class King extends Piece{
         return Math.abs(rankDifference) <= 1 && Math.abs(fileDifference) <= 1;
     }
 
+    //TODO: ADD CASTLING HERE SO BOT CAN DO IT
     public List<Position> getMoves(ChessBoard board){
         List<Position> moves = new ArrayList<>();
 
@@ -45,7 +47,7 @@ public class King extends Piece{
 
         List<Position> reachable = new ArrayList<>();
         for (Position pos : moves){
-            Piece square = board.getBOARD()[pos.getRank()][pos.getFile()];
+            Piece square = board.getBoard()[pos.getRank()][pos.getFile()];
             if ((square == null)) {
                 reachable.add(pos);
             } else if (!square.getColor().equals(this.color)){
@@ -55,16 +57,6 @@ public class King extends Piece{
         return reachable;
     }
 
-    public boolean canMove(ChessBoard chessboard){
-        List<Position> moves = getMoves(chessboard);
-        return !moves.isEmpty();
-    }
-
-
-
-    public boolean getHasMoved(){
-        return hasMoved;
-    }
     @Override
     public String toString(){
         return "King";
