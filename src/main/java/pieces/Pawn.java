@@ -95,11 +95,6 @@ public class Pawn extends Piece{
         return moveList;
     }
 
-
-    public boolean getHasMoved(){
-        return this.hasMoved;
-    }
-
     @Override
     public String toString(){
         return "Pawn";

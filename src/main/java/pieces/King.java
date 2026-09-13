@@ -57,10 +57,6 @@ public class King extends Piece{
         return reachable;
     }
 
-
-    public boolean getHasMoved(){
-        return hasMoved;
-    }
     @Override
     public String toString(){
         return "King";
