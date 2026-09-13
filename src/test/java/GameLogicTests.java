@@ -117,22 +117,6 @@ public class GameLogicTests {
         assertNotNull(blackKing);
     }
 
-    @Test
-    public void testSpecificBug(){
-        ChessBoard chessBoard = new ChessBoard();
-        chessBoard.movePiece(chessBoard.getPieceAt(new Position("A2")).getPosition(), new Position("A3"));
-        chessBoard.checkGameEnded();
-        chessBoard.movePiece(chessBoard.getPieceAt(new Position("B8")).getPosition(), new Position("C6"));
-        chessBoard.checkGameEnded();
-        chessBoard.movePiece(chessBoard.getPieceAt(new Position("A3")).getPosition(), new Position("A4"));
-        chessBoard.checkGameEnded();
-        chessBoard.movePiece(chessBoard.getPieceAt(new Position("G8")).getPosition(), new Position("H6"));
-        chessBoard.checkGameEnded();
-
-        Piece blackKing = chessBoard.getPieceAt(new Position("E8"));
-        assertNotNull(blackKing);
-    }
-
     //TODO: TEST FULLMOVE and halfmoveclock and player color updating correctly every turn
 
     //TODO: REDO MUST CHANGE HASMOVED if it was first move

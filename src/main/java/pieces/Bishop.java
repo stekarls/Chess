@@ -21,8 +21,6 @@ public class Bishop extends Piece{
 
         if (!targetSquare.getSquareColor().equals(this.position.getSquareColor())) return false;
 
-
-        //TODO: IS IT FASTER TO JUST ADD ALL POSSIBLE MOVES IN A LIST?
         int rankPos = this.position.getRank();
         int filePos = this.position.getFile();
 

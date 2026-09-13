@@ -365,7 +365,7 @@ public class ChessBoard {
             }
 
 
-            //TODO: Could be moved to movePiece logic
+            //TODO: Could be moved to movePiece logic?
             enPassantUpdate();
         }
 
@@ -515,14 +515,14 @@ public class ChessBoard {
         return false;
     }
 
-    //TODO: canCaptureOrMove does not take own king into account from attacking piece, does not matter in isMyKingChecked because you can not put yourself in check
+    //TODO: canCaptureOrMove does not take own king into account from attacking piece, does not matter in isKingKingChecked because you can not put yourself in check
     public List<Piece> whoCanCapturePiece(Piece piece){
         List<Piece> enemyPieces = piece.getColor().equals(Color.WHITE) ? blackPieces : whitePieces;
         List<Piece> enemyPiecesCopy = new ArrayList<>(enemyPieces);
         List<Piece> attackers = new ArrayList<>();
 
         for (Piece enemyPiece : enemyPiecesCopy){
-            if (movePiece(enemyPiece.getPosition(), piece.getPosition())){ //TODO: second iteration
+            if (movePiece(enemyPiece.getPosition(), piece.getPosition())){
                 attackers.add(enemyPiece);
                 reverseMovePiece();
             }
@@ -561,7 +561,7 @@ public class ChessBoard {
         insertPiece(lastTurn.piece(), promoted.getPosition());
     }
 
-    public Piece[][] clearBoard(){
+    public void clearBoard(){
         for (int i = 0; i < this.board.length; i++){
             for (int j = 0; j < this.board.length; j++){
                 this.board[i][j] = null;
@@ -569,7 +569,6 @@ public class ChessBoard {
         }
         blackPieces.clear();
         whitePieces.clear();
-        return this.board;
     }
 
     public void calculatePlayerTurn(){

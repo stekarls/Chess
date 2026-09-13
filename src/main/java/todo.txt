@@ -1,17 +1,10 @@
 
 Non-essential:
-2. Add moving animation to the previous one
-3. Add opponent CPU
-5. Fix null handling, getting right error messages to console
+- Add moving animation to the previous one
+- Fix null handling, getting right error messages to console
 - Check for variable permissions, final etc for optimal scoping
 - Enhance code readability by replacing BOARD[targetpos.get....][] with getters and setters like getSquare(Position position)
 - Add FEN position notation (importing and exporting board positions) interpreter (remember has moved to be set when out of standard position)
-- Add stockfish api
 
 Essential:
-- En passant
-- Castling
-- Checkmate comes even if another piece can intercept
-- Add Remis
-- Go over and check all hasMoved logic in the different scenarios that it is set right
-
+- Add castling logic in king's legalMoves so bot can know it's possible

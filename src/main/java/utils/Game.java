@@ -73,6 +73,7 @@ public class Game {
                            break;
                        }
                        board.printBoard();
+                       System.out.println(calculatePieceValues());
                    }
                }else {
                    System.out.println("Not this player's turn");
@@ -158,6 +159,7 @@ public class Game {
                             break;
                         }
                         board.printBoard();
+                        System.out.println(calculatePieceValues());
 
                     }
                 }else {
@@ -195,6 +197,16 @@ public class Game {
 
     private void playerTurn(){
 
+    }
+
+    private String calculatePieceValues(){
+        int whitePieces = board.getWhitePieces().stream().mapToInt(Piece::getPieceValue).sum();
+        int blackPieces = board.getBlackPieces().stream().mapToInt(Piece::getPieceValue).sum();
+        int diff = Math.abs(whitePieces - blackPieces);
+
+        if (whitePieces > blackPieces) return "White is up " + diff + " points";
+        if (blackPieces > whitePieces) return "Black is up " + diff + " points";
+        return "Black and white are equal on points";
     }
 
     private boolean verifyPlayerTurn(ChessBoard board, Position position, Color playerTurn){

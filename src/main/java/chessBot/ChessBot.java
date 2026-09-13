@@ -54,9 +54,8 @@ public class ChessBot {
 
         for (Piece piece : myPieces){
             for (Position legalSquare : piece.getMoves(board)){
-                Piece enemyPiece = board.getPieceAt(legalSquare);
                 if (board.movePiece(piece.getPosition(), legalSquare)){ //Or canMoveOrCapture?
-                    boolean canBeCaptured = !board.whoCanCapturePiece(piece).isEmpty(); //TODO: problem here
+                    boolean canBeCaptured = !board.whoCanCapturePiece(piece).isEmpty();
                     boolean threatensKing = board.isKingChecked(enemyColor);
                     MoveRecord moveHistory = board.getMoveHistoryStack().peek();
                     if (moveHistory.captured() != null){
