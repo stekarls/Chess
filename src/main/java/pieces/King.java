@@ -58,14 +58,6 @@ public class King extends Piece{
     }
 
 
-
-    public boolean canMove(ChessBoard chessboard){
-        List<Position> moves = getMoves(chessboard);
-        return !moves.isEmpty();
-    }
-
-
-
     public boolean getHasMoved(){
         return hasMoved;
     }
