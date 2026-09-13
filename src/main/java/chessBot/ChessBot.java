@@ -12,15 +12,13 @@ import java.util.*;
 //TODO: Implement attacking patterns
 public class ChessBot {
 
-    private final Color myColor;
     private final Color enemyColor;
     private final ChessBoard board;
     private final List<Piece> myPieces;
     //TODO: implement randomness
 
     public ChessBot(Color myColor, ChessBoard board){
-        this.myColor = myColor;
-        this.board =board;
+        this.board = board;
         this.myPieces = myColor.equals(Color.WHITE) ? board.getWhitePieces() : board.getBlackPieces();
         this.enemyColor = myColor.equals(Color.WHITE) ? Color.BLACK : Color.WHITE;
     }
@@ -38,7 +36,7 @@ public class ChessBot {
         MoveInfo moveInfo = evaluateBestMove();
         Position from = moveInfo.getPiece().getPosition();
         Position to = moveInfo.getTargetSquare();
-        System.out.println("Bot played [" + moveInfo.getPiece() + "] " + from + " -> " + to);
+        System.out.println("Bot played [" + moveInfo.getPiece() + "] " + from + " -> " + to); //TODO: add to game class
         board.movePiece(from, to);
         return moveInfo;
     }

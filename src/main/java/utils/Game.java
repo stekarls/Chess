@@ -194,11 +194,6 @@ public class Game {
         }
     }
 
-
-    private void playerTurn(){
-
-    }
-
     private String calculatePieceValues(){
         int whitePieces = board.getWhitePieces().stream().mapToInt(Piece::getPieceValue).sum();
         int blackPieces = board.getBlackPieces().stream().mapToInt(Piece::getPieceValue).sum();
