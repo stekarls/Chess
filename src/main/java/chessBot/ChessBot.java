@@ -3,19 +3,20 @@ package chessBot;
 import enums.Color;
 import pieces.Piece;
 import utils.ChessBoard;
+import utils.MoveRecord;
 import utils.Position;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 
+
+//TODO: Implement attacking patterns
 public class ChessBot {
 
     private final Color myColor;
     private final Color enemyColor;
     private final ChessBoard board;
     private final List<Piece> myPieces;
+    //TODO: implement randomness
 
     public ChessBot(Color myColor, ChessBoard board){
         this.myColor = myColor;
@@ -24,7 +25,7 @@ public class ChessBot {
         this.enemyColor = myColor.equals(Color.WHITE) ? Color.BLACK : Color.WHITE;
     }
 
-    Comparator<MoveInfo> setPriorityOfMove = Comparator.comparingInt((MoveInfo move) -> {
+    Comparator<MoveInfo> movePriority = Comparator.comparingInt((MoveInfo move) -> {
         int priority = 0;
         priority += move.getEnemyValue();
         if (move.isThreatensKing()) priority += 10;
@@ -48,17 +49,18 @@ public class ChessBot {
     }
 
     public PriorityQueue<MoveInfo> getAllMoves(){
-        PriorityQueue<MoveInfo> possibleMoves = new PriorityQueue<>(setPriorityOfMove);
+        PriorityQueue<MoveInfo> possibleMoves = new PriorityQueue<>(movePriority);
         List<Piece> myPieces = new ArrayList<>(this.myPieces);
 
         for (Piece piece : myPieces){
             for (Position legalSquare : piece.getMoves(board)){
                 Piece enemyPiece = board.getPieceAt(legalSquare);
-                if (board.movePiece(piece.getPosition(), legalSquare)){ //Or canMoveOrCapture
-                    boolean canBeCaptured = !board.whoCanCapturePiece(piece).isEmpty();
+                if (board.movePiece(piece.getPosition(), legalSquare)){ //Or canMoveOrCapture?
+                    boolean canBeCaptured = !board.whoCanCapturePiece(piece).isEmpty(); //TODO: problem here
                     boolean threatensKing = board.isKingChecked(enemyColor);
-                    if (enemyPiece != null){
-                        int enemyValue = enemyPiece.getPieceValue();
+                    MoveRecord moveHistory = board.getMoveHistoryStack().peek();
+                    if (moveHistory.captured() != null){
+                        int enemyValue = moveHistory.captured().getPieceValue();
                         possibleMoves.add(new MoveInfo(piece, legalSquare, enemyValue, threatensKing, canBeCaptured));
                     }else {
                         possibleMoves.add(new MoveInfo(piece, legalSquare, 0, false, canBeCaptured));

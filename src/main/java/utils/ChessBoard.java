@@ -130,6 +130,12 @@ public class ChessBoard {
             return true;
         }
 
+        if(piece instanceof Pawn p && targetSquare.equals(enPassant)){
+            if(targetPiece == null){
+                int value = p.getColor().equals(Color.WHITE) ? 1 : - 1;
+                targetPiece = getPieceAt(new Position(targetSquare.getRank() + value, targetSquare.getFile()));
+            }
+        }
 
         if (canCaptureOrMove(piece, targetSquare)){
             move(piece, targetSquare);
@@ -146,12 +152,13 @@ public class ChessBoard {
             }
         }
 
-        moveHistoryStack.push(new MoveRecord(piece, originalSquare, targetSquare, targetPiece, promotion, !piece.hasMoved()));
+        MoveRecord newMove = new MoveRecord(piece, originalSquare, targetSquare, targetPiece, promotion, !piece.hasMoved());
+        moveHistoryStack.push(newMove);
 
         //Reverse move or reverse capture if own king is checked
         if (isKingChecked(piece.getColor())){
             if (targetPiece != null){
-                reverseCapture(targetPiece, originalSquare);
+                reverseCapture(newMove);
             }else {
                 reverseMovePiece();
             }
@@ -201,20 +208,15 @@ public class ChessBoard {
 
     private void move(Piece piece, Position targetSquare){
 
-
         if(piece instanceof Pawn p && targetSquare.equals(enPassant)){
             int value = p.getColor().equals(Color.WHITE) ? 1 : - 1;
             removePiece(new Position(targetSquare.getRank() + value, targetSquare.getFile()));
         }
 
         removePiece(piece.getPosition());
-
-        //TODO: IS this redundant?
         if (getPieceAt(targetSquare) != null){
             removePiece(targetSquare);
         }
-
-
         insertPiece(piece, targetSquare);
     }
 
@@ -243,10 +245,9 @@ public class ChessBoard {
 
     public void reverseMovePiece(){
 
+        //TODO: REVERSE CASTLING
         MoveRecord lastTurn = moveHistoryStack.pop();
         Piece piece = getPieceAt(lastTurn.toPos());
-        Position originalSquare = lastTurn.fromPos();
-        Position capturedSquare = lastTurn.toPos();
         Piece capturedPiece = lastTurn.captured();
 
         if (lastTurn.firstMove()){
@@ -258,9 +259,9 @@ public class ChessBoard {
         }
 
         if (capturedPiece != null){
-            reverseCapture(capturedPiece, originalSquare);
+            reverseCapture(lastTurn);
         }else {
-            move(lastTurn.piece(), originalSquare);
+            move(lastTurn.piece(), lastTurn.fromPos());
         }
 
     }
@@ -280,9 +281,12 @@ public class ChessBoard {
         }
     }
 
-    private void reverseCapture(Piece capturedPiece, Position originalSquare){
-        Piece myPiece = getPieceAt(capturedPiece.getPosition());
-        move(myPiece, originalSquare);
+    private void reverseCapture(MoveRecord lastMove){
+
+        Piece capturedPiece = lastMove.captured();
+        Piece myPiece = lastMove.piece() instanceof Pawn && lastMove.toPos().equals(enPassant) ? getPieceAt(lastMove.toPos()) : getPieceAt(capturedPiece.getPosition());
+
+        move(myPiece, lastMove.fromPos());
         insertPiece(capturedPiece, capturedPiece.getPosition());
     }
 
@@ -429,17 +433,8 @@ public class ChessBoard {
     }
 
     private boolean isStaleMate(){
-
-        King myKing = turnColor.equals(Color.WHITE) ? whiteKing : blackKing;
-
-        List<Piece> myPieces = new ArrayList<>(myKing.getColor().equals(Color.WHITE) ? whitePieces : blackPieces);
-        for (Piece piece : myPieces){
-            if (canPieceMove(piece)){
-                return false;
-            }
-        }
-
-        return true;
+        List<Piece> myPieces = new ArrayList<>(turnColor.equals(Color.WHITE) ? whitePieces : blackPieces);
+        return myPieces.stream().noneMatch(this::canPieceMove);
     }
 
     private boolean canPieceMove(Piece piece){
@@ -457,11 +452,8 @@ public class ChessBoard {
 
     //TODO: Duplicate, same as canKingMove
     private boolean kingCanMoveFromCheck(Color color){
-
         King checkedKing =  color.equals(Color.WHITE) ? whiteKing : blackKing;
-        Position kingPos = checkedKing.getPosition();
-
-        return canKingMove(checkedKing, kingPos);
+        return canKingMove(checkedKing, checkedKing.getPosition());
     }
 
     private boolean canKingMove(King king, Position kingPos){
@@ -479,14 +471,15 @@ public class ChessBoard {
         Position myKingPos = color.equals(Color.WHITE) ? whiteKing.getPosition() : blackKing.getPosition();
         List<Piece> enemyPieces = color.equals(Color.WHITE) ? blackPieces : whitePieces;
         List<Piece> myPieces = new ArrayList<>(color.equals(Color.WHITE) ? whitePieces : blackPieces);
-        List<Piece> kingThreats = enemyPieces.stream().filter(piece -> canCaptureOrMove(piece, myKingPos)).toList();
+        List<Piece> myKingThreats = enemyPieces.stream().filter(piece -> canCaptureOrMove(piece, myKingPos)).toList();
         List<Position> squaresToIntercept = new ArrayList<>();
 
-        if ((kingThreats.size() > 1)){
+        if ((myKingThreats.size() > 1)){
             return false;
         }
 
-        for (Piece piece : kingThreats){
+        //Calculate all squares that can be intercepted by my pieces to stop check
+        for (Piece piece : myKingThreats){
             if (!(piece instanceof Knight)){
                 int rankDifference = myKingPos.getRank() - piece.getPosition().getRank();
                 int fileDifference = myKingPos.getFile() - piece.getPosition().getFile();
@@ -495,6 +488,7 @@ public class ChessBoard {
                 int fileStep = Integer.compare(fileDifference, 0);
 
                 Position square = piece.getPosition();
+
                 do {
                     squaresToIntercept.add(new Position(square.getRank(), square.getFile()));
                     square.setRank(square.getRank() + rankStep);
@@ -504,14 +498,17 @@ public class ChessBoard {
         }
 
         for (Piece piece : myPieces){
-            if (piece instanceof King){
-                continue;
-            }
-            for (Position square : squaresToIntercept){
-                if (canCaptureOrMove(piece, square)){
-                    if (movePiece(piece.getPosition(), square)) {
-                        return true;
-                    }
+            if (piece instanceof King) continue;
+            if (canIntercept(piece, squaresToIntercept)) return true;
+        }
+        return false;
+    }
+
+    private boolean canIntercept(Piece piece, List<Position> squaresToIntercept) {
+        for (Position square : squaresToIntercept){
+            if (canCaptureOrMove(piece, square)){
+                if (movePiece(piece.getPosition(), square)) {
+                    return true;
                 }
             }
         }
@@ -525,7 +522,7 @@ public class ChessBoard {
         List<Piece> attackers = new ArrayList<>();
 
         for (Piece enemyPiece : enemyPiecesCopy){
-            if (movePiece(enemyPiece.getPosition(), piece.getPosition())){
+            if (movePiece(enemyPiece.getPosition(), piece.getPosition())){ //TODO: second iteration
                 attackers.add(enemyPiece);
                 reverseMovePiece();
             }
@@ -560,9 +557,8 @@ public class ChessBoard {
     }
 
     public void demote(Piece promoted, MoveRecord lastTurn){
-        Color color = promoted.getColor();
-
         removePiece(promoted.getPosition());
+        insertPiece(lastTurn.piece(), promoted.getPosition());
     }
 
     public Piece[][] clearBoard(){

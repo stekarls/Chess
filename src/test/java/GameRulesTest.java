@@ -1,9 +1,9 @@
+import enums.Color;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import pieces.*;
 import utils.ChessBoard;
-import enums.Color;
 import utils.Position;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -427,20 +427,62 @@ public class GameRulesTest {
             assertNull(board.getPieceAt(new Position("B5")));
         }
 
-//        @Test
-//        public void testEnPassantCaptureBlack(){
-//            board.movePiece(new Position("A2"), new Position("A4"));
-//            board.checkGameEnded();
-//            board.movePiece(new Position("C7"), new Position("C5"));
-//            board.checkGameEnded();
-//            board.movePiece(new Position("A4"), new Position("A5"));
-//            board.checkGameEnded();
-//            board.movePiece(new Position("B7"), new Position("B5"));
-//            board.checkGameEnded();
-//            board.movePiece(new Position("A5"), new Position("B6"));
-//            board.checkGameEnded();
-//            assertNull(board.getPieceAt(new Position("B4")));
-//        }
+        @Test
+        public void shouldNotBeAbleToCaptureEnPassantSquareFromFarAway(){
+            board.movePiece(new Position("C2"), new Position("C4"));
+            board.checkGameEnded();
+            board.movePiece(new Position("H7"), new Position("C3"));
+            board.checkGameEnded();
+            board.printBoard();
+            assertNull(board.getPieceAt(new Position("C3")));
+        }
+
+        @Test
+        public void testEnPassantCaptureBlack(){
+            board.movePiece(new Position("A2"), new Position("A4"));
+            board.checkGameEnded();
+            board.movePiece(new Position("C7"), new Position("C5"));
+            board.checkGameEnded();
+            board.movePiece(new Position("A4"), new Position("A5"));
+            board.checkGameEnded();
+            board.movePiece(new Position("B7"), new Position("B5"));
+            board.checkGameEnded();
+            board.movePiece(new Position("A5"), new Position("B6"));
+            board.checkGameEnded();
+            assertNull(board.getPieceAt(new Position("B4")));
+        }
+
+        @Test
+        public void reverseMoveShouldReverseEnPassant(){
+            ChessBoard board = new ChessBoard();
+            board.clearBoard();
+
+            Piece[] pieces = new Piece[] {
+                    new King(Color.WHITE, new Position("G1")),
+                    new Pawn(Color.WHITE, new Position("A7")),
+                    new Pawn(Color.WHITE, new Position("B6")),
+                    new Pawn(Color.WHITE, new Position("C2")),
+                    new Pawn(Color.WHITE, new Position("F2")),
+                    new Pawn(Color.WHITE, new Position("G2")),
+                    new Pawn(Color.WHITE, new Position("H3")),
+                    new Rook(Color.WHITE, new Position("C6")),
+
+
+                    new King(Color.BLACK, new Position("B7")),
+                    new Pawn(Color.BLACK, new Position("D4")),
+                    new Pawn(Color.BLACK, new Position("H4")),
+                    new Rook(Color.BLACK, new Position("G8")),
+            };
+            board.insertPieces(pieces);
+            board.movePiece(board.getPieceAt(new Position("C2")).getPosition(), new Position("C4"));
+            board.checkGameEnded();
+            board.movePiece(board.getPieceAt(new Position("D4")).getPosition(), new Position("C3"));
+            board.reverseMovePiece();
+
+            boolean capturedPawn = board.getPieceAt(new Position("C4")) != null;
+            boolean attackingPawn = board.getPieceAt(new Position("D4")) != null;
+            assertTrue(capturedPawn && attackingPawn);
+        }
 
     }
 

@@ -28,7 +28,11 @@ public class Pawn extends Piece{
         MoveRecord lastMove = board.getMoveHistoryStack().peek();
         if (board.getEnPassant() != null && lastMove != null){
             if (!board.getPieceAt(lastMove.toPos()).getColor().equals(color)){
-                legalMoves.add(board.getEnPassant());
+                int rankDiff = Math.abs(targetSquare.getRank() - this.getPosition().getRank());
+                int fileDiff = Math.abs(targetSquare.getFile() - this.getPosition().getFile());
+                if (rankDiff < 2 && fileDiff < 2){
+                    legalMoves.add(board.getEnPassant());
+                }
             }
         }
 

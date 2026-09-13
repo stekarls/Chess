@@ -133,6 +133,13 @@ public class PieceMovementTests {
                 Piece piece = board.getPieceAt(new Position("B2"));
                 assertFalse(board.movePiece(piece.getPosition(), new Position("A3")));
             }
+
+            @Test
+            public void pawnCanNotCaptureDiagonallyMoreThanOneFileAway(){
+                board.insertPiece(new Pawn(Color.WHITE, new Position("G2")), new Position("G2"));
+                Piece piece = board.getPieceAt(new Position("G2"));
+                assertFalse(board.movePiece(piece.getPosition(), new Position("C3")));
+            }
         }
 
         @Nested

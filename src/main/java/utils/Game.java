@@ -16,9 +16,6 @@ public class Game {
         this.board = new ChessBoard();
     }
 
-
-
-
     public void start(){
 
         Color playerTurn;
@@ -93,26 +90,34 @@ public class Game {
 
         Color botColor = chosenColor.equals(Color.WHITE) ? Color.BLACK : Color.WHITE;
         ChessBot chessBot = new ChessBot(botColor, board);
-
-        Color playerTurn;
         Scanner input = new Scanner(System.in);
 
-//        board.clearBoard();
-//
-//        Piece[] pieces = new Piece[] {
-//                new Pawn(Color.WHITE, new Position("G7")),
-//                new King(Color.WHITE, new Position("A1")),
-//                new King(Color.BLACK, new Position("A8")),
-//                new Pawn(Color.BLACK, new Position("E2"))
-//        };
-//        board.insertPieces(pieces);
+        board.clearBoard();
+
+        Piece[] pieces = new Piece[] {
+                new King(Color.WHITE, new Position("G1")),
+                new Pawn(Color.WHITE, new Position("A7")),
+                new Pawn(Color.WHITE, new Position("B6")),
+                new Pawn(Color.WHITE, new Position("C2")),
+                new Pawn(Color.WHITE, new Position("F2")),
+                new Pawn(Color.WHITE, new Position("G2")),
+                new Pawn(Color.WHITE, new Position("H3")),
+                new Rook(Color.WHITE, new Position("C6")),
+
+
+                new King(Color.BLACK, new Position("B7")),
+                new Pawn(Color.BLACK, new Position("D4")),
+                new Pawn(Color.BLACK, new Position("H4")),
+                new Rook(Color.BLACK, new Position("G8")),
+        };
+        board.insertPieces(pieces);
 
         System.out.println("\n\n\n\n\n\n------Welcome to Command Line Chess------");
         System.out.println("Valid move format: FROM-TO. EXAMPLE: A2-A4");
         board.printBoard();
 
         while (true){
-            playerTurn = board.getTurnColor();
+            Color playerTurn = board.getTurnColor();
             System.out.print("(" + playerTurn + ") " + "Enter a valid move: ");
             String move = input.nextLine();
 
@@ -186,9 +191,6 @@ public class Game {
 
         }
     }
-
-
-
 
 
     private void playerTurn(){
