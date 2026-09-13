@@ -127,10 +127,6 @@ public class Position {
         return Objects.hash(rank, file);
     }
 
-    public String chessNotation(){
-        return boardCharacter(this.file) + inputToBoardNumber(this.rank) + "";
-    }
-
     private SquareColor calculateSquareColor(int rank, int file){
         if (rank % 2 == file % 2){
             return SquareColor.LIGHT;
@@ -143,6 +139,6 @@ public class Position {
         String file = Character.toString(boardCharacter(this.file));
         int rank = boardNumberToOutput(this.rank);
 
-        return file + rank + "";
+        return file + rank;
     }
 }
