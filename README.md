@@ -30,12 +30,13 @@ This project was built to practice object-oriented design in Java by modeling a 
 -  Check detection — a move that would leave your own king in check is rejected
 -  Basic checkmate detection (ends the game when the king in check has no legal square to move to)
 -  Castling and enPassant rules
+-  Basic enemy cpu to play against
 
 ## Known limitations / in progress
 
 This is an active work-in-progress project, not a finished game. Currently missing or incomplete:
 
-- No pawn promotion
+- Pawn always promotes to queen, need to have options to choose 
 - No threefold repetition detection
 - FEN position import and export
 - Need more detailed feedback on errors or bad input/moves
