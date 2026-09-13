@@ -12,31 +12,32 @@ import java.util.*;
 //TODO: Implement attacking patterns
 public class ChessBot {
 
+    private final Color color;
     private final Color enemyColor;
     private final ChessBoard board;
     private final List<Piece> myPieces;
     //TODO: implement randomness
 
-    public ChessBot(Color myColor, ChessBoard board){
+    public ChessBot(Color color, ChessBoard board){
         this.board = board;
-        this.myPieces = myColor.equals(Color.WHITE) ? board.getWhitePieces() : board.getBlackPieces();
-        this.enemyColor = myColor.equals(Color.WHITE) ? Color.BLACK : Color.WHITE;
+        this.myPieces = color.equals(Color.WHITE) ? board.getWhitePieces() : board.getBlackPieces();
+        this.enemyColor = color.equals(Color.WHITE) ? Color.BLACK : Color.WHITE;
+        this.color = color;
     }
 
     Comparator<MoveInfo> movePriority = Comparator.comparingInt((MoveInfo move) -> {
         int priority = 0;
-        priority += move.getEnemyValue();
-        if (move.isThreatensKing()) priority += 10;
-        if (move.isCanBeCaptured()) priority -= 20;
+        priority += move.enemyValue();
+        if (move.threatensKing()) priority += 10;
+        if (move.canBeCaptured()) priority -= 20;
         return priority;
 
     }).reversed();
 
     public MoveInfo play(){
         MoveInfo moveInfo = evaluateBestMove();
-        Position from = moveInfo.getPiece().getPosition();
-        Position to = moveInfo.getTargetSquare();
-        System.out.println("Bot played [" + moveInfo.getPiece() + "] " + from + " -> " + to); //TODO: add to game class
+        Position from = moveInfo.piece().getPosition();
+        Position to = moveInfo.targetSquare();
         board.movePiece(from, to);
         return moveInfo;
     }
@@ -69,4 +70,7 @@ public class ChessBot {
         return possibleMoves;
     }
 
+    public Color getColor() {
+        return color;
+    }
 }
