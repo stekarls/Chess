@@ -2,7 +2,6 @@ package utils;
 
 import chessBot.ChessBot;
 import enums.Color;
-import pieces.*;
 import pieces.Piece;
 
 import java.util.Scanner;
@@ -17,109 +16,100 @@ public class Game {
     }
 
     public void start(){
-
-        Color playerTurn;
-        Scanner input = new Scanner(System.in);
-
-//        board.clearBoard();
-//
-//        Piece[] pieces = new Piece[] {
-//                new Pawn(Color.WHITE, new Position("G7")),
-//                new King(Color.WHITE, new Position("A1")),
-//                new King(Color.BLACK, new Position("A8")),
-//                new Pawn(Color.BLACK, new Position("E2"))
-//        };
-//        board.insertPieces(pieces);
+        Scanner scanner = new Scanner(System.in);
 
         System.out.println("\n\n\n\n\n\n------Welcome to Command Line Chess------");
-        System.out.println("Valid move format: FROM-TO. EXAMPLE: A2-A4");
+        System.out.println("Enter number to select gamemode: \n\n1: [Against Bot] \n2: [2-Player game] \n3: [Quit]");
+
+        int gameMode = handleIntInput(scanner, 1, 3);
+
+        if (gameMode == 3){
+            System.out.println("See you later!");
+            return;
+        }
+
+        if (gameMode == 1) {
+            System.out.println("Which color would you like to play as?");
+            System.out.println("\n1: [White] \n2: [Black] \n3: [Quit]");
+
+            int playerInput = handleIntInput(scanner, 1, 3);
+
+            if (playerInput == 3) {
+                System.out.println("See you later!");
+                return;
+            }
+            playAgainstBot(playerInput == 1 ? Color.BLACK : Color.WHITE);
+        } else {
+            startTwoPlayerGame();
+        }
+
+
+    }
+
+    public void startTwoPlayerGame(){
+
         board.printBoard();
-
+        System.out.println("\nValid move format: FROM-TO. EXAMPLE: A2-A4");
         while (true){
-            playerTurn = board.getTurnColor();
-            System.out.print("(" + playerTurn + ") " + "Enter a valid move: ");
-            String move = input.nextLine();
-
-            if (move.equals("exit")){
+            playerTurn();
+            board.printBoard();
+            calculatePieceValues();
+            if (board.checkGameEnded()){
+                board.printBoard();
                 break;
             }
-            if (move.equalsIgnoreCase("undo")){
-                if (!board.undo()){
-                    System.out.println("No more moves to undo");
-                    continue;
-                }
+            playerTurn();
+            board.printBoard();
+            calculatePieceValues();
+            if (board.checkGameEnded()){
                 board.printBoard();
-                continue;
+                break;
             }
+            System.out.println(calculatePieceValues());
+        }
 
-//            if (move.equalsIgnoreCase("REDO")){
-//                if (!board.redo()){
-//                    System.out.println("No more moves to undo");
-//                    continue;
-//                }
-//                board.printBoard();
-//                continue;
-//            }
+    }
 
-            if (Pattern.matches("[A-Ha-h][1-8]-[A-Ha-h][1-8]", move)){
-                Position fromPos = new Position(move.charAt(0), move.charAt(1));
-                Position toPos = new Position(move.charAt(3), move.charAt(4));
+    public void playAgainstBot(Color color){
 
-                if (verifyPlayerTurn(board, fromPos, playerTurn)){
-                   if (board.movePiece(fromPos, toPos)){
-                       board.printBoard();
-                       if (board.checkGameEnded()){
-                           System.out.println("King unable to move, checkmate"); //TODO: a game does not allways end in checkmate
-                           break;
-                       }
-                       board.printBoard();
-                       System.out.println(calculatePieceValues());
-                   }
-               }else {
-                   System.out.println("Not this player's turn");
-                    board.printBoard();
-               }
-            }else {
-                System.out.println("Move is not written in right format, example: A4-C2");
+        ChessBot chessBot = new ChessBot(color, board);
+        if (color.equals(Color.WHITE)){
+            chessBot.play();
+            board.checkGameEnded();
+            board.printBoard();
+            MoveRecord botMove = board.getMoveHistoryStack().peek();
+            System.out.println("*** Bot played [" + botMove.piece() + "] " + botMove.fromPos() + " -> " + botMove.toPos() + " ***");
+            System.out.println(calculatePieceValues());
+        }else {
+            board.printBoard();
+        }
+
+        System.out.println("\nValid move format: FROM-TO. EXAMPLE: A2-A4");
+        while (true){
+            playerTurn();
+            if (board.checkGameEnded()){
+                board.printBoard();
+                break;
             }
-
-
+            chessBot.play();
+            if (board.checkGameEnded()){
+                board.printBoard();
+                break;
+            }
+            board.printBoard();
+            MoveRecord botMove = board.getMoveHistoryStack().peek();
+            System.out.println("*** Bot played [" + botMove.piece() + "] " + botMove.fromPos() + " -> " + botMove.toPos() + " ***");
+            System.out.println(calculatePieceValues());
         }
     }
 
-    public void playWithBot(Color chosenColor){
+    public void playerTurn(){
 
-        Color botColor = chosenColor.equals(Color.WHITE) ? Color.BLACK : Color.WHITE;
-        ChessBot chessBot = new ChessBot(botColor, board);
         Scanner input = new Scanner(System.in);
-
-        board.clearBoard();
-
-        Piece[] pieces = new Piece[] {
-                new King(Color.WHITE, new Position("G1")),
-                new Pawn(Color.WHITE, new Position("A7")),
-                new Pawn(Color.WHITE, new Position("B6")),
-                new Pawn(Color.WHITE, new Position("C2")),
-                new Pawn(Color.WHITE, new Position("F2")),
-                new Pawn(Color.WHITE, new Position("G2")),
-                new Pawn(Color.WHITE, new Position("H3")),
-                new Rook(Color.WHITE, new Position("C6")),
-
-
-                new King(Color.BLACK, new Position("B7")),
-                new Pawn(Color.BLACK, new Position("D4")),
-                new Pawn(Color.BLACK, new Position("H4")),
-                new Rook(Color.BLACK, new Position("G8")),
-        };
-        board.insertPieces(pieces);
-
-        System.out.println("\n\n\n\n\n\n------Welcome to Command Line Chess------");
-        System.out.println("Valid move format: FROM-TO. EXAMPLE: A2-A4");
-        board.printBoard();
 
         while (true){
             Color playerTurn = board.getTurnColor();
-            System.out.print("(" + playerTurn + ") " + "Enter a valid move: ");
+            System.out.print("(" + playerTurn + ") " + "Enter a valid move [FROM-TO]: ");
             String move = input.nextLine();
 
             if (move.equals("exit")){
@@ -147,20 +137,9 @@ public class Game {
                 Position fromPos = new Position(move.charAt(0), move.charAt(1));
                 Position toPos = new Position(move.charAt(3), move.charAt(4));
 
-                if (board.getPieceAt(fromPos).getColor().equals(chosenColor)){
+                if (board.getPieceAt(fromPos).getColor().equals(playerTurn)){
                     if (board.movePiece(fromPos, toPos)){
-                        if (board.checkGameEnded()){
-                            System.out.println("Game Over");
-                            break;
-                        }
-                        chessBot.play();
-                        if (board.checkGameEnded()){
-                            System.out.println("Game Over");
-                            break;
-                        }
-                        board.printBoard();
-                        System.out.println(calculatePieceValues());
-
+                        break;
                     }
                 }else {
                     System.out.println("You cannot move another player's pieces");
@@ -168,8 +147,6 @@ public class Game {
             }else {
                 System.out.println("Move is not written in right format, example: A4-C2");
             }
-
-
         }
     }
 
@@ -201,27 +178,25 @@ public class Game {
 
         if (whitePieces > blackPieces) return "White is up " + diff + " points";
         if (blackPieces > whitePieces) return "Black is up " + diff + " points";
-        return "Black and white are equal on points";
+        return "(Black and white are equal on points)";
     }
 
-    private boolean verifyPlayerTurn(ChessBoard board, Position position, Color playerTurn){
-        Piece piece = board.getPieceAt(position);
-        if (piece != null){
-            return piece.getColor().equals(playerTurn);
+    private int handleIntInput(Scanner scanner, int min, int max){
+        while (true){
+            System.out.print("\nEnter number: ");
+            String input = scanner.nextLine();
+            try {
+                int value = Integer.parseInt(input);
+                if (value >= min && value <= max){
+                    return value;
+                }
+            }catch (Exception e){
+                System.out.println("Invalid input, please enter a number between " + min + " and " + max);
+            }
         }
-        return false;
 
-
-
-
-//        Piece piece = board.getPieceAt(position);
-//        if (piece != null){
-//            Color pieceColor = piece.getColor();
-//            boolean isWhite = pieceColor.equals(Color.WHITE);
-//            if (isWhite && totalMoves % 2 != 0){
-//                return true;
-//            } else return !isWhite && totalMoves % 2 == 0;
-//        }
-//        return false;
     }
+
+
+
 }

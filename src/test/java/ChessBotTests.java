@@ -114,7 +114,7 @@ public class ChessBotTests {
         chessBoard.insertPieces(new Pawn(Color.BLACK, new Position("E3")));
 
         MoveInfo bestMove = chessBot.evaluateBestMove();
-        Position bestSquare = bestMove.getPiece().getPosition();
+        Position bestSquare = bestMove.piece().getPosition();
         assertEquals(chessBoard.getPieceAt(new Position("B2")).getPosition(), bestSquare);
     }
 
