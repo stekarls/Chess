@@ -86,7 +86,10 @@ public class Game {
 
         System.out.println("\nValid move format: FROM-TO. EXAMPLE: A2-A4");
         while (true){
-            playerTurn();
+            if(!playerTurn()){
+                break;
+            }
+
             if (board.checkGameEnded()){
                 board.printBoard();
                 break;
@@ -103,7 +106,7 @@ public class Game {
         }
     }
 
-    public void playerTurn(){
+    public boolean playerTurn(){
 
         Scanner input = new Scanner(System.in);
 
@@ -113,7 +116,7 @@ public class Game {
             String move = input.nextLine();
 
             if (move.equals("exit")){
-                break;
+                return false;
             }
             if (move.equalsIgnoreCase("undo")){
                 if (!board.undo()){
@@ -148,6 +151,7 @@ public class Game {
                 System.out.println("Move is not written in right format, example: A4-C2");
             }
         }
+        return true;
     }
 
     public void simulateChessGame(){
