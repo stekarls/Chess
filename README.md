@@ -21,6 +21,17 @@ A chess engine and playable command-line game written in plain Java (no external
 
 This project was built to practice object-oriented design in Java by modeling a non-trivial rule system from scratch — move legality, turn order, and check detection — without relying on a chess library. Moves are entered in the console using standard algebraic-style coordinates (e.g. `A2-A4`).
 
+## How to run
+
+Requires Java 21 or newer.
+
+1. Download `chess.jar` from the [latest release](https://github.com/stekarls/Chess/releases/latest).
+2. Open a terminal in the folder where you saved it and run:
+
+```
+java -jar chess.jar
+```
+
 ## Features
 
 -  Full 8x8 board setup and ASCII rendering in the console
