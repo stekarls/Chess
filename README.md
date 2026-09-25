@@ -52,29 +52,44 @@ This is an active work-in-progress project, not a finished game. Currently missi
 - FEN position import and export
 - Need more detailed feedback on errors or bad input/moves
 
-See [`src/todo.txt`](src/todo.txt) for the running list of planned fixes and features.
+See [`src/main/java/todo.txt`](src/main/java/todo.txt) for the running list of planned fixes and features.
 
 **Planned next steps:** a Spring Boot backend exposing the game engine over an API, with a React frontend for a graphical board — turning this from a CLI tool into a full web app.
 
 ## Project structure
 
 ```
-src/
-├── pieces/
-│   ├── Piece.java      # Abstract base class shared by all pieces
-│   ├── King.java
-│   ├── Queen.java
-│   ├── Rook.java
-│   ├── Bishop.java
-│   ├── Knight.java
-│   └── Pawn.java
-└── utils/
-    ├── Game.java        # Entry point / game loop, handles input parsing and turns
-    ├── ChessBoard.java  # Board state, move execution, capture logic, check detection
-    ├── Position.java    # Board coordinate representation
-    ├── Color.java       # Enum for White / Black
-    └── SquareColor.java # Enum for Dark / Light squares
-   
+├── pom.xml                      # Maven build (Java 21, JUnit, runnable jar config)
+├── .github/workflows/
+│   └── chess-tests.yml          # CI: runs the test suite
+└── src/
+    ├── main/java/
+    │   ├── chessBot/
+    │   │   ├── ChessBot.java    # CPU opponent: scores candidate moves and picks the best
+    │   │   └── MoveInfo.java    # Record describing a candidate move and its evaluation
+    │   ├── enums/
+    │   │   ├── Color.java       # Enum for White / Black
+    │   │   └── SquareColor.java # Enum for Dark / Light squares
+    │   ├── pieces/
+    │   │   ├── Piece.java       # Abstract base class shared by all pieces
+    │   │   ├── King.java
+    │   │   ├── Queen.java
+    │   │   ├── Rook.java
+    │   │   ├── Bishop.java
+    │   │   ├── Knight.java
+    │   │   └── Pawn.java
+    │   ├── utils/
+    │   │   ├── Main.java        # Entry point
+    │   │   ├── Game.java        # Game loop: mode selection, input parsing and turns
+    │   │   ├── ChessBoard.java  # Board state, move execution, capture logic, check detection
+    │   │   ├── MoveRecord.java  # Record of a played move (used for undo / en passant)
+    │   │   └── Position.java    # Board coordinate representation
+    │   └── todo.txt             # Running list of planned fixes and features
+    └── test/java/
+        ├── ChessBotTests.java
+        ├── GameLogicTests.java
+        ├── GameRulesTest.java
+        └── PieceMovementTests.java
 ```
 
 ## License
